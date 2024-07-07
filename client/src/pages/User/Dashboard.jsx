@@ -13,6 +13,7 @@ export default function Dashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user, isError } = useSelector((state) => state.auth);
+  const { attendance, isLoading } = useSelector((state) => state.attendance);
 
   useEffect(() => {
     dispatch(getMe());
@@ -32,9 +33,17 @@ export default function Dashboard() {
                 <div>
                   <h2 className="card-title font-bold">{`Hello ${user.full_name}`}</h2>
                   <p className="font-semibold">{user.position}</p>
-                  <div className="rounded-full bg-black w-full max-w-24 h-8">
-                    <p className="text-white text-center mt-2 text-xs font-medium">
-                      On Working
+                  <div className="rounded-full bg-black w-full max-w-24 h-8 flex items-center mt-2">
+                    <p className="text-white text-center text-xs font-medium">
+                      {!attendance && !isLoading && "Not Working"}
+                      {attendance &&
+                        attendance?.check_in &&
+                        attendance?.check_out === null &&
+                        "On Work"}
+                      {attendance &&
+                        attendance?.check_in &&
+                        attendance?.check_out &&
+                        "Done Working"}
                     </p>
                   </div>
                 </div>

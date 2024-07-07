@@ -9,5 +9,7 @@ router.get(
   verifyToken,
   attendanceController.checkTodayAttendance
 );
+router.post("/check-out", verifyToken, attendanceController.checkout);
+router.get("/attendances/:id", verifyToken, attendanceController.getAttendanceById);
 
 module.exports = router;
