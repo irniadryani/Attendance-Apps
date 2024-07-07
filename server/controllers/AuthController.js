@@ -120,6 +120,8 @@ const logout = async (req, res) => {
       expiry: new Date(decoded.exp * 1000), // JWT exp is in seconds
     });
 
+    res.clearCookie("refreshToken");
+
     res.status(200).json({ msg: "Logged out successfully" });
   } catch (error) {
     console.error(error);

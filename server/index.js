@@ -10,7 +10,7 @@ const AuthRoute = require("./routes/AuthRoute");
 
 dotenv.config();
 
-const port = process.env.APP_PORT
+const port = process.env.APP_PORT;
 
 //Middleware
 app.use(
@@ -34,7 +34,7 @@ app.use(
     allowedHeaders: "Content-Type, Authorization",
   })
 );
-
+app.use(cookieParser());
 app.use(express.json()); //menerima data dalam bentuk json
 app.use(UserRoute);
 app.use(PermissionRoute);
