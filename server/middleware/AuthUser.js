@@ -10,23 +10,27 @@ module.exports.verifyToken = async (req, res, next) => {
       return res.status(401).json({ msg: "Token not provided" });
     }
 
-    console.log("Received token:", token);
-
     // Check if token is blacklisted
     const blacklistedToken = await Blacklist.findOne({ where: { token } });
     if (blacklistedToken) {
       return res.status(401).json({ msg: "Invalid token" });
     }
 
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-    req.user = decoded; // Store decoded token data in req.user for further use
-    next();
+    try {
+      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      req.user = decoded; // Store decoded token data in req.user for further use
+      next();
+    } catch (error) {
+      if (error.name === "TokenExpiredError") {
+        return res.status(401).json({ msg: "Token expired" });
+      } else if (error.name === "JsonWebTokenError") {
+        return res.status(403).json({ msg: "Invalid token" });
+      } else {
+        throw error;
+      }
+    }
   } catch (error) {
     console.error("Token verification error:", error);
-
-    if (error.name === "JsonWebTokenError") {
-      return res.status(403).json({ msg: "Invalid token" });
-    }
     return res.status(500).json({ msg: "Internal Server Error" });
   }
 };

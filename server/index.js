@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const UserRoute = require("./routes/UserRoute");
 const PermissionRoute = require("./routes/PermissionRoute");
 const AuthRoute = require("./routes/AuthRoute");
+const AttendanceRoute = require("./routes/AttendanceRoute.js");
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ app.use(express.json()); //menerima data dalam bentuk json
 app.use(UserRoute);
 app.use(PermissionRoute);
 app.use(AuthRoute);
+app.use(AttendanceRoute);
 
 app.post("/ping", (req, res) => {
   res.send("pong");
