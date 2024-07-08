@@ -5,6 +5,7 @@ import Attendances from "./Attendance";
 import Permission from "./Permission";
 import Leaves from "./Leaves";
 import DailyReport from "./DailyReport";
+import Approval from "./Approval";
 
 export default function Menu() {
   return (
@@ -69,7 +70,9 @@ export default function Menu() {
             Daily Report
           </p>
         </btn>
-        <div className="bg-black rounded-3xl w-36 h-36 flex flex-col justify-center items-center p-5">
+        <button className="bg-black rounded-3xl w-36 h-36 flex flex-col justify-center items-center p-5"  onClick={() =>
+            document.getElementById("approval_modal").showModal()
+          }>
           <img
             src={Attendance}
             className="w-24 items-center justify-center"
@@ -78,12 +81,13 @@ export default function Menu() {
           <p className="text-white font-semibold text-center justify-center text-sm mt-3">
             Approval
           </p>
-        </div>
+        </button>
       </div>
       <Attendances />
       <Permission />
       <Leaves />
       <DailyReport />
+      <Approval/>
     </div>
   );
 }
