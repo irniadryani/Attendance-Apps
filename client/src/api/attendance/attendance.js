@@ -11,11 +11,11 @@ export const checkoutFn = async (data) => {
 };
 
 export const getAllAttendanceFn = async () => {
-  const response = await Api.post("/attendances");
+  const response = await Api.get("/attendances");
   return response.data;
 };
 
 export const getAttendanceByIdFn = async (id) => {
-  const response = await Api.post(`/attendance/${id}`);
+  const response = await Api.get(`attendances/${id}`);
   return response.data;
 };

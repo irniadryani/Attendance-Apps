@@ -10,7 +10,10 @@ function secondsToHHMMSS(seconds) {
   const minutes = Math.floor((seconds % 3600) / 60);
   const secs = Math.floor(seconds % 60); // Truncate milliseconds
 
-  return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+    2,
+    "0"
+  )}:${String(secs).padStart(2, "0")}`;
 }
 
 function secondsToFormattedTime(seconds) {
@@ -18,26 +21,25 @@ function secondsToFormattedTime(seconds) {
   const minutes = Math.floor((seconds % 3600) / 60);
   const secs = Math.floor(seconds % 60);
 
-  let formattedTime = '';
+  let formattedTime = "";
   if (hours > 0) {
     formattedTime += `${hours} hr `;
   }
   if (minutes > 0) {
     formattedTime += `${minutes} min `;
   }
-  if (secs > 0 || formattedTime === '') { // Show seconds if it's the only unit or if there's no other time unit
+  if (secs > 0 || formattedTime === "") {
+    // Show seconds if it's the only unit or if there's no other time unit
     formattedTime += `${secs} sec`;
   }
 
   return formattedTime.trim();
 }
 
-
-
 // Example check-in location (Singapore Marina Bay Sands)
 const CHECKIN_LOCATION = {
-  latitude: -6.935662,
-  longitude: 107.578095,
+  latitude: 18.5289,
+  longitude: 73.8743,
 };
 
 // Function to calculate distance using Haversine formula
@@ -110,8 +112,16 @@ const checkout = async (req, res) => {
 
     // Get today's date in UTC timezone
     const today = new Date();
-    const startOfDay = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
-    const endOfDay = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() + 1));
+    const startOfDay = new Date(
+      Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())
+    );
+    const endOfDay = new Date(
+      Date.UTC(
+        today.getUTCFullYear(),
+        today.getUTCMonth(),
+        today.getUTCDate() + 1
+      )
+    );
 
     // Fetch today's attendance record
     const attendance = await Attendances.findOne({
@@ -125,7 +135,9 @@ const checkout = async (req, res) => {
     });
 
     if (!attendance) {
-      return res.status(400).json({ error: "No check-in record found for today" });
+      return res
+        .status(400)
+        .json({ error: "No check-in record found for today" });
     }
 
     // Calculate work hours in seconds
@@ -147,8 +159,6 @@ const checkout = async (req, res) => {
     res.status(500).json({ error: "Failed to check out" });
   }
 };
-
-
 
 const checkTodayAttendance = async (req, res) => {
   try {
@@ -191,18 +201,61 @@ const getAttendanceById = async (req, res) => {
     // Fetch attendance records
     const attendances = await Attendances.findAll({
       where: { user_id: id },
+      order: [['created_at', 'DESC']], // Sort by created_at in descending order
     });
 
-    // Convert work_hours to the formatted time string
-    const result = attendances.map(att => {
-      const workHours = att.work_hours;
-      const [hours, minutes, seconds] = workHours.split(":").map(Number);
-      const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-      const formattedWorkHours = secondsToFormattedTime(totalSeconds);
+    // Format dates and work hours
+    const result = attendances.map((att) => {
+      let formattedWorkHours = ""; // Default value if work_hours is null
+
+      if (att.work_hours) {
+        const [hours, minutes, seconds] = att.work_hours.split(":").map(Number);
+        const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+        formattedWorkHours = secondsToFormattedTime(totalSeconds);
+      }
+      
+      // Format check_in to HH:mm:ss
+      let formattedCheckIn = "";
+      if (att.check_in) {
+        const checkInDate = new Date(att.check_in);
+        formattedCheckIn = `${checkInDate
+          .getHours()
+          .toString()
+          .padStart(2, "0")}:${checkInDate
+          .getMinutes()
+          .toString()
+          .padStart(2, "0")}:${checkInDate
+          .getSeconds()
+          .toString()
+          .padStart(2, "0")}`;
+      }
+
+      // Format check_out to HH:mm:ss
+      let formattedCheckOut = "";
+      if (att.check_out) {
+        const checkOutDate = new Date(att.check_out);
+        formattedCheckOut = `${checkOutDate
+          .getHours()
+          .toString()
+          .padStart(2, "0")}:${checkOutDate
+          .getMinutes()
+          .toString()
+          .padStart(2, "0")}:${checkOutDate
+          .getSeconds()
+          .toString()
+          .padStart(2, "0")}`;
+      }
+
+      // Format created_at to YYYY-MM-DD
+      const createdAtDate = new Date(att.created_at);
+      const formattedDate = `${createdAtDate.getFullYear()}-${(createdAtDate.getMonth() + 1).toString().padStart(2, '0')}-${createdAtDate.getDate().toString().padStart(2, '0')}`;
 
       return {
         ...att.toJSON(),
         work_hours: formattedWorkHours,
+        check_in: formattedCheckIn,
+        check_out: formattedCheckOut,
+        date: formattedDate, // Add formatted date field
       };
     });
 
@@ -212,5 +265,38 @@ const getAttendanceById = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch attendance records" });
   }
 };
+
+
+// const getAttendanceById = async (req, res) => {
+//   try {
+//     const { id } = req.user;
+
+//     // Fetch attendance records
+//     const attendances = await Attendances.findAll({
+//       where: { user_id: id },
+//     });
+
+//     // Convert work_hours to the formatted time string
+//     const result = attendances.map(att => {
+//       let formattedWorkHours = 'N/A'; // Default value if work_hours is null
+
+//       if (att.work_hours) {
+//         const [hours, minutes, seconds] = att.work_hours.split(":").map(Number);
+//         const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+//         formattedWorkHours = secondsToFormattedTime(totalSeconds);
+//       }
+
+//       return {
+//         ...att.toJSON(),
+//         work_hours: formattedWorkHours,
+//       };
+//     });
+
+//     res.status(200).json(result);
+//   } catch (error) {
+//     console.error("Error fetching attendance records", error);
+//     res.status(500).json({ error: "Failed to fetch attendance records" });
+//   }
+// };
 
 module.exports = { checkin, checkTodayAttendance, checkout, getAttendanceById };

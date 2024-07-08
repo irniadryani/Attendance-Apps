@@ -1,10 +1,35 @@
 import React from "react";
+import { Accordion, AccordionItem } from "@nextui-org/react";
+import { useParams } from "react-router-dom";
+import { getAttendanceByIdFn } from "../../api/attendance/attendance";
+import { useQuery } from "@tanstack/react-query";
 
 export default function History() {
+  const { id } = useParams();
+
+  const {
+    data: dataSingleAttendance,
+    refetch: refetchSingleAttendance,
+    isLoading: loadingSingleAttendance,
+  } = useQuery({
+    queryKey: ["attendance", id],
+    queryFn: () => getAttendanceByIdFn(id),
+  });
+
+  const getTitle = (attendance) => {
+    if (attendance.check_in && attendance.check_out) {
+      return "Worked";
+    } else if (!attendance.check_in && !attendance.check_out) {
+      return "Not Working";
+    }
+    return "On Working";
+  };
+
   return (
-    <div>
+    <div className="dark:bg-gray-900 dark:text-white min-h-screen">
       <div>
         <p className="font-bold text-2xl mx-10 mt-10">History</p>
+
         <div className="flex justify-end mx-10">
           <div className="dropdown dropdown-hover mt-5">
             <div
@@ -28,20 +53,29 @@ export default function History() {
           </div>
         </div>
 
-        <div className="card bg-base-100 w-full shadow-xl">
-          <div className="card-body">
-            <div className="card bg-black text-neutral-content w-full flex flex-row justify-between">
-              <div className="mx-5 mt-2">
-                <p className="font-bold text-sm">Worked</p>
-                <p className="font-semibold text-xs">9 hr 1 min</p>
-              </div>
-              <div>
-                <button className="btn btn-light text-black btn-sm m-2">
-                  Details
-                </button>
-              </div>
-            </div>
-          </div>
+        <div className="my-5">
+          <Accordion variant="splitted" className="dark:bg-gray-800 text-black">
+            {dataSingleAttendance?.map((attendance) => (
+              <AccordionItem
+                key={attendance.id}
+                aria-label={`Accordion ${attendance.id}`}
+                title={getTitle(attendance)}
+                subtitle={attendance.date} // Make sure `date` is available in `attendance`
+              >
+                <div className="flex flex-col gap-1">
+                  <p className="text-sm font-semibold">
+                    Check in : {attendance.check_in}
+                  </p>
+                  <p className="text-sm font-semibold">
+                    Check out : {attendance.check_out}
+                  </p>
+                  <p className="text-sm font-semibold">
+                    Work Hours : {attendance.work_hours}
+                  </p>
+                </div>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </div>
     </div>
