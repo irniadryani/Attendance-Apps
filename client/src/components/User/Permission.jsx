@@ -1,33 +1,115 @@
 import React, { useState } from "react";
-import Datepicker from "react-tailwindcss-datepicker";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { createPermissionFn } from "../../api/permission/permission";
+import { useForm } from "react-hook-form";
+import Swal from "sweetalert2";
+import { useMutation } from "@tanstack/react-query";
+import DetailPemission from "./DetailPemission";
 
 export default function Permission() {
-  const [value, setValue] = useState({
-    startDate: new Date(),
-    endDate: new Date().setMonth(11),
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+
+  const handlePermissionResponse = useMutation({
+    mutationFn: (data) => createPermissionFn(data),
+
+    onMutate() {},
+    onSuccess: (res) => {
+      console.log(res);
+      reset();
+      Swal.fire({
+        icon: "success",
+        title: "Permission Created!",
+        text: "The permission has been successfully created.",
+      });
+      document.getElementById("permission_modal").close();
+    },
+    onError: (error) => {
+      console.log(error);
+    },
   });
 
-  const handleValueChange = (newValue) => {
-    console.log("newValue:", newValue);
-    setValue(newValue);
+  const addPermission = (data) => {
+    const permissionData = {
+      ...data,
+    };
+    console.log("permission data", permissionData); // Log to check the values
+    handlePermissionResponse.mutateAsync(permissionData);
   };
+
   return (
-    <div>
+    <div className="">
       <dialog id="permission_modal" className="modal">
-        <div className="modal-box">
+        <div className="modal-box w-11/12 max-w-5xl">
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
             </button>
           </form>
           <h3 className="font-bold text-lg">Permission Request</h3>
-          <div className=" my-5">
-            <form>
-              <div>
-                <p className="text-sm font-medium">Select Date</p>
-                {/* <div>
-                  <Datepicker value={value} onChange={handleValueChange} />
-                </div> */}
+          <button className="my-5" onClick={() =>
+            document.getElementById("detail_permission_modal").showModal()
+          }>
+            <p className="font-thin text-xs mb-1 text-start">*Tap to see detail</p>
+            <div className="card bg-neutral text-neutral-content w-56 h-24">
+              <div className="flex flex-col items-center text-center justify-between">
+                <h2 className="font-bold text-6xl items-end">8</h2>
+                <p className="font-bold text-lg items-end">Permission Left</p>
+              </div>
+            </div>
+          </button>
+          <div className="card bg-base-100 w-full shadow-2xl my-5 mr-10">
+            <form onSubmit={handleSubmit(addPermission)} className="p-5">
+              <p className="font-bold text-lg my-5 text-center">Form Request Permission</p>
+              <div className="flex flex-row justify-between">
+                <label htmlFor="start_date" className="text-sm font-medium">
+                  Start Date
+                </label>
+                <div>
+                  <DatePicker
+                    showTimeSelect
+                    minTime={new Date(0, 0, 0, 12, 30)}
+                    maxTime={new Date(0, 0, 0, 19, 0)}
+                    selected={startDate}
+                    onChange={(date) => setStartDate(date)}
+                    dateFormat="MMMM d, yyyy h:mmaa"
+                    className="flex justify-center mr-24"
+                  />
+                  <input
+                    type="hidden"
+                    {...register("start_date", { required: true })}
+                    value={startDate.toISOString()}
+                  />
+                </div>
+              </div>
+              <div className="flex flex-row mt-5 justify-between">
+                <label htmlFor="end_date" className="text-sm font-medium">
+                  End Date
+                </label>
+                <div>
+                  <DatePicker
+                    showTimeSelect
+                    minTime={new Date(0, 0, 0, 12, 30)}
+                    maxTime={new Date(0, 0, 0, 19, 0)}
+                    selected={endDate}
+                    onChange={(date) => setEndDate(date)}
+                    dateFormat="MMMM d, yyyy h:mmaa"
+                    className="flex justify-center ml-10 mr-24"
+                  />
+                  <input
+                    type="hidden"
+                    {...register("end_date", { required: true })}
+                    value={endDate.toISOString()}
+                  />
+                </div>
               </div>
               <div>
                 <label
@@ -35,21 +117,30 @@ export default function Permission() {
                   className="form-control w-full max-w-4xl"
                 >
                   <div className="label mt-3 w-full justify-start">
-                    <span className="label-text text-sm font-medium">Notes</span>
+                    <span className="label-text text-sm font-medium">
+                      Notes
+                    </span>
                   </div>
                 </label>
                 <textarea
                   placeholder=""
-                  className="textarea textarea-bordered textarea-lg w-full max-w-4xl"
+                  className="textarea textarea-bordered textarea-lg w-full max-w-4xl text-sm"
+                  {...register("notes")}
                 ></textarea>
               </div>
               <div className="flex justify-end">
-                <button className="btn btn-success text-white my-3">Submit</button>
+                <button
+                  className="btn bg-black text-white my-3"
+                  type="submit"
+                >
+                  Submit
+                </button>
               </div>
             </form>
           </div>
         </div>
       </dialog>
+      <DetailPemission/>
     </div>
   );
 }

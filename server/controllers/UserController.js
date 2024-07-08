@@ -54,6 +54,7 @@ const createUser = async (req, res) => {
       email: email,
       password: hashPassword,
       role_id: role_id,
+      
     });
     res.status(201).json({ msg: "Register Berhasi" });
   } catch (error) {

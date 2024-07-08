@@ -1,17 +1,18 @@
 const express = require("express");
 const router = require("express").Router();
 const permissionController = require('../controllers/PermissionController');
+const { verifyToken } = require("../middleware/AuthUser");
 
-// Rute untuk mendapatkan pengguna
-router.get('/permissions', permissionController.getPermission);
 
-router.get('/permission/:id', permissionController.getPermissionById);
+router.get('/permissions', verifyToken, permissionController.getPermission);
 
-router.post('/permission', permissionController.createPermission);
+router.get('/permission/:id', verifyToken, permissionController.getPermissionById);
 
-router.patch('/permission/:id', permissionController.updatePermission);
+router.post('/permission', verifyToken, permissionController.createPermission);
 
-router.delete('/permission:id', permissionController.deletePermission);
+router.put('/permission/:id', verifyToken, permissionController.updatePermission);
+
+// router.delete('/permission:id', permissionController.deletePermission);
 
 
 module.exports = router;

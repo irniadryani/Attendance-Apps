@@ -24,9 +24,17 @@ export default function Login() {
     dispatch(getMe());
   }, [dispatch]);
 
+  // useEffect(() => {
+  //   if (user) {
+  //     navigate("/");
+  //   }
+  // }, [user]);
+
   useEffect(() => {
-    if (user) {
+    if (user?.role === "User") {
       navigate("/");
+    }else if (user?.role === "Admin"){
+      navigate("/dashboard-admin")
     }
   }, [user]);
 

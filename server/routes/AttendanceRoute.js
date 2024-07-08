@@ -11,5 +11,7 @@ router.get(
 );
 router.post("/check-out", verifyToken, attendanceController.checkout);
 router.get("/attendances/:id", verifyToken, attendanceController.getAttendanceById);
+router.get("/attendances", verifyToken, attendanceController.getAllAttendances);
+
 
 module.exports = router;

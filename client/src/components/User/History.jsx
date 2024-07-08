@@ -6,7 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 
 export default function History() {
   const { id } = useParams();
-
   const {
     data: dataSingleAttendance,
     refetch: refetchSingleAttendance,
@@ -15,6 +14,8 @@ export default function History() {
     queryKey: ["attendance", id],
     queryFn: () => getAttendanceByIdFn(id),
   });
+
+  console.log("attendance", dataSingleAttendance)
 
   const getTitle = (attendance) => {
     if (attendance.check_in && attendance.check_out) {

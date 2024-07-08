@@ -201,6 +201,76 @@ const getAttendanceById = async (req, res) => {
     // Fetch attendance records
     const attendances = await Attendances.findAll({
       where: { user_id: id },
+      order: [['created_at', 'DESC']], 
+      limit: 7,
+    });
+
+    // Format dates and work hours
+    const result = attendances.map((att) => {
+      let formattedWorkHours = ""; // Default value if work_hours is null
+
+      if (att.work_hours) {
+        const [hours, minutes, seconds] = att.work_hours.split(":").map(Number);
+        const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+        formattedWorkHours = secondsToFormattedTime(totalSeconds);
+      }
+      
+      // Format check_in to HH:mm:ss
+      let formattedCheckIn = "";
+      if (att.check_in) {
+        const checkInDate = new Date(att.check_in);
+        formattedCheckIn = `${checkInDate
+          .getHours()
+          .toString()
+          .padStart(2, "0")}:${checkInDate
+          .getMinutes()
+          .toString()
+          .padStart(2, "0")}:${checkInDate
+          .getSeconds()
+          .toString()
+          .padStart(2, "0")}`;
+      }
+
+      // Format check_out to HH:mm:ss
+      let formattedCheckOut = "";
+      if (att.check_out) {
+        const checkOutDate = new Date(att.check_out);
+        formattedCheckOut = `${checkOutDate
+          .getHours()
+          .toString()
+          .padStart(2, "0")}:${checkOutDate
+          .getMinutes()
+          .toString()
+          .padStart(2, "0")}:${checkOutDate
+          .getSeconds()
+          .toString()
+          .padStart(2, "0")}`;
+      }
+
+      // Format created_at to YYYY-MM-DD
+      const createdAtDate = new Date(att.created_at);
+      const formattedDate = `${createdAtDate.getFullYear()}-${(createdAtDate.getMonth() + 1).toString().padStart(2, '0')}-${createdAtDate.getDate().toString().padStart(2, '0')}`;
+
+      return {
+        ...att.toJSON(),
+        work_hours: formattedWorkHours,
+        check_in: formattedCheckIn,
+        check_out: formattedCheckOut,
+        date: formattedDate, // Add formatted date field
+      };
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error fetching attendance records", error);
+    res.status(500).json({ error: "Failed to fetch attendance records" });
+  }
+};
+
+const getAllAttendances = async (req, res) => {
+  try {
+    // Fetch attendance records
+    const attendances = await Attendances.findAll({
       order: [['created_at', 'DESC']], // Sort by created_at in descending order
     });
 
@@ -267,36 +337,4 @@ const getAttendanceById = async (req, res) => {
 };
 
 
-// const getAttendanceById = async (req, res) => {
-//   try {
-//     const { id } = req.user;
-
-//     // Fetch attendance records
-//     const attendances = await Attendances.findAll({
-//       where: { user_id: id },
-//     });
-
-//     // Convert work_hours to the formatted time string
-//     const result = attendances.map(att => {
-//       let formattedWorkHours = 'N/A'; // Default value if work_hours is null
-
-//       if (att.work_hours) {
-//         const [hours, minutes, seconds] = att.work_hours.split(":").map(Number);
-//         const totalSeconds = hours * 3600 + minutes * 60 + seconds;
-//         formattedWorkHours = secondsToFormattedTime(totalSeconds);
-//       }
-
-//       return {
-//         ...att.toJSON(),
-//         work_hours: formattedWorkHours,
-//       };
-//     });
-
-//     res.status(200).json(result);
-//   } catch (error) {
-//     console.error("Error fetching attendance records", error);
-//     res.status(500).json({ error: "Failed to fetch attendance records" });
-//   }
-// };
-
-module.exports = { checkin, checkTodayAttendance, checkout, getAttendanceById };
+module.exports = { checkin, checkTodayAttendance, checkout, getAttendanceById, getAllAttendances };

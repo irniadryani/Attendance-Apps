@@ -39,7 +39,7 @@ export const Sidebar = () => {
           <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
             <li>
               <NavLink
-                to="/dashboard"
+                to="/dashboard-admin"
                 className="menu-item"
                 activeClassName="font-bold"
               >
@@ -52,16 +52,16 @@ export const Sidebar = () => {
                 className="menu-item"
                 activeClassName="font-bold"
               >
-                Users
+                Employee Attendance
               </NavLink>
             </li>
             <li>
               <NavLink
-                to="/permission"
+                to="/"
                 className="menu-item"
                 activeClassName="font-bold"
               >
-                Permission List
+                Selft Attendance
               </NavLink>
             </li>
             <li>
