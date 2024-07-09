@@ -45,8 +45,8 @@ const getPermissionById = async (req, res) => {
         attributes: ["id", "start_date", "end_date", "status", "notes"],
         where: {
           user_id: req.params.id, 
-          order: [['created_at', 'DESC']], 
-          limit: 7,
+          // order: [['created_at', 'DESC']], 
+          // limit: 7,
         },
       });
   

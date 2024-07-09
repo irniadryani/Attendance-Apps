@@ -38,8 +38,8 @@ function secondsToFormattedTime(seconds) {
 
 // Example check-in location (Singapore Marina Bay Sands)
 const CHECKIN_LOCATION = {
-  latitude: 18.5289,
-  longitude: 73.8743,
+  latitude: -6.9408141,
+  longitude: 107.5882522,
 };
 
 // Function to calculate distance using Haversine formula

@@ -9,6 +9,7 @@ const PermissionRoute = require("./routes/PermissionRoute");
 const AuthRoute = require("./routes/AuthRoute");
 const AttendanceRoute = require("./routes/AttendanceRoute.js");
 const DailyReportRoute = require("./routes/DailyReportRoute.js");
+const AnnouncementRoute = require("./routes/AnnouncementRoute.js");
 
 dotenv.config();
 
@@ -43,6 +44,7 @@ app.use(PermissionRoute);
 app.use(AuthRoute);
 app.use(AttendanceRoute);
 app.use(DailyReportRoute);
+app.use(AnnouncementRoute);
 
 app.post("/ping", (req, res) => {
   res.send("pong");
