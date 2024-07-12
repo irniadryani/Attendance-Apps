@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { Op } = require("sequelize");
 const DailyReport = require("../models/DailyReportModel");
+const User = require("../models/UserModel");
 
 const formatDate = (date) => {
   const d = new Date(date);
@@ -14,13 +15,20 @@ const formatDate = (date) => {
 const getDailyReport = async (req, res) => {
   try {
     const response = await DailyReport.findAll({
-      attributes: ["id", "user_id", "report_date", "report_message"],
+      attributes: ['id', 'report_date', 'report_message', "user_id"],
+      include: [{
+        model: User,
+        attributes: ['full_name', 'position'], // Include user attributes
+      }],
     });
 
-    // Format dates in response
-    const formattedResponse = response.map((perm) => ({
-      ...perm.toJSON(),
-      report_date: formatDate(perm.report_date),
+    const formattedResponse = response.map((report) => ({
+      id: report.id,
+      user_id: report.user_id,
+      report_date: formatDate(report.report_date),
+      report_message: report.report_message,
+      user_name: report.user.full_name, // Access full_name from associated Users model
+      user_position: report.user.position, // Access position from associated Users model
     }));
 
     console.log(formattedResponse);
