@@ -1,9 +1,11 @@
+// models/LeavesModel.js
 "use strict";
 
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/connection.js");
 
 const Users = require("./UserModel");
+const Limit = require("./LimitModel");
 
 const Leaves = sequelize.define(
   "leaves",
@@ -22,6 +24,14 @@ const Leaves = sequelize.define(
       allowNull: false,
       references: {
         model: Users,
+        key: "id",
+      },
+    },
+    limit_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: Limit,
         key: "id",
       },
     },
@@ -69,5 +79,6 @@ const Leaves = sequelize.define(
 );
 
 Leaves.belongsTo(Users, { foreignKey: "user_id" });
+Leaves.belongsTo(Limit, { foreignKey: "limit_id" });
 
 module.exports = Leaves;

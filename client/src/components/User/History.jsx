@@ -30,7 +30,7 @@ export default function History() {
     } else if (!attendance.check_in && !attendance.check_out) {
       return "Not Working";
     } else if (attendance.check_in && !isToday && !attendance.check_out) {
-      return "Worked"; // Changed from "On Working" to "Worked" for past days
+      return "Worked"; 
     }
     return "On Working";
   };
