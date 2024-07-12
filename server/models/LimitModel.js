@@ -16,6 +16,13 @@ const Limit = sequelize.define(
         notEmpty: true,
       },
     },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
     total: {
       type: DataTypes.INTEGER,
       allowNull: false,
