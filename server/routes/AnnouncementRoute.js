@@ -4,6 +4,7 @@ const announcementController = require('../controllers/AnnouncementController');
 const { verifyToken } = require("../middleware/AuthUser");
 
 router.get('/announcements', verifyToken, announcementController.getAllAnnouncement);
+router.get('/announcement/:id', verifyToken, announcementController.getAnnouncementById);
 router.post('/announcement', verifyToken, announcementController.createAnnouncement);
 router.put('/announcement/:id', verifyToken, announcementController.updateAnnouncement);
 router.delete("/announcement/:id", verifyToken,announcementController.deleteAnnouncement);

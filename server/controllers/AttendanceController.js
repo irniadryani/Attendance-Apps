@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Attendances = require("../models/AttendancesModel");
+const User = require("../models/UserModel");
 const { check } = require("express-validator");
 const unirest = require("unirest");
 const { Op } = require("sequelize");
@@ -200,9 +201,31 @@ const getAttendanceById = async (req, res) => {
 
     // Fetch attendance records
     const attendances = await Attendances.findAll({
-      where: { user_id: id },
-      order: [['created_at', 'DESC']], 
-      limit: 7,
+      where: {
+        user_id: id,
+        [Op.and]: [
+          {
+            created_at: {
+              [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0) - (new Date().getDay() === 0 ? 6 : new Date().getDay() - 1) * 24 * 60 * 60 * 1000),
+            },
+          },
+          {
+            created_at: {
+              [Op.lte]: new Date(new Date().setHours(23, 59, 59, 999)),
+            },
+          },
+        ],
+        // Filter out weekends (Saturday=6, Sunday=0)
+        [Op.not]: [
+          {
+            [Op.or]: [
+              { created_at: { [Op.eq]: new Date(new Date().setDate(new Date().getDate() - new Date().getDay())) } }, // Sunday
+              { created_at: { [Op.eq]: new Date(new Date().setDate(new Date().getDate() - new Date().getDay() + 6)) } }, // Saturday
+            ],
+          },
+        ],
+      },
+      order: [['created_at', 'DESC']],
     });
 
     // Format dates and work hours
@@ -267,14 +290,121 @@ const getAttendanceById = async (req, res) => {
   }
 };
 
+
+// const getAllAttendances = async (req, res) => {
+//   try {
+//     // Fetch attendance records
+//     const attendances = await Attendances.findAll({
+//       order: [['created_at', 'DESC']],
+//       include: [
+//         {
+//           model: User, // Assuming User is the model for users table
+//           attributes: ["full_name"],
+//         },
+//       ],
+//     });
+
+//     // Format and transform data as needed
+//     const result = attendances.map((att) => {
+//       let formattedWorkHours = ""; // Default value if work_hours is null
+
+//       if (att.work_hours) {
+//         const [hours, minutes, seconds] = att.work_hours.split(":").map(Number);
+//         const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+//         formattedWorkHours = secondsToFormattedTime(totalSeconds);
+//       }
+      
+//       // Format check_in to HH:mm:ss
+//       let formattedCheckIn = "";
+//       if (att.check_in) {
+//         const checkInDate = new Date(att.check_in);
+//         formattedCheckIn = `${checkInDate
+//           .getHours()
+//           .toString()
+//           .padStart(2, "0")}:${checkInDate
+//           .getMinutes()
+//           .toString()
+//           .padStart(2, "0")}:${checkInDate
+//           .getSeconds()
+//           .toString()
+//           .padStart(2, "0")}`;
+//       }
+
+//       // Format check_out to HH:mm:ss
+//       let formattedCheckOut = "";
+//       if (att.check_out) {
+//         const checkOutDate = new Date(att.check_out);
+//         formattedCheckOut = `${checkOutDate
+//           .getHours()
+//           .toString()
+//           .padStart(2, "0")}:${checkOutDate
+//           .getMinutes()
+//           .toString()
+//           .padStart(2, "0")}:${checkOutDate
+//           .getSeconds()
+//           .toString()
+//           .padStart(2, "0")}`;
+//       }
+
+//       // Format created_at to YYYY-MM-DD
+//       const createdAtDate = new Date(att.created_at);
+//       const formattedDate = `${createdAtDate.getFullYear()}-${(createdAtDate.getMonth() + 1).toString().padStart(2, '0')}-${createdAtDate.getDate().toString().padStart(2, '0')}`;
+
+//       return {
+//         id: att.id,
+//         full_name: att.user ? att.user.full_name : null, // Replace user_id with full_name
+//         check_in: formattedCheckIn,
+//         check_out: formattedCheckOut,
+//         work_hours: formattedWorkHours,
+//         status: att.status,
+//         location_lat: att.location_lat,
+//         location_long: att.location_long,
+//         created_at: att.created_at,
+//         updated_at: att.updated_at,
+//         date: formattedDate, // Add formatted date field
+//       };
+//     });
+
+//     res.status(200).json(result);
+//   } catch (error) {
+//     console.error("Error fetching attendance records", error);
+//     res.status(500).json({ error: "Failed to fetch attendance records" });
+//   }
+// };
+
+
 const getAllAttendances = async (req, res) => {
   try {
     // Fetch attendance records
     const attendances = await Attendances.findAll({
-      order: [['created_at', 'DESC']], // Sort by created_at in descending order
+      order: [["created_at", "DESC"]],
+      include: [
+        {
+          model: User,
+          attributes: ["full_name"],
+        },
+      ],
     });
 
-    // Format dates and work hours
+    // Calculate total and average working hours
+    let totalSeconds = 0;
+    let totalAttendances = 0;
+
+    attendances.forEach((att) => {
+      if (att.work_hours) {
+        const [hours, minutes, seconds] = att.work_hours.split(":").map(Number);
+        const workSeconds = hours * 3600 + minutes * 60 + seconds;
+        totalSeconds += workSeconds;
+        totalAttendances++;
+      }
+    });
+
+    const averageSeconds = totalAttendances > 0 ? totalSeconds / totalAttendances : 0;
+
+    const totalWorkingHours = secondsToFormattedTime(totalSeconds);
+    const averageWorkingHours = secondsToFormattedTime(averageSeconds);
+
+    // Format and transform data as needed
     const result = attendances.map((att) => {
       let formattedWorkHours = ""; // Default value if work_hours is null
 
@@ -283,8 +413,7 @@ const getAllAttendances = async (req, res) => {
         const totalSeconds = hours * 3600 + minutes * 60 + seconds;
         formattedWorkHours = secondsToFormattedTime(totalSeconds);
       }
-      
-      // Format check_in to HH:mm:ss
+
       let formattedCheckIn = "";
       if (att.check_in) {
         const checkInDate = new Date(att.check_in);
@@ -300,7 +429,6 @@ const getAllAttendances = async (req, res) => {
           .padStart(2, "0")}`;
       }
 
-      // Format check_out to HH:mm:ss
       let formattedCheckOut = "";
       if (att.check_out) {
         const checkOutDate = new Date(att.check_out);
@@ -316,20 +444,36 @@ const getAllAttendances = async (req, res) => {
           .padStart(2, "0")}`;
       }
 
-      // Format created_at to YYYY-MM-DD
       const createdAtDate = new Date(att.created_at);
-      const formattedDate = `${createdAtDate.getFullYear()}-${(createdAtDate.getMonth() + 1).toString().padStart(2, '0')}-${createdAtDate.getDate().toString().padStart(2, '0')}`;
+      const formattedDate = `${createdAtDate.getFullYear()}-${(
+        createdAtDate.getMonth() + 1
+      )
+        .toString()
+        .padStart(2, "0")}-${createdAtDate.getDate().toString().padStart(2, "0")}`;
 
       return {
-        ...att.toJSON(),
-        work_hours: formattedWorkHours,
+        id: att.id,
+        full_name: att.user ? att.user.full_name : null,
         check_in: formattedCheckIn,
         check_out: formattedCheckOut,
-        date: formattedDate, // Add formatted date field
+        work_hours: formattedWorkHours,
+        status: att.status,
+        location_lat: att.location_lat,
+        location_long: att.location_long,
+        created_at: att.created_at,
+        updated_at: att.updated_at,
+        date: formattedDate,
       };
     });
 
-    res.status(200).json(result);
+    // Append total and average working hours to the response
+    const response = {
+      totalWorkingHours,
+      averageWorkingHours,
+      attendances: result,
+    };
+
+    res.status(200).json(response);
   } catch (error) {
     console.error("Error fetching attendance records", error);
     res.status(500).json({ error: "Failed to fetch attendance records" });

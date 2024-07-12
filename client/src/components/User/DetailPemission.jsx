@@ -18,7 +18,7 @@ export default function DetailPemission() {
     queryFn: () => getPermissionByIdFn(user?.id),
   });
 
-  console.log("data", dataSinglePermission)
+  console.log("datasinglepermission", dataSinglePermission)
 
   return (
     <dialog

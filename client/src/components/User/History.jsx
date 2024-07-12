@@ -16,15 +16,25 @@ export default function History() {
   });
 
   console.log("attendance", dataSingleAttendance)
-
+  
   const getTitle = (attendance) => {
+    const today = new Date();
+    const attendanceDate = new Date(attendance.date);
+    const isToday =
+      attendanceDate.getUTCFullYear() === today.getUTCFullYear() &&
+      attendanceDate.getUTCMonth() === today.getUTCMonth() &&
+      attendanceDate.getUTCDate() === today.getUTCDate();
+  
     if (attendance.check_in && attendance.check_out) {
       return "Worked";
     } else if (!attendance.check_in && !attendance.check_out) {
       return "Not Working";
+    } else if (attendance.check_in && !isToday && !attendance.check_out) {
+      return "Worked"; // Changed from "On Working" to "Worked" for past days
     }
     return "On Working";
   };
+  
 
   return (
     <div className="dark:bg-gray-900 dark:text-white min-h-screen">

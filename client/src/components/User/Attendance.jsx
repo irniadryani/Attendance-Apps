@@ -162,9 +162,11 @@ export default function Attendance() {
             </div>
           )}
           <div className="flex flex-col gap-5 w-full my-5">
+          {attendance?.check_in && !attendance?.check_out && (
             <p className="flex justify-center items-center text-center font-medium text-base">
               Please Fill The Daily Report First Before Checkout
             </p>
+          )}
             {attendance?.check_in && !attendance?.check_out && (
               <div className="w-full">
                 <div className="card bg-base-100 w-full shadow-2xl mr-10">

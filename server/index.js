@@ -4,12 +4,14 @@ const sequelize = require("./config/connection.js");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
+const fileUpload = require("express-fileupload");
 const UserRoute = require("./routes/UserRoute");
 const PermissionRoute = require("./routes/PermissionRoute");
 const AuthRoute = require("./routes/AuthRoute");
 const AttendanceRoute = require("./routes/AttendanceRoute.js");
 const DailyReportRoute = require("./routes/DailyReportRoute.js");
 const AnnouncementRoute = require("./routes/AnnouncementRoute.js");
+// const { updateMissedCheckouts } = require('./utils/cronJob.js'); 
 
 dotenv.config();
 
@@ -37,6 +39,10 @@ app.use(
     allowedHeaders: "Content-Type, Authorization",
   })
 );
+
+
+// Middleware for handling file uploads
+app.use(fileUpload());
 app.use(cookieParser());
 app.use(express.json()); //menerima data dalam bentuk json
 app.use(UserRoute);
@@ -49,6 +55,9 @@ app.use(AnnouncementRoute);
 app.post("/ping", (req, res) => {
   res.send("pong");
 });
+
+// // Start cron job
+// updateMissedCheckouts();
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

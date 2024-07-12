@@ -10,7 +10,7 @@ router.get("/users/:id", verifyToken, userController.getUserById);
 
 router.post("/users",verifyToken, userController.createUser);
 
-router.patch("/users/:id",verifyToken, userController.updateUser);
+router.put("/users/:id",verifyToken, userController.updateUser);
 
 router.delete("/users/:id", verifyToken,userController.deleteUser);
 

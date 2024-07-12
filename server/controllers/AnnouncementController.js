@@ -45,6 +45,32 @@ const createAnnouncement = async (req, res) => {
       }
   }
 
+  const getAnnouncementById = async (req, res) => {
+    try {
+      const response = await Announcement.findAll({
+        attributes: ["id", "admin_id", "message"],
+        where: {
+          id: req.params.id, 
+        },
+      });
+  
+      if (response.length === 0) {
+        return res.status(404).json({ msg: "Announcement Not Found" });
+      }
+  
+  
+      res.status(200).json(response);
+    } catch (error) {
+      if (
+        error.message ===
+        `invalid input syntax for type uuid: \"${req.params.id}\"`
+      ) {
+        res.status(404).json({ msg: "Announcement Not Found" });
+      } else {
+        res.status(500).json({ msg: error.message });
+      }
+    }
+  };
   
   const updateAnnouncement = async(req, res) => {
     try {
@@ -124,4 +150,4 @@ const createAnnouncement = async (req, res) => {
   
 
 
-module.exports={createAnnouncement, getAllAnnouncement, updateAnnouncement, deleteAnnouncement}
+module.exports={createAnnouncement, getAllAnnouncement, getAnnouncementById, updateAnnouncement, deleteAnnouncement}

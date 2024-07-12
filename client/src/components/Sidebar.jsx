@@ -2,6 +2,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import { logout, reset } from "../features/authSlice";
 import { useEffect } from "react";
+import { HiOutlineHome } from "react-icons/hi";
+import { GrGroup } from "react-icons/gr";
+import { RiHistoryFill } from "react-icons/ri";
+import { LuUserCheck2 } from "react-icons/lu";
+import { TbLogout } from "react-icons/tb";
+import { AiOutlineUserAdd } from "react-icons/ai";
+import { MdApproval } from "react-icons/md";
+import { TfiAnnouncement } from "react-icons/tfi";
+import { TbReportAnalytics } from "react-icons/tb";
 
 export const Sidebar = () => {
   const dispatch = useDispatch();
@@ -36,32 +45,85 @@ export const Sidebar = () => {
             aria-label="close sidebar"
             className="drawer-overlay"
           ></label>
-          <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+          <ul className="menu bg-black text-white font-semibold min-h-full w-80 p-4">
             <li>
               <NavLink
                 to="/dashboard-admin"
-                className="menu-item"
+                className="menu-item rounded-xl mb-2"
                 activeClassName="font-bold"
               >
+                <HiOutlineHome />
                 Dashboard
               </NavLink>
             </li>
             <li>
               <NavLink
-                to="/users"
-                className="menu-item"
+                to="/employee-list"
+                className="menu-item rounded-xl mb-2"
                 activeClassName="font-bold"
               >
+                <GrGroup />
+                Employee List
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/attendance-history"
+                className="menu-item rounded-xl mb-2"
+                activeClassName="font-bold"
+              >
+                <RiHistoryFill />
                 Employee Attendance
               </NavLink>
             </li>
             <li>
               <NavLink
-                to="/"
-                className="menu-item"
+                to="/approval"
+                className="menu-item rounded-xl mb-2"
                 activeClassName="font-bold"
               >
-                Selft Attendance
+                <MdApproval />
+                Approval
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/announcement"
+                className="menu-item rounded-xl mb-2"
+                activeClassName="font-bold"
+              >
+                <TfiAnnouncement />
+               Announcement
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/daily-report"
+                className="menu-item rounded-xl mb-2"
+                activeClassName="font-bold"
+              >
+                <TbReportAnalytics />
+               Daily Report
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/"
+                className="menu-item rounded-xl mb-2"
+                activeClassName="font-bold"
+              >
+                <LuUserCheck2 />
+                Self Attendance
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/create-account-employee"
+                className="menu-item rounded-xl mb-2"
+                activeClassName="font-bold"
+              >
+                <AiOutlineUserAdd />
+                Create Account
               </NavLink>
             </li>
             <li>
@@ -70,6 +132,7 @@ export const Sidebar = () => {
                 className="menu-item"
                 activeClassName="font-bold"
               >
+                <TbLogout />
                 Log out
               </button>
             </li>

@@ -2,6 +2,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import { logout, reset } from "../features/authSlice";
 import { useEffect } from "react";
+import EditProfile from "./User/EditProfile";
+import { getUserByIdFn} from "../api/user/user"
+import { useQuery } from "@tanstack/react-query";
 
 export const Navbar = () => {
   const dispatch = useDispatch();
@@ -19,6 +22,19 @@ export const Navbar = () => {
     }
   }, [user, isError]);
 
+
+  const {
+    data: dataSingleUser,
+    refetch: refetchSingleUser,
+    isLoading: loadingSingleUser,
+  } = useQuery({
+    queryKey: ["user", user?.id],
+    queryFn: () => getUserByIdFn(user?.id),
+  });
+
+  console.log("profil", dataSingleUser?.photo_profil)
+
+
   return (
     <div>
       <div className="navbar bg-base-100">
@@ -34,8 +50,8 @@ export const Navbar = () => {
             >
               <div className="w-10 rounded-full">
                 <img
-                  alt="Tailwind CSS Navbar component"
-                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
+                  alt="photo"
+                  src={dataSingleUser?.photo_profil}
                 />
               </div>
             </div>
@@ -44,10 +60,15 @@ export const Navbar = () => {
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
             >
               <li>
-                <a className="justify-between">
+                <button
+                  className="justify-between"
+                  onClick={() =>
+                    document.getElementById("edit_profil_modal").showModal()
+                  }
+                >
                   Profile
                   <span className="badge">New</span>
-                </a>
+                </button>
               </li>
               <li>
                 <a>Settings</a>
@@ -66,6 +87,7 @@ export const Navbar = () => {
           </div>
         </div>
       </div>
+      <EditProfile />
     </div>
   );
 };

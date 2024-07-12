@@ -61,6 +61,10 @@ const Users = sequelize.define(
 			type: DataTypes.BOOLEAN,
 			defaultValue: true,
 		},
+		// url: {
+		// 	type: DataTypes.STRING(255),
+		// 	allowNull: true,
+		//   },
 		created_at: {
 			type: DataTypes.DATE,
 			defaultValue: DataTypes.NOW,
