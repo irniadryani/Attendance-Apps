@@ -5,7 +5,7 @@ import { getAllPermissionFn } from "../../api/permission/permission";
 // import { get } from "../../api//leaves/leaves";
 import { useQuery } from "@tanstack/react-query";
 import TodayAttendanceTable from "../../components/Admin/TodayAttendanceTable";
-import Employee from "../../assets/employee.png";
+import Admin from "../../assets/admin.png";
 
 export default function Dashboard() {
   const {
@@ -71,7 +71,7 @@ export default function Dashboard() {
               
             </div>
             <div className="flex justify-right">
-              <img src={Employee} className="justify-end w-48" alt="Employee" />
+              <img src={Admin} className="justify-end w-48" alt="Employee" />
             </div>
           </div>
         </div>

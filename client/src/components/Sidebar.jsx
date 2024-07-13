@@ -11,6 +11,7 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 import { MdApproval } from "react-icons/md";
 import { TfiAnnouncement } from "react-icons/tfi";
 import { TbReportAnalytics } from "react-icons/tb";
+import { LuSettings } from "react-icons/lu";
 
 export const Sidebar = () => {
   const dispatch = useDispatch();
@@ -124,6 +125,16 @@ export const Sidebar = () => {
               >
                 <AiOutlineUserAdd />
                 Create Account
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to="/settings"
+                className="menu-item rounded-xl mb-2"
+                activeClassName="font-bold"
+              >
+                <LuSettings />
+               Settings
               </NavLink>
             </li>
             <li>
