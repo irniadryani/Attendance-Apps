@@ -16,8 +16,8 @@ import { toast } from "react-toastify";
 
 export default function Announcement() {
   const [announcementIdToDelete, setAnnouncementIdToDelete] = useState(null);
-  const [announcementIdToUpdate, setAnnouncementIdToUpdate] = useState(null);
-  
+  const [announcementToUpdate, setAnnouncementToUpdate] = useState(null);
+
   const {
     data: dataAnnouncement,
     refetch: refetchAnnouncement,
@@ -79,11 +79,9 @@ export default function Announcement() {
     }
   }, [announcementIdToDelete]);
 
-
   const openUpdateModal = (announcementId) => {
     document.getElementById("update_announcement_modal").showModal();
   };
-
 
   return (
     <Layout>
@@ -126,7 +124,10 @@ export default function Announcement() {
                 <div className="flex flex-row">
                   <div>
                     <button
-                      onClick={() => openUpdateModal(announcement.id)}
+                      onClick={() => {
+                        setAnnouncementToUpdate(announcement);
+                        openUpdateModal(announcement.id);
+                      }}
                     >
                       <MdEdit color="white" size={20} />
                     </button>
@@ -153,13 +154,11 @@ export default function Announcement() {
         </div>
       </div>
       <CreateAnnouncement refetch={refetchAnnouncement} />
-      {dataAnnouncement?.map((announcement) => (
-        <UpdateAnnouncement
-          key={announcement.id}
-          announcement={announcement}
-          refetch={refetchAnnouncement}
-        />
-      ))}
+
+      <UpdateAnnouncement
+        announcement={announcementToUpdate}
+        refetch={refetchAnnouncement}
+      />
     </Layout>
   );
 }

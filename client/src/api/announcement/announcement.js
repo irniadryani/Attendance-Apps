@@ -15,8 +15,8 @@ export const createAnnouncementFn = async (data) => {
   return response.data;
 };
 
-export const updateAnnouncementFn = async (id) => {
-  const response = await Api.put(`/announcement/${id}`);
+export const updateAnnouncementFn = async (id, data) => {
+  const response = await Api.put(`/announcement/${id}`, data);
   return response.data;
 };
 

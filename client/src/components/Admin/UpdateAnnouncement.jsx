@@ -40,18 +40,24 @@ export default function UpdateAnnouncement({ announcement, refetch }) {
   }, [announcement, setValue]);
 
   const onSubmit = (data) => {
-    handleUpdateAnnouncement.mutate(data);
+    console.log("data message", data);
+    handleUpdateAnnouncement.mutateAsync(data);
   };
 
   return (
     <dialog id="update_announcement_modal" className="modal">
       <div className="modal-box">
         <form onSubmit={handleSubmit(onSubmit)}>
-          <form method="dialog">
-            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-              ✕
-            </button>
-          </form>
+          <button
+            type="button"
+            onClick={() => {
+              document.getElementById("update_announcement_modal").close();
+            }}
+            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+          >
+            ✕
+          </button>
+
           <h3 className="font-bold text-lg">Update Announcement</h3>
           <div className="w-full my-5 h-full">
             <label htmlFor="message">
