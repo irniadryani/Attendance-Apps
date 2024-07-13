@@ -1,33 +1,25 @@
-// models/LimitModel.js
-"use strict";
+'use strict';
 
-const { DataTypes } = require("sequelize");
-const sequelize = require("../config/connection.js");
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/connection.js');
 
 const Limit = sequelize.define(
-  "limit",
+  'Limit',
   {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
       allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
     },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
     },
-    total: {
+    maximum: {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
-        notEmpty: true,
         min: 0,
       },
     },
@@ -41,10 +33,10 @@ const Limit = sequelize.define(
     },
   },
   {
-    freezeTableName: true,
+    tableName: 'limits',
     timestamps: true,
-    createdAt: "created_at",
-    updatedAt: "updated_at",
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
   }
 );
 

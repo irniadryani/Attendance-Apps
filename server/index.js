@@ -11,7 +11,7 @@ const AuthRoute = require("./routes/AuthRoute");
 const AttendanceRoute = require("./routes/AttendanceRoute.js");
 const DailyReportRoute = require("./routes/DailyReportRoute.js");
 const AnnouncementRoute = require("./routes/AnnouncementRoute.js");
-// const { updateMissedCheckouts } = require('./utils/cronJob.js'); 
+const LeavesRoute = require("./routes/LeavesRoute.js");
 
 dotenv.config();
 
@@ -51,6 +51,7 @@ app.use(AuthRoute);
 app.use(AttendanceRoute);
 app.use(DailyReportRoute);
 app.use(AnnouncementRoute);
+app.use(LeavesRoute);
 
 app.post("/ping", (req, res) => {
   res.send("pong");

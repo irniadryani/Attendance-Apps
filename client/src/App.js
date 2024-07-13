@@ -14,6 +14,7 @@ import Approval from "./pages/Admin/Approval";
 import Announcement from "./pages/Admin/Announcement";
 import DailyReport from "./pages/Admin/DailyReport";
 import DetailDailyReport from "./pages/Admin/DetailDailyReport";
+import Settings from "./pages/Admin/Settings.jsx"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools/build/modern/production.js";
 import { ToastContainer } from "react-toastify";
@@ -66,6 +67,7 @@ function App() {
               <Route path="/approval" element={<Approval />} />
               <Route path="/daily-report" element={<DailyReport />} />
               <Route path={"/daily-report/:id"} element={<DetailDailyReport />} />
+              <Route path={"/settings"} element={<Settings />} />
             </Routes>
           </BrowserRouter>
           <ToastContainer />
