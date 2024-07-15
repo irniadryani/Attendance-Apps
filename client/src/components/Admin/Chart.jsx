@@ -4,7 +4,7 @@ import { Chart, ArcElement, Tooltip } from 'chart.js';
 import { useQuery } from '@tanstack/react-query';
 import { getAllAttendanceFn } from '../../api/attendance/attendance';
 import { getAllPermissionFn } from '../../api/permission/permission';
-import { getAllDailyReportFn } from '../../api/dailyReport/dailyReport';
+import { getAllLeavesFn } from '../../api/leaves/leaves';
 
 // Import Chart.js tooltip plugin
 Chart.register(Tooltip);
@@ -13,7 +13,7 @@ Chart.register(ArcElement);
 const ChartComponent = () => {
   const [attendanceCount, setAttendanceCount] = useState(0);
   const [permissionCount, setPermissionCount] = useState(0);
-  const [dailyReportCount, setDailyReportCount] = useState(0);
+  const [leavesCount, setLeavesCount] = useState(0);
 
   const {
     data: dataAttendance,
@@ -34,19 +34,19 @@ const ChartComponent = () => {
   });
 
   const {
-    data: dataDailyReport,
-    refetch: refetchDailyReport,
-    isLoading: loadingDailyReport,
+    data: dataLeaves,
+    refetch: refetchLeaves,
+    isLoading: loadingLeaves,
   } = useQuery({
-    queryKey: ['dailyReport'],
-    queryFn: getAllDailyReportFn,
+    queryKey: ['leaves'],
+    queryFn: getAllLeavesFn,
   });
 
   useEffect(() => {
-    if (dataAttendance) {
-      setAttendanceCount(dataAttendance.length);
+    if (dataAttendance?.attendances) {
+      setAttendanceCount(dataAttendance?.attendances?.length);
     }
-  }, [dataAttendance]);
+  }, [dataAttendance?.attendances]);
 
   useEffect(() => {
     if (dataPermission) {
@@ -55,16 +55,16 @@ const ChartComponent = () => {
   }, [dataPermission]);
 
   useEffect(() => {
-    if (dataDailyReport) {
-      setDailyReportCount(dataDailyReport.length);
+    if (dataLeaves) {
+      setLeavesCount(dataLeaves.length);
     }
-  }, [dataDailyReport]);
+  }, [dataLeaves]);
 
   const data = {
-    labels: ['Attendance', 'Permission', 'Daily Report'],
+    labels: ['Attendance', 'Permission', 'Leaves'],
     datasets: [
       {
-        data: [attendanceCount, permissionCount, dailyReportCount],
+        data: [attendanceCount, permissionCount, leavesCount],
         backgroundColor: ['rgb(204, 234, 187)', 'rgb(63, 63, 68)', 'rgb(253, 203, 158)'],
         borderWidth: 2,
       },

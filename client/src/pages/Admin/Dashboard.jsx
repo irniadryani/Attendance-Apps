@@ -2,7 +2,7 @@ import React from "react";
 import Layout from "../Layout";
 import { getAllAttendanceFn } from "../../api/attendance/attendance";
 import { getAllPermissionFn } from "../../api/permission/permission";
-// import { get } from "../../api//leaves/leaves";
+import { getAllLeavesFn } from "../../api/leaves/leaves";
 import { useQuery } from "@tanstack/react-query";
 import TodayAttendanceTable from "../../components/Admin/TodayAttendanceTable";
 import Admin from "../../assets/admin.png";
@@ -10,7 +10,6 @@ import Admin from "../../assets/admin.png";
 export default function Dashboard() {
   const {
     data: dataAttendance,
-    refetch: refetchAttendance,
     isLoading: loadingAttendance,
   } = useQuery({
     queryKey: ["attendance"],
@@ -19,46 +18,76 @@ export default function Dashboard() {
 
   const {
     data: dataPermission,
-    refetch: refetchPermission,
     isLoading: loadingPermission,
   } = useQuery({
     queryKey: ["permission"],
     queryFn: getAllPermissionFn,
   });
 
+  const {
+    data: dataLeaves,
+    isLoading: loadingLeaves,
+  } = useQuery({
+    queryKey: ["leaves"],
+    queryFn: getAllLeavesFn,
+  });
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+    const year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  };
+
+  const today = formatDate(new Date());
+
   const calculateTodayAbsences = () => {
     let todayAbsences = 0;
 
     if (!loadingAttendance && dataAttendance) {
-      const today = new Date().toISOString().slice(0, 10); // Today's date in YYYY-MM-DD format
-
       // Calculate attendance lengths for today
-      todayAbsences = dataAttendance.attendances.filter(
-        (entry) => entry.date === today
+      todayAbsences = dataAttendance?.attendances.filter(
+        (entry) => formatDate(entry.date) === today
       ).length;
     }
 
-    return todayAbsences; // Return the calculated value
+    return todayAbsences;
   };
-
-  const todayAbsences = calculateTodayAbsences(); // Call the function to get the actual count
 
   const calculateTodayPermission = () => {
     let todayPermission = 0;
 
     if (!loadingPermission && dataPermission) {
-      const today = new Date().toISOString().slice(0, 10); // Today's date in YYYY-MM-DD format
-
-      // Calculate attendance lengths for today
+      // Calculate permission lengths for today
       todayPermission = dataPermission.filter(
-        (entry) => entry.date === today
+        (entry) => formatDate(entry.start_date) === today 
       ).length;
     }
 
-    return todayPermission; // Return the calculated value
+    return todayPermission;
   };
 
+  const calculateTodayLeaves = () => {
+    let todayLeaves = 0;
+
+    if (!loadingLeaves && dataLeaves) {
+      // Calculate leaves lengths for today
+      todayLeaves = dataLeaves.filter(
+        (entry) => formatDate(entry.start_date) === today
+      ).length;
+    }
+
+    return todayLeaves;
+  };
+
+  const todayAbsences = calculateTodayAbsences();
   const todayPermission = calculateTodayPermission();
+  const todayLeaves = calculateTodayLeaves();
 
   return (
     <Layout>
@@ -68,7 +97,6 @@ export default function Dashboard() {
             <div>
               <h2 className="card-title font-bold text-white">Welcome</h2>
               <p className="font-semibold text-white">You Are Login As Admin</p>
-              
             </div>
             <div className="flex justify-right">
               <img src={Admin} className="justify-end w-48" alt="Employee" />
@@ -98,7 +126,7 @@ export default function Dashboard() {
           </div>
           <div className="card bg-black text-neutral-content w-56 h-24">
             <div className="flex flex-col items-center text-center justify-between">
-              <h2 className="font-bold text-6xl items-end">8</h2>{" "}
+              <h2 className="font-bold text-6xl items-end">{todayLeaves}</h2>{" "}
               <p className="font-bold text-lg items-end">Today Leaves</p>
             </div>
           </div>

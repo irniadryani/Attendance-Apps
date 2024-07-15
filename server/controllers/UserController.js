@@ -19,7 +19,16 @@ const getUsers = async (req, res) => {
 const getUserById = async (req, res) => {
   try {
     const response = await User.findOne({
-      attributes: ["id", "full_name", "email", "role_id", "phone_number", "position", "photo_profil"], 
+      attributes: [
+        "id",
+        "full_name",
+        "email",
+        "role_id",
+        "phone_number",
+        "position",
+        "photo_profil",
+        "url"
+      ],
       where: {
         id: req.params.id,
       },
@@ -45,7 +54,9 @@ const createUser = async (req, res) => {
   }
 
   if (password !== confPassword) {
-    return res.status(400).json({ msg: "Password dan Confirm Password Tidak Cocok" });
+    return res
+      .status(400)
+      .json({ msg: "Password dan Confirm Password Tidak Cocok" });
   }
 
   try {
@@ -76,8 +87,6 @@ const createUser = async (req, res) => {
   }
 };
 
-
-
 const updateUser = async (req, res) => {
   try {
     const user = await User.findOne({
@@ -90,14 +99,8 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ msg: "User Not Found" });
     }
 
-    const {
-      full_name,
-      email,
-      role_id,
-      phone_number,
-      position,
-      password,
-    } = req.body;
+    const { full_name, email, role_id, phone_number, position, password } =
+      req.body;
 
     let { photo_profil, url } = user; // Existing photo and URL
 
@@ -116,19 +119,19 @@ const updateUser = async (req, res) => {
       }
 
       // Check if the participant is using the default profile image
-      const isUsingDefaultImage =
-        user.url &&
-        user.url.includes("settings/default-profile-image/") &&
-        user.photo_profil;
+      // const isUsingDefaultImage =
+      //   user.url &&
+      //   user.url.includes("settings/default-profile-image/") &&
+      //   user.photo_profil;
 
-      if (!isUsingDefaultImage && user.photo_profil) {
-        const imagePath = path.join(__dirname, "../public/users", user.photo_profil);
-        if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath);
-        } else {
-          console.log("Previous image not found:", imagePath);
-        }
-      }
+      // if (!isUsingDefaultImage && user.photo_profil) {
+      //   const imagePath = path.join(__dirname, "../public/users", user.photo_profil);
+      //   if (fs.existsSync(imagePath)) {
+      //     fs.unlinkSync(imagePath);
+      //   } else {
+      //     console.log("Previous image not found:", imagePath);
+      //   }
+      // }
 
       const filePath = path.join(__dirname, "../public/users/", fileName);
       await file.mv(filePath);
@@ -142,10 +145,15 @@ const updateUser = async (req, res) => {
       email,
       role_id,
       phone_number,
+      password,
       position,
       photo_profil,
       url,
     };
+
+    console.log("update data", updateData);
+
+    console.log("user ", User);
 
     if (password) {
       updateData.password = bcrypt.hashSync(password, 10);
@@ -168,7 +176,6 @@ const updateUser = async (req, res) => {
     }
   }
 };
-
 
 const deleteUser = async (req, res) => {
   try {

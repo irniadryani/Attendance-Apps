@@ -41,7 +41,7 @@ const Permission = sequelize.define('permissions', {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-            isIn: [['Submitted', 'Approved', 'Rejected']],
+            isIn: [['Submitted', 'Approved', 'Rejected', "Canceled"]],
             notEmpty: true
         }
     },

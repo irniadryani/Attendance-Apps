@@ -12,7 +12,5 @@ router.post('/permission', verifyToken, permissionController.createPermission);
 
 router.put('/permission/:id', verifyToken, permissionController.updatePermission);
 
-// router.delete('/permission:id', permissionController.deletePermission);
-
 
 module.exports = router;

@@ -1,9 +1,9 @@
 import { Api } from "../../lib/common";
-// const formDataconfig = {
-//     headers: {
-//       "Content-Type": "multipart/form-data"
-//    }
-//   };
+const formDataconfig = {
+  headers: {
+    "Content-Type": "multipart/form-data",
+  },
+};
 
 export const getAllUserFn = async () => {
   const response = await Api.get("/users");
@@ -20,8 +20,8 @@ export const createUserFn = async (data) => {
   return response.data;
 };
 
-export const updateUserFn = async (id) => {
-  const response = await Api.put(`/users/${id}`);
+export const updateUserFn = async (id, data) => {
+  const response = await Api.put(`/users/${id}`, data, formDataconfig);
   return response.data;
 };
 

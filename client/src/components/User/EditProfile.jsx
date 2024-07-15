@@ -29,7 +29,6 @@ export default function EditProfile() {
     defaultValues: {
       full_name: "",
       photo_profil: "",
-      phone_number: ""
     },
   });
 
@@ -39,13 +38,21 @@ export default function EditProfile() {
     }
   }, [user.id, refetchSingleUser]);
 
+  useEffect(() => {
+    if (!loadingSingleUser && dataSingleUser) {
+      resetEditProfile({
+        full_name: dataSingleUser.full_name,
+      });
+    }
+  }, [loadingSingleUser, dataSingleUser]);
+
   const handleUpdateProfile = useMutation({
     mutationFn: (data) => updateUserFn(user.id, data),
 
     onMutate() {},
     onSuccess: async (res) => {
       console.log(res);
-      // await document.getElementById("edit_profile_modal").close();
+      document?.getElementById("edit_profil_modal")?.close();
       await refetchSingleUser();
       resetEditProfile();
       await Swal.fire({
@@ -57,7 +64,7 @@ export default function EditProfile() {
     onError: async (error) => {
       console.log(error);
 
-      // await document.getElementById("edit_profile_modal").close();
+      await document.getElementById("edit_profil_modal").close();
       resetEditProfile();
       await Swal.fire({
         icon: "error",
@@ -69,18 +76,17 @@ export default function EditProfile() {
 
   const updateProfile = (data) => {
     const pengajarData = new FormData();
-    console.log("data", pengajarData);
+    console.log("data update", data);
 
     pengajarData.append("full_name", data.full_name);
 
-    if (data.photo_profil) {
-      pengajarData.append("phooto_profil", data.photo_profil);
+    if (data.photo_profil[0]) {
+      pengajarData.append("photo_profil", data.photo_profil[0]);
     }
 
     handleUpdateProfile.mutateAsync(pengajarData);
   };
 
- 
   return (
     <div>
       <dialog
@@ -102,7 +108,7 @@ export default function EditProfile() {
                 className="form-control w-full max-w-xs"
               >
                 <div className="label mt-3 justify-start">
-                  <span className="label-text">Change Username</span>
+                  <span className="label-text">Change Full Name</span>
                 </div>
               </label>
               <input

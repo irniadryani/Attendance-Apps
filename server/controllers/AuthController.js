@@ -85,7 +85,15 @@ const me = async (req, res) => {
   try {
     const user = await User.findOne({
       where: { id: req.user.id },
-      attributes: ["id", "full_name", "email", "role_id", "position"],
+      attributes: [
+        "id",
+        "full_name",
+        "email",
+        "role_id",
+        "position",
+        "url",
+        "photo_profil",
+      ],
       include: [
         {
           model: Role,
@@ -101,8 +109,12 @@ const me = async (req, res) => {
     const email = user.email;
     const role = user.role ? user.role.name : "No role assigned";
     const position = user.position;
+    const url = user.url ? user.url : null;
+    const photo_profil = user.photo_profil ? user.photo_profil : null;
 
-    res.status(200).json({ id, full_name, email, role, position });
+    res
+      .status(200)
+      .json({ id, full_name, email, role, position, photo_profil, url });
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "An error occurred" });

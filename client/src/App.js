@@ -11,6 +11,7 @@ import EmployeeList from "./pages/Admin/Employee";
 import AttendanceHistory from "./pages/Admin/Attendance";
 import CreateAccountEmployee from "./pages/Admin/CreateAccount";
 import Approval from "./pages/Admin/Approval";
+import HistoryApproval from "./pages/Admin/HistoryApproval.jsx";
 import Announcement from "./pages/Admin/Announcement";
 import DailyReport from "./pages/Admin/DailyReport";
 import DetailDailyReport from "./pages/Admin/DetailDailyReport";
@@ -65,6 +66,7 @@ function App() {
               />
               <Route path="/announcement" element={<Announcement />} />
               <Route path="/approval" element={<Approval />} />
+              <Route path="/history-approval" element={<HistoryApproval />} />
               <Route path="/daily-report" element={<DailyReport />} />
               <Route path={"/daily-report/:id"} element={<DetailDailyReport />} />
               <Route path={"/settings"} element={<Settings />} />

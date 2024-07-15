@@ -1,9 +1,8 @@
-// models/UserModel.js
-"use strict";
-
+// UserModel.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/connection.js");
 const Roles = require("./RolesModel");
+const Limits = require("./LimitModel");
 
 const Users = sequelize.define(
   "users",
@@ -13,15 +12,20 @@ const Users = sequelize.define(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
       allowNull: false,
-      validate: {
-        notEmpty: true,
-      },
     },
     role_id: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: Roles,
+        key: "id",
+      },
+    },
+    limit_id: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: Limits,
         key: "id",
       },
     },
@@ -47,6 +51,10 @@ const Users = sequelize.define(
       allowNull: true,
     },
     photo_profil: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    url: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -84,7 +92,7 @@ const Users = sequelize.define(
 );
 
 Users.belongsTo(Roles, { foreignKey: "role_id" });
-// Users.hasMany(Limit, { foreignKey: "user_id" }); // Define the relationship
+Users.belongsTo(Limits, { foreignKey: "limit_id" });
 
 module.exports = Users;
 

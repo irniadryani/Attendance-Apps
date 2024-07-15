@@ -71,7 +71,9 @@ export const Navbar = () => {
                 </button>
               </li>
               <li>
-                <a>Settings</a>
+                <button>
+                  <a>Password</a>
+                </button>
               </li>
               <li>
                 {" "}
