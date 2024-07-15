@@ -3,13 +3,19 @@ const router = express.Router();
 const { check } = require("express-validator");
 const { Op } = require("sequelize");
 const permissionModel = require("../models/PermissionModel");
+const User = require("../models/UserModel");
 
+// Define the formatDate function
 const formatDate = (date) => {
   const d = new Date(date);
-  const year = d.getFullYear().toString().slice(-2);
-  const month = (d.getMonth() + 1).toString().padStart(2, "0");
-  const day = d.getDate().toString().padStart(2, "0");
-  return `${year}-${month}-${day}`;
+  let month = '' + (d.getMonth() + 1);
+  let day = '' + d.getDate();
+  const year = d.getFullYear();
+
+  if (month.length < 2) month = '0' + month;
+  if (day.length < 2) day = '0' + day;
+
+  return [year, month, day].join('-');
 };
 
 const getPermission = async (req, res) => {
@@ -23,13 +29,20 @@ const getPermission = async (req, res) => {
         "status",
         "notes",
       ],
+      include: [{
+        model: User,
+        attributes: ['full_name'], // Include user attributes
+      }],
     });
 
-    // Format dates in response
-    const formattedResponse = response.map((perm) => ({
-      ...perm.toJSON(),
-      start_date: formatDate(perm.start_date),
-      end_date: formatDate(perm.end_date),
+    const formattedResponse = response.map((permission) => ({
+      id: permission.id,
+      user_id: permission.user_id,
+      user_name: permission.user.full_name,
+      start_date: formatDate(permission.start_date),
+      end_date: formatDate(permission.end_date),
+      notes: permission.notes,
+      status: permission.status,
     }));
 
     console.log(formattedResponse);
@@ -40,38 +53,37 @@ const getPermission = async (req, res) => {
 };
 
 const getPermissionById = async (req, res) => {
-    try {
-      const response = await permissionModel.findAll({
-        attributes: ["id", "start_date", "end_date", "status", "notes"],
-        where: {
-          user_id: req.params.id, 
-        },
-      });
-  
-      if (response.length === 0) {
-        return res.status(404).json({ msg: "Permissions Not Found" });
-      }
-  
-      // Format dates in response
-      const formattedResponse = response.map((perm) => ({
-        ...perm.toJSON(),
-        start_date: formatDate(perm.start_date),
-        end_date: formatDate(perm.end_date),
-      }));
-  
-      res.status(200).json(formattedResponse);
-    } catch (error) {
-      if (
-        error.message ===
-        `invalid input syntax for type uuid: \"${req.params.id}\"`
-      ) {
-        res.status(404).json({ msg: "Permissions Not Found" });
-      } else {
-        res.status(500).json({ msg: error.message });
-      }
+  try {
+    const response = await permissionModel.findAll({
+      attributes: ["id", "start_date", "end_date", "status", "notes"],
+      where: {
+        user_id: req.params.id,
+      },
+    });
+
+    if (response.length === 0) {
+      return res.status(404).json({ msg: "Permissions Not Found" });
     }
-  };
-  
+
+    // Format dates in response
+    const formattedResponse = response.map((perm) => ({
+      ...perm.toJSON(),
+      start_date: formatDate(perm.start_date),
+      end_date: formatDate(perm.end_date),
+    }));
+
+    res.status(200).json(formattedResponse);
+  } catch (error) {
+    if (
+      error.message ===
+      `invalid input syntax for type uuid: \"${req.params.id}\"`
+    ) {
+      res.status(404).json({ msg: "Permissions Not Found" });
+    } else {
+      res.status(500).json({ msg: error.message });
+    }
+  }
+};
 
 const createPermission = async (req, res) => {
   const { start_date, end_date, status, notes } = req.body;
@@ -109,38 +121,37 @@ const createPermission = async (req, res) => {
 };
 
 const updatePermission = async (req, res) => {
+  try {
+    const permission = await permissionModel.findOne({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if (!permission) return res.status(404).json({ msg: "Permission Not Found" });
+
+    const { status } = req.body;
+
     try {
-      const permission = await permissionModel.findOne({
-        where: {
-          id: req.params.id,
-        },
+      await permission.update({
+        status: status,
       });
-  
-      if (!permission) return res.status(404).json({ msg: "Permission Not Found" });
-  
-      const { status } = req.body;
-  
-      try {
-        await permission.update({
-          status: status,
-        });
-  
-        res.status(200).json({ msg: "Permission Updated" });
-      } catch (error) {
-        res.status(400).json({ msg: error.message });
-      }
+
+      res.status(200).json({ msg: "Permission Updated" });
     } catch (error) {
-      if (
-        error.message ===
-        `invalid input syntax for type uuid: \"${req.params.id}\"`
-      ) {
-        res.status(404).json({ msg: "Permission Not Found" });
-      } else {
-        res.status(500).json({ msg: error.message });
-      }
+      res.status(400).json({ msg: error.message });
     }
-  };
-  ;
+  } catch (error) {
+    if (
+      error.message ===
+      `invalid input syntax for type uuid: \"${req.params.id}\"`
+    ) {
+      res.status(404).json({ msg: "Permission Not Found" });
+    } else {
+      res.status(500).json({ msg: error.message });
+    }
+  }
+};
 
 module.exports = {
   getPermission,

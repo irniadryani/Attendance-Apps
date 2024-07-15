@@ -11,11 +11,11 @@ export const getPermissionByIdFn = async (id) => {
 };
 
 export const createPermissionFn = async (data) => {
-    const response = await Api.post("/permission", data);
-    return response.data;
-  };
+  const response = await Api.post("/permission", data);
+  return response.data;
+};
 
-  export const updatePermissionFn = async (id) => {
-    const response = await Api.put(`/permission/${id}`);
-    return response.data;
-  };
+export const updatePermissionFn = async (id, data) => {
+  const response = await Api.put(`/permission/${id}`, data);
+  return response.data;
+};
