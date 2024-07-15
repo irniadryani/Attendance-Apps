@@ -4,8 +4,9 @@ const leavesController = require('../controllers/LeavesController');
 const { verifyToken } = require("../middleware/AuthUser");
 
 
-// router.get('/daily-reports', verifyToken, dailyReportController.getDailyReport);
-// router.get('/daily-reports/:id', verifyToken, dailyReportController.getDailyReportById);
+router.get('/leaves', verifyToken, leavesController.getAllLeaves);
+router.get('/leaves/:id', verifyToken, leavesController.getLeavesById);
 router.post('/leaves', verifyToken, leavesController.createLeaves);
+router.put('/leaves/:id', verifyToken, leavesController.updateLeaves);
 
 module.exports = router;
