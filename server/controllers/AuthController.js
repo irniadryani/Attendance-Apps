@@ -130,7 +130,7 @@ const logout = async (req, res) => {
 
     await Blacklist.create({
       token: token,
-      expiry: new Date(decoded.exp * 1000), // JWT exp is in seconds
+      expiry: new Date(decoded.exp * 10000), // JWT exp is in seconds
     });
 
     res.clearCookie("refreshToken");

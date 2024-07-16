@@ -12,6 +12,7 @@ const AttendanceRoute = require("./routes/AttendanceRoute.js");
 const DailyReportRoute = require("./routes/DailyReportRoute.js");
 const AnnouncementRoute = require("./routes/AnnouncementRoute.js");
 const LeavesRoute = require("./routes/LeavesRoute.js");
+const SettingRoute = require("./routes/SettingRoute.js");
 
 dotenv.config();
 
@@ -52,6 +53,7 @@ app.use(AttendanceRoute);
 app.use(DailyReportRoute);
 app.use(AnnouncementRoute);
 app.use(LeavesRoute);
+app.use(SettingRoute);
 
 app.post("/ping", (req, res) => {
   res.send("pong");

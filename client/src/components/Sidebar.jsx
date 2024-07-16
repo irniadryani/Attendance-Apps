@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
-import { logout, reset } from "../features/authSlice";
 import { useEffect } from "react";
+import { logout, reset } from "../features/authSlice";
 import { HiOutlineHome } from "react-icons/hi";
 import { GrGroup } from "react-icons/gr";
 import { RiHistoryFill } from "react-icons/ri";
@@ -35,6 +35,141 @@ export const Sidebar = () => {
     }
   }, [user, isError]);
 
+  // Define menu items based on user role
+  const getMenuItems = () => {
+    if (user && user.role === "Superadmin") {
+      return (
+        <>
+          <li>
+            <NavLink
+              to="/create-account-employee"
+              className="menu-item rounded-xl mb-2"
+              activeClassName="font-bold"
+            >
+              <AiOutlineUserAdd />
+              Create Account
+            </NavLink>
+          </li>
+          <li>
+            <button
+              onClick={() => logoutFn()}
+              className="menu-item"
+              activeClassName="font-bold"
+            >
+              <TbLogout />
+              Log out
+            </button>
+          </li>
+        </>
+      );
+    } else if (user && user.role === "Admin") {
+      return (
+        <>
+          <li>
+            <NavLink
+              to="/dashboard-admin"
+              className="menu-item rounded-xl mb-2"
+              activeClassName="font-bold"
+            >
+              <HiOutlineHome />
+              Dashboard
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/employee-list"
+              className="menu-item rounded-xl mb-2"
+              activeClassName="font-bold"
+            >
+              <GrGroup />
+              Employee List
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/attendance-history"
+              className="menu-item rounded-xl mb-2"
+              activeClassName="font-bold"
+            >
+              <RiHistoryFill />
+              Employee Attendance
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/approval"
+              className="menu-item rounded-xl mb-2"
+              activeClassName="font-bold"
+            >
+              <MdApproval />
+              Approval
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/announcement"
+              className="menu-item rounded-xl mb-2"
+              activeClassName="font-bold"
+            >
+              <TfiAnnouncement />
+              Announcement
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/daily-report"
+              className="menu-item rounded-xl mb-2"
+              activeClassName="font-bold"
+            >
+              <TbReportAnalytics />
+              Daily Report
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/"
+              className="menu-item rounded-xl mb-2"
+              activeClassName="font-bold"
+            >
+              <LuUserCheck2 />
+              Self Attendance
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/create-account-employee"
+              className="menu-item rounded-xl mb-2"
+              activeClassName="font-bold"
+            >
+              <AiOutlineUserAdd />
+              Create Account
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/settings"
+              className="menu-item rounded-xl mb-2"
+              activeClassName="font-bold"
+            >
+              <LuSettings />
+              Settings
+            </NavLink>
+          </li>
+          <li>
+            <button
+              onClick={() => logoutFn()}
+              className="menu-item"
+              activeClassName="font-bold"
+            >
+              <TbLogout />
+              Log out
+            </button>
+          </li>
+        </>
+      );
+    }
+  };
+
   return (
     <div>
       <div className="drawer lg:drawer-open">
@@ -47,106 +182,7 @@ export const Sidebar = () => {
             className="drawer-overlay"
           ></label>
           <ul className="menu bg-black text-white font-semibold min-h-full w-80 p-4">
-            <li>
-              <NavLink
-                to="/dashboard-admin"
-                className="menu-item rounded-xl mb-2"
-                activeClassName="font-bold"
-              >
-                <HiOutlineHome />
-                Dashboard
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/employee-list"
-                className="menu-item rounded-xl mb-2"
-                activeClassName="font-bold"
-              >
-                <GrGroup />
-                Employee List
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/attendance-history"
-                className="menu-item rounded-xl mb-2"
-                activeClassName="font-bold"
-              >
-                <RiHistoryFill />
-                Employee Attendance
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/approval"
-                className="menu-item rounded-xl mb-2"
-                activeClassName="font-bold"
-              >
-                <MdApproval />
-                Approval
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/announcement"
-                className="menu-item rounded-xl mb-2"
-                activeClassName="font-bold"
-              >
-                <TfiAnnouncement />
-               Announcement
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/daily-report"
-                className="menu-item rounded-xl mb-2"
-                activeClassName="font-bold"
-              >
-                <TbReportAnalytics />
-               Daily Report
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/"
-                className="menu-item rounded-xl mb-2"
-                activeClassName="font-bold"
-              >
-                <LuUserCheck2 />
-                Self Attendance
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/create-account-employee"
-                className="menu-item rounded-xl mb-2"
-                activeClassName="font-bold"
-              >
-                <AiOutlineUserAdd />
-                Create Account
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/settings"
-                className="menu-item rounded-xl mb-2"
-                activeClassName="font-bold"
-              >
-                <LuSettings />
-               Settings
-              </NavLink>
-            </li>
-            <li>
-              <button
-                onClick={() => logoutFn()}
-                className="menu-item"
-                activeClassName="font-bold"
-              >
-                <TbLogout />
-                Log out
-              </button>
-            </li>
+            {getMenuItems()}
           </ul>
         </div>
       </div>

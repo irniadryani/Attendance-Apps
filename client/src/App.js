@@ -16,6 +16,7 @@ import Announcement from "./pages/Admin/Announcement";
 import DailyReport from "./pages/Admin/DailyReport";
 import DetailDailyReport from "./pages/Admin/DetailDailyReport";
 import Settings from "./pages/Admin/Settings.jsx"
+import DashboardSuperAdmin from "./pages/Superadmin/Dashboard.jsx"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools/build/modern/production.js";
 import { ToastContainer } from "react-toastify";
@@ -70,6 +71,9 @@ function App() {
               <Route path="/daily-report" element={<DailyReport />} />
               <Route path={"/daily-report/:id"} element={<DetailDailyReport />} />
               <Route path={"/settings"} element={<Settings />} />
+
+              {/* Route SuperAdmin */}
+              <Route path="/dashboard-superadmin" element={<DashboardSuperAdmin />} />
             </Routes>
           </BrowserRouter>
           <ToastContainer />
