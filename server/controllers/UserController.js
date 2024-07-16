@@ -1,8 +1,10 @@
 const User = require("../models/UserModel");
 const Role = require("../models/RolesModel");
+const Setting = require("../models/SettingModel");
 const bcrypt = require("bcrypt");
 const fs = require("fs");
 const path = require("path");
+const Limit = require("../models/LimitModel");
 
 const getUsers = async (req, res) => {
   try {
@@ -27,7 +29,7 @@ const getUserById = async (req, res) => {
         "phone_number",
         "position",
         "photo_profil",
-        "url"
+        "url",
       ],
       where: {
         id: req.params.id,
@@ -49,21 +51,17 @@ const getUserById = async (req, res) => {
 const createUser = async (req, res) => {
   const { full_name, email, password, confPassword, role_name } = req.body;
 
-  if (!password) {
-    return res.status(400).json({ msg: "Password tidak boleh kosong" });
-  }
-
   if (password !== confPassword) {
     return res
       .status(400)
-      .json({ msg: "Password dan Confirm Password Tidak Cocok" });
+      .json({ msg: "Password and Confirm Password do not match" });
   }
 
   try {
     // Check if email already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ msg: "Email already exist" });
+      return res.status(400).json({ msg: "Email already exists" });
     }
 
     // Fetch the role_id based on the role_name
@@ -72,20 +70,35 @@ const createUser = async (req, res) => {
       return res.status(400).json({ msg: "Invalid role name" });
     }
 
-    const hashPassword = bcrypt.hashSync(password, 10);
+    // Fetch default password from settings
+    const currentSetting = await Setting.findOne({ where: { id: 1 } });
+    const defaultPassword = currentSetting
+      ? currentSetting.default_password
+      : "defaultpassword";
+
+      console.log("Fetched default password from settings:", defaultPassword);
+    
+    const isUsingDefaultPassword = !password || password === defaultPassword;
+    const hashPassword = await bcrypt.hash(isUsingDefaultPassword ? defaultPassword : password, 10);
+
+    const limit_id = "81eb0cd9-74ec-4b55-bf70-414b2fa591dd"; // Replace with your actual logic
 
     await User.create({
       full_name,
       email,
+      default_password: isUsingDefaultPassword, // Set true if using default password
       password: hashPassword,
       role_id: role.id,
+      limit_id: limit_id
     });
 
-    res.status(201).json({ msg: "Register Berhasil" });
+    res.status(201).json({ msg: "Register successful" });
   } catch (error) {
     res.status(400).json({ msg: error.message });
   }
 };
+
+
 
 const updateUser = async (req, res) => {
   try {

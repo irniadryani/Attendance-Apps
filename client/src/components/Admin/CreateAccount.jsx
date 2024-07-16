@@ -42,8 +42,6 @@ export default function CreateAccount() {
     const userData = {
       ...formData,
       role_name: "User",
-      password: "defaultpassword",
-      confPassword: "defaultpassword",
     }; // Ensure role_name is added to userData
     console.log("Form data submitted:", userData);
     handleCreateAccountResponse.mutate(userData); // Call mutate with userData

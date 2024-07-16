@@ -3,7 +3,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/connection'); // Adjust the path as per your project structure
 
-const Setting = sequelize.define('setting', {
+const Setting = sequelize.define('settings', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
