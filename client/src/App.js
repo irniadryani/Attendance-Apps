@@ -3,10 +3,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DashboardUser from "./pages/User/Dashboard";
 import DashboardAdmin from "./pages/Admin/Dashboard";
 import Login from "./components/Login";
-import User from "./pages/User";
-import Permission from "./pages/Permission";
-import AddUser from "./pages/AddUser";
-import EditUser from "./pages/EditUser";
 import EmployeeList from "./pages/Admin/Employee";
 import AttendanceHistory from "./pages/Admin/Attendance";
 import CreateAccountEmployee from "./pages/Admin/CreateAccount";
@@ -49,11 +45,6 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<DashboardUser />} />
-              <Route path="/users" element={<User />} />
-              <Route path="/users/add" element={<AddUser />} />
-              <Route path="/users/edit/:id" element={<EditUser />} />
-              <Route path="/permission" element={<Permission />} />
-
               {/* Route Admin */}
               <Route path="/dashboard-admin" element={<DashboardAdmin />} />
               <Route path="/employee-list" element={<EmployeeList />} />

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Leaves = require("../models/LeavesModel");
 const Limit = require("../models/LimitModel");
+const Setting = require("../models/SettingModel");
 const User = require("../models/UserModel");
 const { Op } = require("sequelize");
 

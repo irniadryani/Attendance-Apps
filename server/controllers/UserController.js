@@ -98,8 +98,6 @@ const createUser = async (req, res) => {
   }
 };
 
-
-
 const updateUser = async (req, res) => {
   try {
     const user = await User.findOne({

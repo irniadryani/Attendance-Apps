@@ -13,6 +13,7 @@ const DailyReportRoute = require("./routes/DailyReportRoute.js");
 const AnnouncementRoute = require("./routes/AnnouncementRoute.js");
 const LeavesRoute = require("./routes/LeavesRoute.js");
 const SettingRoute = require("./routes/SettingRoute.js");
+const LimitRoute = require("./routes/LimitRoute.js");
 
 dotenv.config();
 
@@ -54,6 +55,7 @@ app.use(DailyReportRoute);
 app.use(AnnouncementRoute);
 app.use(LeavesRoute);
 app.use(SettingRoute);
+app.use(LimitRoute);
 
 app.post("/ping", (req, res) => {
   res.send("pong");

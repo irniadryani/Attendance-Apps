@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Attendances = require("../models/AttendancesModel");
 const User = require("../models/UserModel");
+const Setting = require("../models/SettingModel");
 const { check } = require("express-validator");
 const unirest = require("unirest");
 const { Op } = require("sequelize");
@@ -37,12 +38,6 @@ function secondsToFormattedTime(seconds) {
   return formattedTime.trim();
 }
 
-// Example check-in location (Singapore Marina Bay Sands)
-const CHECKIN_LOCATION = {
-  latitude: -6.9408141,
-  longitude: 107.5882522,
-};
-
 // Function to calculate distance using Haversine formula
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371e3; // Radius of the Earth in meters
@@ -63,6 +58,17 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 const checkin = async (req, res) => {
   try {
     const { latitude, longitude } = req.body; // Assuming latitude and longitude are sent from frontend
+
+    const currentSetting = await Setting.findOne({ where: { id: 1 } });
+
+    const latitudes = currentSetting.latitude;
+    const longitudes = currentSetting.longitude;
+
+    // Example check-in location (Singapore Marina Bay Sands)
+    const CHECKIN_LOCATION = {
+      latitude: latitudes,
+      longitude: longitudes,
+    };
 
     // Calculate distance between user's location and check-in location
     const distance = calculateDistance(
@@ -206,7 +212,14 @@ const getAttendanceById = async (req, res) => {
         [Op.and]: [
           {
             created_at: {
-              [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0) - (new Date().getDay() === 0 ? 6 : new Date().getDay() - 1) * 24 * 60 * 60 * 1000),
+              [Op.gte]: new Date(
+                new Date().setHours(0, 0, 0, 0) -
+                  (new Date().getDay() === 0 ? 6 : new Date().getDay() - 1) *
+                    24 *
+                    60 *
+                    60 *
+                    1000
+              ),
             },
           },
           {
@@ -219,13 +232,29 @@ const getAttendanceById = async (req, res) => {
         [Op.not]: [
           {
             [Op.or]: [
-              { created_at: { [Op.eq]: new Date(new Date().setDate(new Date().getDate() - new Date().getDay())) } }, // Sunday
-              { created_at: { [Op.eq]: new Date(new Date().setDate(new Date().getDate() - new Date().getDay() + 6)) } }, // Saturday
+              {
+                created_at: {
+                  [Op.eq]: new Date(
+                    new Date().setDate(
+                      new Date().getDate() - new Date().getDay()
+                    )
+                  ),
+                },
+              }, // Sunday
+              {
+                created_at: {
+                  [Op.eq]: new Date(
+                    new Date().setDate(
+                      new Date().getDate() - new Date().getDay() + 6
+                    )
+                  ),
+                },
+              }, // Saturday
             ],
           },
         ],
       },
-      order: [['created_at', 'DESC']],
+      order: [["created_at", "DESC"]],
     });
 
     // Format dates and work hours
@@ -237,7 +266,7 @@ const getAttendanceById = async (req, res) => {
         const totalSeconds = hours * 3600 + minutes * 60 + seconds;
         formattedWorkHours = secondsToFormattedTime(totalSeconds);
       }
-      
+
       // Format check_in to HH:mm:ss
       let formattedCheckIn = "";
       if (att.check_in) {
@@ -272,7 +301,14 @@ const getAttendanceById = async (req, res) => {
 
       // Format created_at to YYYY-MM-DD
       const createdAtDate = new Date(att.created_at);
-      const formattedDate = `${createdAtDate.getFullYear()}-${(createdAtDate.getMonth() + 1).toString().padStart(2, '0')}-${createdAtDate.getDate().toString().padStart(2, '0')}`;
+      const formattedDate = `${createdAtDate.getFullYear()}-${(
+        createdAtDate.getMonth() + 1
+      )
+        .toString()
+        .padStart(2, "0")}-${createdAtDate
+        .getDate()
+        .toString()
+        .padStart(2, "0")}`;
 
       return {
         ...att.toJSON(),
@@ -289,7 +325,6 @@ const getAttendanceById = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch attendance records" });
   }
 };
-
 
 // const getAllAttendances = async (req, res) => {
 //   try {
@@ -313,7 +348,7 @@ const getAttendanceById = async (req, res) => {
 //         const totalSeconds = hours * 3600 + minutes * 60 + seconds;
 //         formattedWorkHours = secondsToFormattedTime(totalSeconds);
 //       }
-      
+
 //       // Format check_in to HH:mm:ss
 //       let formattedCheckIn = "";
 //       if (att.check_in) {
@@ -372,7 +407,6 @@ const getAttendanceById = async (req, res) => {
 //   }
 // };
 
-
 const getAllAttendances = async (req, res) => {
   try {
     // Fetch attendance records
@@ -399,7 +433,8 @@ const getAllAttendances = async (req, res) => {
       }
     });
 
-    const averageSeconds = totalAttendances > 0 ? totalSeconds / totalAttendances : 0;
+    const averageSeconds =
+      totalAttendances > 0 ? totalSeconds / totalAttendances : 0;
 
     const totalWorkingHours = secondsToFormattedTime(totalSeconds);
     const averageWorkingHours = secondsToFormattedTime(averageSeconds);
@@ -449,7 +484,10 @@ const getAllAttendances = async (req, res) => {
         createdAtDate.getMonth() + 1
       )
         .toString()
-        .padStart(2, "0")}-${createdAtDate.getDate().toString().padStart(2, "0")}`;
+        .padStart(2, "0")}-${createdAtDate
+        .getDate()
+        .toString()
+        .padStart(2, "0")}`;
 
       return {
         id: att.id,
@@ -480,5 +518,10 @@ const getAllAttendances = async (req, res) => {
   }
 };
 
-
-module.exports = { checkin, checkTodayAttendance, checkout, getAttendanceById, getAllAttendances };
+module.exports = {
+  checkin,
+  checkTodayAttendance,
+  checkout,
+  getAttendanceById,
+  getAllAttendances,
+};

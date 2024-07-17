@@ -76,7 +76,6 @@ export const Navbar = () => {
                 </button>
               </li>
               <li>
-                {" "}
                 <button
                   onClick={() => logoutFn()}
                   className="menu-item"
