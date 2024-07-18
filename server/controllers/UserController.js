@@ -9,7 +9,7 @@ const Limit = require("../models/LimitModel");
 const getUsers = async (req, res) => {
   try {
     const response = await User.findAll({
-      attributes: ["id", "full_name", "email", "role_id"],
+      attributes: ["id", "full_name", "email", "role_id", "photo_profil", "url"],
     });
     console.log(response);
     res.status(200).json(response);

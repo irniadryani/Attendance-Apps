@@ -34,7 +34,7 @@ export default function DetailEmployee({ employeeId }) {
               />
             </figure>
             <div className="card-body">
-              <h2 className="card-title mb-5">Employee 1 Details</h2>
+              <h2 className="card-title mb-5">{employeeDetail.full_name} Details</h2>
               <div className="flex flex-col gap-3">
                 <div className="flex flex-row">
                   <p className="w-24 font-semibold">Name</p>

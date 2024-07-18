@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import Layout from "../Layout";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import { useLocation, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getDailyReportByIdFn } from "../../api/dailyReport/dailyReport";
 import { Accordion, AccordionItem } from "@nextui-org/react";
 
 export default function DetailDailyReport() {
+  const [date, setDate] = useState(null);
   const { id } = useParams();
   const location = useLocation();
   const employeeId = atob(id);
@@ -20,7 +23,16 @@ export default function DetailDailyReport() {
       queryFn: () => getDailyReportByIdFn(employeeId),
     });
 
-  console.log("dp", dataSingleDailyReport);
+  const sortedDailyReports = dataSingleDailyReport?.sort((a, b) => {
+    return new Date(a.report_date) - new Date(b.report_date);
+  });
+
+  const filteredDailyReport = sortedDailyReports?.filter((dailyReport) => {
+    const matchingDate =
+      !date ||
+      new Date(dailyReport?.report_date).toDateString() === date.toDateString();
+    return matchingDate;
+  });
 
   return (
     <Layout>
@@ -28,9 +40,27 @@ export default function DetailDailyReport() {
         <p className="mt-10 font-bold text-4xl text-black">{employeeName}</p>
         <p className="font-medium text-xl text-black">{employeePosition}</p>
       </div>
+      <div>
+        <div className="flex flex-row p-3">
+          <div>
+            <p className="font-semibold text-sm items-center mr-2">
+              Sort By Date:
+            </p>
+          </div>
+
+          <div className="w-36">
+            <DatePicker
+              selected={date}
+              onChange={(date) => setDate(date)}
+              isClearable
+              placeholderText="Select a date"
+            />
+          </div>
+        </div>
+      </div>
       <div className="my-5">
         <Accordion variant="splitted" className="dark:bg-gray-800 text-black">
-          {dataSingleDailyReport?.map((dailyreport) => (
+          {filteredDailyReport?.map((dailyreport) => (
             <AccordionItem
               key={dailyreport.id}
               aria-label={`Accordion ${dailyreport.id}`}
