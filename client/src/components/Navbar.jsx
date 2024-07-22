@@ -1,10 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { logout, reset } from "../features/authSlice";
 import { useEffect } from "react";
 import EditProfile from "./User/EditProfile";
-import { getUserByIdFn} from "../api/user/user"
+import { getUserByIdFn } from "../api/user/user";
 import { useQuery } from "@tanstack/react-query";
+import ChangePassword from "./User/ChangePassword";
 
 export const Navbar = () => {
   const dispatch = useDispatch();
@@ -22,7 +23,6 @@ export const Navbar = () => {
     }
   }, [user, isError]);
 
-
   const {
     data: dataSingleUser,
     refetch: refetchSingleUser,
@@ -31,9 +31,6 @@ export const Navbar = () => {
     queryKey: ["user", user?.id],
     queryFn: () => getUserByIdFn(user?.id),
   });
-
-  console.log("profil", dataSingleUser?.photo_profil)
-
 
   return (
     <div>
@@ -51,7 +48,10 @@ export const Navbar = () => {
               <div className="w-10 rounded-full">
                 <img
                   alt="photo"
-                  src={dataSingleUser?.photo_profil}
+                  src={`${process.env.REACT_APP_BACKEND_HOST?.replace(
+                    /\/$/,
+                    ""
+                  )}${dataSingleUser?.url}`}
                 />
               </div>
             </div>
@@ -71,10 +71,24 @@ export const Navbar = () => {
                 </button>
               </li>
               <li>
-                <button>
+                <button
+                  onClick={() =>
+                    document.getElementById("change_password_modal").showModal()
+                  }
+                >
                   <a>Password</a>
                 </button>
               </li>
+              {user.role !== "User" && (
+                <li>
+                  <Link to="/">
+                    <button>
+                      <a>Self Attendance</a>
+                    </button>
+                  </Link>
+                </li>
+              )}
+
               <li>
                 <button
                   onClick={() => logoutFn()}
@@ -89,6 +103,7 @@ export const Navbar = () => {
         </div>
       </div>
       <EditProfile />
+      <ChangePassword />
     </div>
   );
 };

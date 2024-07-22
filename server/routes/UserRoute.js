@@ -6,12 +6,20 @@ const { verifyToken, adminOnly } = require("../middleware/AuthUser");
 // Rute untuk mendapatkan pengguna
 router.get("/users", verifyToken, userController.getUsers);
 
-router.get("/users/:id", verifyToken, userController.getUserById);
+router.get("/user/:id", verifyToken, userController.getUserById);
 
 router.post("/users",verifyToken, userController.createUser);
 
-router.put("/users/:id",verifyToken, userController.updateUser);
+router.put("/user/:id",verifyToken, userController.updateUser);
 
-router.delete("/users/:id", verifyToken,userController.deleteUser);
+router.delete("/user/:id", verifyToken,userController.deleteUser);
+
+router.get("/users/filter", verifyToken, userController.filterUsers);
+
+router.put("/user/update-role/:id",verifyToken, userController.roleUser);
+
+router.put("/user/update-status/:id",verifyToken, userController.updateUserStatus);
+
+router.put("/user/change-password/:id",verifyToken, userController.changePassword);
 
 module.exports = router;
