@@ -6,6 +6,7 @@ const Setting = require("../models/SettingModel");
 const { check } = require("express-validator");
 const unirest = require("unirest");
 const { Op } = require("sequelize");
+const { logMessage } = require('../utils/logger');
 
 function secondsToHHMMSS(seconds) {
   const hours = Math.floor(seconds / 3600);
@@ -103,12 +104,14 @@ const checkin = async (req, res) => {
       res.status(201).json(attendance);
     } else {
       // Distance check failed
+      logMessage('warn', 'You are not within the allowed check-in radius');
       res
         .status(400)
         .json({ error: "You are not within the allowed check-in radius." });
     }
   } catch (error) {
     console.error("Error checking in", error);
+    logMessage('error', 'Error checking in', { error: error.message });
     res.status(500).json({ error: "Failed to check in" });
   }
 };
@@ -142,6 +145,7 @@ const checkout = async (req, res) => {
     });
 
     if (!attendance) {
+      logMessage('error', 'No check-in record found for today', { error: error.message });
       return res
         .status(400)
         .json({ error: "No check-in record found for today" });
@@ -169,6 +173,8 @@ const checkout = async (req, res) => {
 
 const checkTodayAttendance = async (req, res) => {
   try {
+    logMessage('info', 'checkTodayAttendance function called', { user: req.user });
+
     const { id } = req.user;
 
     // Get today's date in UTC timezone
@@ -194,15 +200,23 @@ const checkTodayAttendance = async (req, res) => {
       },
     });
 
+    if (attendance) {
+      logMessage('info', "Today's attendance record found", { attendance });
+    } else {
+      logMessage('info', 'No attendance record found for today', { userId: id });
+    }
+
     res.json(attendance);
   } catch (error) {
-    console.error("Error fetching today's attendance:", error);
+    logMessage('error', "Error fetching today's attendance", { error: error.message });
     res.status(500).json({ error: "Failed to fetch today's attendance" });
   }
 };
 
 const getAttendanceById = async (req, res) => {
   try {
+    logMessage('info', 'getAttendanceById function called', { user: req.user });
+
     const { id } = req.user;
 
     // Fetch attendance records
@@ -256,6 +270,8 @@ const getAttendanceById = async (req, res) => {
       },
       order: [["created_at", "DESC"]],
     });
+
+    logMessage('info', 'Fetched attendance records', { attendancesCount: attendances.length });
 
     // Format dates and work hours
     const result = attendances.map((att) => {
@@ -319,9 +335,11 @@ const getAttendanceById = async (req, res) => {
       };
     });
 
+    logMessage('info', 'Formatted attendance records', { result });
+
     res.status(200).json(result);
   } catch (error) {
-    console.error("Error fetching attendance records", error);
+    logMessage('error', 'Error fetching attendance records', { error: error.message });
     res.status(500).json({ error: "Failed to fetch attendance records" });
   }
 };
@@ -406,9 +424,10 @@ const getAttendanceById = async (req, res) => {
 //     res.status(500).json({ error: "Failed to fetch attendance records" });
 //   }
 // };
-
 const getAllAttendances = async (req, res) => {
   try {
+    logMessage('info', 'getAllAttendances function called');
+
     // Fetch attendance records
     const attendances = await Attendances.findAll({
       order: [["created_at", "DESC"]],
@@ -419,6 +438,8 @@ const getAllAttendances = async (req, res) => {
         },
       ],
     });
+
+    logMessage('info', 'Fetched attendance records', { attendancesCount: attendances.length });
 
     // Calculate total and average working hours
     let totalSeconds = 0;
@@ -433,11 +454,15 @@ const getAllAttendances = async (req, res) => {
       }
     });
 
-    const averageSeconds =
-      totalAttendances > 0 ? totalSeconds / totalAttendances : 0;
+    const averageSeconds = totalAttendances > 0 ? totalSeconds / totalAttendances : 0;
 
     const totalWorkingHours = secondsToFormattedTime(totalSeconds);
     const averageWorkingHours = secondsToFormattedTime(averageSeconds);
+
+    logMessage('info', 'Calculated total and average working hours', {
+      totalWorkingHours,
+      averageWorkingHours
+    });
 
     // Format and transform data as needed
     const result = attendances.map((att) => {
@@ -504,6 +529,8 @@ const getAllAttendances = async (req, res) => {
       };
     });
 
+    logMessage('info', 'Formatted attendance records', { result });
+
     // Append total and average working hours to the response
     const response = {
       totalWorkingHours,
@@ -511,12 +538,15 @@ const getAllAttendances = async (req, res) => {
       attendances: result,
     };
 
+    logMessage('info', 'Sending response with attendance data', { response });
+
     res.status(200).json(response);
   } catch (error) {
-    console.error("Error fetching attendance records", error);
+    logMessage('error', 'Error fetching attendance records', { error: error.message });
     res.status(500).json({ error: "Failed to fetch attendance records" });
   }
 };
+
 
 module.exports = {
   checkin,

@@ -4,6 +4,7 @@ const Announcement = require("../models/AnnouncementModel");
 const { check } = require("express-validator");
 const unirest = require("unirest");
 const { Op } = require("sequelize");
+const { logMessage } = require('../utils/logger');
 
 const createAnnouncement = async (req, res) => {
   const { message } = req.body;
@@ -16,14 +17,17 @@ const createAnnouncement = async (req, res) => {
       message: message,
     });
 
+    // Log the successful creation
+    logMessage('info', 'Announcement successfully created', { admin_id, message });
+
     // Return a success message with the created announcement record
     res.status(201).json({
       msg: "Announcement successfully created",
       announcement: newAnnouncement,
     });
   } catch (error) {
-    // Handle errors
-    console.error("Error creating announcement:", error);
+    // Log the error
+    logMessage('error', 'Failed to create announcement', { error: error.message });
     res
       .status(400)
       .json({ msg: "Failed to create announcement", error: error.message });
@@ -36,8 +40,13 @@ const getAllAnnouncement = async (req, res) => {
       attributes: ["id", "admin_id", "message"],
     });
 
+    // Log the successful retrieval
+    logMessage('info', 'Retrieved all announcements', { count: response.length });
+
     res.status(200).json(response);
   } catch (error) {
+    // Log the error
+    logMessage('error', 'Failed to retrieve announcements', { error: error.message });
     res.status(500).json({ msg: error.message });
   }
 };
@@ -52,8 +61,12 @@ const getAnnouncementById = async (req, res) => {
     });
 
     if (response.length === 0) {
+      logMessage('warning', 'Announcement not found', { id: req.params.id });
       return res.status(404).json({ msg: "Announcement Not Found" });
     }
+
+    // Log the successful retrieval
+    logMessage('info', 'Retrieved announcement by ID', { id: req.params.id });
 
     res.status(200).json(response);
   } catch (error) {
@@ -61,8 +74,10 @@ const getAnnouncementById = async (req, res) => {
       error.message ===
       `invalid input syntax for type uuid: \"${req.params.id}\"`
     ) {
+      logMessage('warning', 'Invalid UUID syntax', { id: req.params.id, error: error.message });
       res.status(404).json({ msg: "Announcement Not Found" });
     } else {
+      logMessage('error', 'Failed to retrieve announcement by ID', { id: req.params.id, error: error.message });
       res.status(500).json({ msg: error.message });
     }
   }
@@ -76,37 +91,37 @@ const updateAnnouncement = async (req, res) => {
       },
     });
 
-    console.log(req.params.id);
-
-    if (!announcement)
+    if (!announcement) {
+      logMessage('warning', 'Announcement not found for update', { id: req.params.id });
       return res.status(404).json({ msg: "Announcement Not Found" });
+    }
 
     const { message } = req.body;
 
-    console.log(message);
-
-    try {
-      await Announcement.update(
-        {
-          message: message,
+    await Announcement.update(
+      {
+        message: message,
+      },
+      {
+        where: {
+          id: announcement.id,
         },
-        {
-          where: {
-            id: announcement.id,
-          },
-        }
-      );
-      res.status(200).json({ msg: "Announcement Updated" });
-    } catch (error) {
-      res.status(400).json({ msg: error.message });
-    }
+      }
+    );
+
+    // Log the successful update
+    logMessage('info', 'Announcement updated successfully', { id: announcement.id, message });
+
+    res.status(200).json({ msg: "Announcement Updated" });
   } catch (error) {
     if (
       error.message ===
       `invalid input syntax for type uuid: \"${req.params.id}\"`
     ) {
-      res.status(404).json({ msg: " Not Found" });
+      logMessage('warning', 'Invalid UUID syntax for update', { id: req.params.id, error: error.message });
+      res.status(404).json({ msg: "Announcement Not Found" });
     } else {
+      logMessage('error', 'Failed to update announcement', { id: req.params.id, error: error.message });
       res.status(500).json({ msg: error.message });
     }
   }
@@ -119,31 +134,31 @@ const deleteAnnouncement = async (req, res) => {
         id: req.params.id,
       },
     });
-    console.log("Announcement found for deletion:", announcement);
 
-    if (!announcement)
+    if (!announcement) {
+      logMessage('warning', 'Announcement not found for deletion', { id: req.params.id });
       return res.status(404).json({ msg: "Announcement Not Found" });
-
-    try {
-      await Announcement.destroy({
-        where: {
-          id: announcement.id,
-        },
-      });
-      console.log("Announcement deleted successfully");
-      res.status(200).json({ msg: "Announcement Deleted" });
-    } catch (error) {
-      console.error("Error in deleting announcement:", error);
-      res.status(400).json({ msg: error.message });
     }
+
+    await Announcement.destroy({
+      where: {
+        id: announcement.id,
+      },
+    });
+
+    // Log the successful deletion
+    logMessage('info', 'Announcement deleted successfully', { id: announcement.id });
+
+    res.status(200).json({ msg: "Announcement Deleted" });
   } catch (error) {
-    console.error("Error in finding announcement:", error);
     if (
       error.message ===
       `invalid input syntax for type uuid: \"${req.params.id}\"`
     ) {
+      logMessage('warning', 'Invalid UUID syntax for deletion', { id: req.params.id, error: error.message });
       res.status(404).json({ msg: "Announcement Not Found" });
     } else {
+      logMessage('error', 'Failed to delete announcement', { id: req.params.id, error: error.message });
       res.status(500).json({ msg: error.message });
     }
   }

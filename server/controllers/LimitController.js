@@ -1,61 +1,40 @@
 const Limit = require("../models/LimitModel");
+const { logMessage } = require('../utils/logger');
 
+// Function to update the limit leaves
 const updateLimitLeaves = async (req, res) => {
     try {
-        const id_leaves = "81eb0cd9-74ec-4b55-bf70-414b2fa591dd";
-        const limitLeaves = await Limit.findOne({ where: { id: "81eb0cd9-74ec-4b55-bf70-414b2fa591dd" } });
+        const limitId = "81eb0cd9-74ec-4b55-bf70-414b2fa591dd";
+        logMessage('info', 'Fetching limit leaves', { limitId });
+
+        const limitLeaves = await Limit.findOne({ where: { id: limitId } });
 
         if (!limitLeaves) {
+            logMessage('warning', 'Limit ID not found', { limitId });
             return res.status(404).json({ msg: "ID Not Found" });
         }
 
         const { limit_leaves } = req.body;
+        logMessage('info', 'Updating limit leaves', { limitId, new_limit_leaves: limit_leaves });
 
-        console.log("Updating limit_leaves to:", limit_leaves); // Debug log
-
-        await Limit.update(
-            { limit_leaves: limit_leaves },
-            { where: { id: "81eb0cd9-74ec-4b55-bf70-414b2fa591dd" } }
+        const [updated] = await Limit.update(
+            { maximum: limit_leaves },
+            { where: { id: limitId } }
         );
 
-        // Fetch the updated record to verify the update
-        const updatedLimit = await Limit.findOne({ where: { id: "81eb0cd9-74ec-4b55-bf70-414b2fa591dd" } });
-        console.log("Updated limit_leaves:", updatedLimit.limit_leaves); // Debug log
+        if (updated) {
+            const updatedLimit = await Limit.findOne({ where: { id: limitId } });
+            logMessage('info', 'Updated limit leaves successfully', { limitId, updated_limit_leaves: updatedLimit.maximum });
+            return res.status(200).json({ msg: "Limit Leaves Updated" });
+        }
 
-        res.status(200).json({ msg: "Limit Leaves Updated" });
+        throw new Error("Limit Leaves Update Failed");
+
     } catch (error) {
-        console.error("Error updating leave status:", error);
-        res.status(400).json({ msg: "Failed to update leave status", error: error.message });
+        logMessage('error', 'Error updating limit leaves', { error: error.message });
+        return res.status(400).json({ msg: "Failed to update limit leaves", error: error.message });
     }
 };
 
-const limitLeaves = async (req, res) => {
-    try {
-      const { limit_leaves } = req.body;
-  
-      // Check if there is already a default password setting
-      let currentSetting = await Limit.findOne({ where: { id:"81eb0cd9-74ec-4b55-bf70-414b2fa591dd" } });
-  
-      if (currentSetting) {
-        // If exists, update the default password
-        await currentSetting.update({ limit_leaves });
-      } else {
-        // If not, create a new setting
-        currentSetting = await Limit.create({
-          limit_leaves,
-        });
-      }
 
-      return res.status(201).json({
-        msg: "Default Limit Leaves Set Successfully",
-        data: {
-          limit_leaves: limit_leaves,
-        },
-      });
-    } catch (error) {
-      console.error("Error setting limit leaves:", error);
-      return res.status(500).json({ error: "Internal Server Error" });
-    }
-  };
-
-module.exports = { updateLimitLeaves, limitLeaves };
+module.exports = { updateLimitLeaves };

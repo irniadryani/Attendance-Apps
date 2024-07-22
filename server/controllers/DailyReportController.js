@@ -3,6 +3,7 @@ const router = express.Router();
 const { Op } = require("sequelize");
 const DailyReport = require("../models/DailyReportModel");
 const User = require("../models/UserModel");
+const { logMessage } = require('../utils/logger');
 
 const formatDate = (date) => {
   const d = new Date(date);
@@ -12,11 +13,12 @@ const formatDate = (date) => {
   return `${year}-${month}-${day}`;
 };
 
-
 const getDailyReport = async (req, res) => {
   try {
+    logMessage('info', 'Fetching all daily reports');
+
     const response = await DailyReport.findAll({
-      attributes: ['id', 'report_date', 'report_message', "user_id"],
+      attributes: ['id', 'report_date', 'report_message', 'user_id'],
       include: [{
         model: User,
         attributes: ['full_name', 'position'], // Include user attributes
@@ -32,9 +34,10 @@ const getDailyReport = async (req, res) => {
       user_position: report.user.position, // Access position from associated Users model
     }));
 
-    console.log(formattedResponse);
+    logMessage('info', 'Fetched daily reports successfully', { reports: formattedResponse });
     res.status(200).json(formattedResponse);
   } catch (error) {
+    logMessage('error', 'Error fetching daily reports', { error: error.message });
     res.status(500).json({ msg: error.message });
   }
 };
@@ -44,43 +47,44 @@ const createDailyReport = async (req, res) => {
   const { id: user_id } = req.user;
 
   try {
-    // Create the permission record
+    logMessage('info', 'Creating daily report', { user_id, report_date, report_message });
+
     const newDailyReport = await DailyReport.create({
       user_id: user_id,
       report_date: report_date,
       report_message: report_message,
     });
 
-    // Format dates in the newly created permission
     const formattedPermission = {
       ...newDailyReport.toJSON(),
       report_date: formatDate(newDailyReport.report_date),
     };
 
-    // Return a success message with the created permission record
+    logMessage('info', 'Daily report created successfully', { report: formattedPermission });
+
     res.status(201).json({
-      msg: "Permission successfully created",
-      permission: formattedPermission,
+      msg: "Daily report successfully created",
+      report: formattedPermission,
     });
   } catch (error) {
-    // Handle errors
-    console.error("Error creating daily report:", error);
-    res
-      .status(400)
-      .json({ msg: "Failed to create daily report", error: error.message });
+    logMessage('error', 'Error creating daily report', { error: error.message });
+    res.status(400).json({ msg: "Failed to create daily report", error: error.message });
   }
 };
 
 const getDailyReportById = async (req, res) => {
   try {
+    logMessage('info', 'Fetching daily report by user ID', { user_id: req.params.id });
+
     const response = await DailyReport.findAll({
-      attributes: ["id", "report_date", "report_message"],
+      attributes: ['id', 'report_date', 'report_message'],
       where: {
         user_id: req.params.id,
       },
     });
 
     if (response.length === 0) {
+      logMessage('warning', 'Daily report not found', { user_id: req.params.id });
       return res.status(404).json({ msg: "Daily Report Not Found" });
     }
 
@@ -88,19 +92,20 @@ const getDailyReportById = async (req, res) => {
       ...report.toJSON(),
       report_date: formatDate(report.report_date),
     }));
-    console.log(formattedResponse);
+
+    logMessage('info', 'Fetched daily report by user ID successfully', { reports: formattedResponse });
     res.status(200).json(formattedResponse);
   } catch (error) {
-    if (
-      error.message ===
-      `invalid input syntax for type uuid: \"${req.params.id}\"`
-    ) {
+    logMessage('error', 'Error fetching daily report by user ID', { user_id: req.params.id, error: error.message });
+
+    if (error.message === `invalid input syntax for type uuid: \"${req.params.id}\"`) {
       res.status(404).json({ msg: "User Not Found" });
     } else {
       res.status(500).json({ msg: error.message });
     }
   }
 };
+
 
 module.exports = {
   getDailyReport,

@@ -3,9 +3,12 @@ const Role = require("../models/RolesModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Blacklist = require("../models/BlacklistModel");
+const { logMessage } = require('../utils/logger');
 
 const login = async (req, res) => {
   try {
+    logMessage('info', 'Login attempt started', { email: req.body.email });
+
     const user = await User.findOne({
       where: {
         email: req.body.email,
@@ -18,17 +21,22 @@ const login = async (req, res) => {
       ],
     });
 
-    if (!user) return res.status(404).json({ msg: "User Not Found" });
+    if (!user) {
+      logMessage('warning', 'User not found during login attempt', { email: req.body.email });
+      return res.status(404).json({ msg: "User Not Found" });
+    }
 
     const match = await bcrypt.compare(req.body.password, user.password);
+
+    if (!match) {
+      logMessage('warning', 'Invalid email or password', { email: req.body.email });
+      return res.status(400).json({ msg: "Invalid email or password" });
+    }
 
     const id = user.id;
     const full_name = user.full_name;
     const email = user.email;
     const role = user.role ? user.role.name : "No role assigned";
-
-    if (!match)
-      return res.status(400).json({ msg: "Invalid email or password" });
 
     const accessToken = jwt.sign(
       { id, full_name, email, role },
@@ -48,6 +56,8 @@ const login = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
+    logMessage('info', 'Login successful', { id, email });
+
     res.status(200).json({
       id,
       full_name,
@@ -57,14 +67,17 @@ const login = async (req, res) => {
       refreshToken,
     });
   } catch (error) {
-    console.error(error);
+    logMessage('error', 'Error during login attempt', { email: req.body.email, error: error.message });
     res.status(500).json({ msg: "An error occurred" });
   }
 };
 
 const refresh = (req, res) => {
   const refreshToken = req.cookies.refreshToken;
-  if (!refreshToken) return res.status(401).json({ msg: "No token provided" });
+  if (!refreshToken) {
+    logMessage('warning', 'No refresh token provided');
+    return res.status(401).json({ msg: "No token provided" });
+  }
 
   try {
     const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
@@ -75,14 +88,20 @@ const refresh = (req, res) => {
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "15m" }
     );
+
+    logMessage('info', 'Access token refreshed', { id, email });
+
     res.status(200).json({ accessToken });
   } catch (error) {
+    logMessage('error', 'Invalid refresh token', { error: error.message });
     res.status(401).json({ msg: "Token is not valid" });
   }
 };
 
 const me = async (req, res) => {
   try {
+    logMessage('info', 'Fetching user profile', { userId: req.user.id });
+
     const user = await User.findOne({
       where: { id: req.user.id },
       attributes: [
@@ -102,7 +121,10 @@ const me = async (req, res) => {
       ],
     });
 
-    if (!user) return res.status(404).json({ msg: "User Not Found" });
+    if (!user) {
+      logMessage('warning', 'User not found', { userId: req.user.id });
+      return res.status(404).json({ msg: "User Not Found" });
+    }
 
     const id = user.id;
     const full_name = user.full_name;
@@ -112,19 +134,26 @@ const me = async (req, res) => {
     const url = user.url ? user.url : null;
     const photo_profil = user.photo_profil ? user.photo_profil : null;
 
+    logMessage('info', 'User profile fetched successfully', { userId: id });
+
     res
       .status(200)
       .json({ id, full_name, email, role, position, photo_profil, url });
   } catch (error) {
-    console.error(error);
+    logMessage('error', 'Error fetching user profile', { userId: req.user.id, error: error.message });
     res.status(500).json({ msg: "An error occurred" });
   }
 };
 
 const logout = async (req, res) => {
   try {
+    logMessage('info', 'Logout attempt started', { userId: req.user.id });
+
     const token = req.headers.authorization?.split(" ")[1];
-    if (!token) return res.status(400).json({ msg: "No token provided" });
+    if (!token) {
+      logMessage('warning', 'No token provided during logout attempt', { userId: req.user.id });
+      return res.status(400).json({ msg: "No token provided" });
+    }
 
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
@@ -135,11 +164,14 @@ const logout = async (req, res) => {
 
     res.clearCookie("refreshToken");
 
+    logMessage('info', 'User logged out successfully', { userId: decoded.id });
+
     res.status(200).json({ msg: "Logged out successfully" });
   } catch (error) {
-    console.error(error);
+    logMessage('error', 'Error during logout attempt', { userId: req.user.id, error: error.message });
     res.status(500).json({ msg: "An error occurred" });
   }
 };
+
 
 module.exports = { login, refresh, me, logout };
