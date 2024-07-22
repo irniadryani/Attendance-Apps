@@ -1,4 +1,10 @@
 import { Api } from "../../lib/common";
+const formDataconfig = {
+  headers: {
+    "Content-Type": "multipart/form-data",
+  },
+};
+
 
 export const getAllPermissionFn = async () => {
   const response = await Api.get("/permissions");
@@ -11,7 +17,7 @@ export const getPermissionByIdFn = async (id) => {
 };
 
 export const createPermissionFn = async (data) => {
-  const response = await Api.post("/permission", data);
+  const response = await Api.post("/permission", data, formDataconfig);
   return response.data;
 };
 

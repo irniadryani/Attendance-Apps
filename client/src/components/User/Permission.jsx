@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import Swal from "sweetalert2";
 import { useMutation } from "@tanstack/react-query";
 import DetailPemission from "./DetailPemission";
+import { Button } from "@nextui-org/react";
 
 export default function Permission() {
   const [startDate, setStartDate] = useState(new Date());
@@ -38,10 +39,15 @@ export default function Permission() {
   });
 
   const addPermission = (data) => {
-    const permissionData = {
-      ...data,
-    };
-    console.log("permission data", permissionData); // Log to check the values
+    const permissionData = new FormData();
+
+    permissionData.append("start_date", data.start_date);
+    permissionData.append("end_date", data.end_date);
+    permissionData.append("notes", data.notes);
+    if (data.file) {
+      permissionData.append("file", data.file[0]);
+    }
+
     handlePermissionResponse.mutateAsync(permissionData);
   };
 
@@ -55,20 +61,34 @@ export default function Permission() {
             </button>
           </form>
           <h3 className="font-bold text-lg">Permission Request</h3>
-          <button className="my-5" onClick={() =>
-            document.getElementById("detail_permission_modal").showModal()
-          }>
-            <p className="font-thin text-xs mb-1 text-start">*Tap to see detail</p>
-            <div className="card bg-neutral text-neutral-content w-56 h-24">
-              <div className="flex flex-col items-center text-center justify-between">
-                <h2 className="font-bold text-6xl items-end">8</h2>
-                <p className="font-bold text-lg items-end">Permission Left</p>
-              </div>
+          <div className="flex flex-row gap-5 justify-end">
+            <div>
+              <button
+                className="btn my-5 bg-black text-white rounded-lg"
+                onClick={() =>
+                  document.getElementById("detail_permission_modal").showModal()
+                }
+              >
+                History Permission
+              </button>
             </div>
-          </button>
+            <div>
+              <button
+                className="btn my-5 bg-yellow-400 text-white rounded-lg"
+                onClick={() =>
+                  document.getElementById("detail_permission_modal").showModal()
+                }
+              >
+                Update Permission
+              </button>
+            </div>
+          </div>
+
           <div className="card bg-base-100 w-full shadow-2xl my-5 mr-10">
             <form onSubmit={handleSubmit(addPermission)} className="p-5">
-              <p className="font-bold text-lg my-5 text-center">Form Request Permission</p>
+              <p className="font-bold text-lg my-5 text-center">
+                Form Request Permission
+              </p>
               <div className="flex flex-row justify-between">
                 <label htmlFor="start_date" className="text-sm font-medium">
                   Start Date
@@ -112,6 +132,21 @@ export default function Permission() {
                 </div>
               </div>
               <div>
+                <label htmlFor="file">
+                  <div className="label mt-3 justify-start">
+                    <span className="label-text text-sm font-medium">
+                      Input File or Document
+                    </span>
+                  </div>
+                </label>
+                <input
+                  type="file"
+                  accept=".png, .jpeg, .jpg, .pdf"
+                  className="file-input file-input-bordered w-full max-w-xs"
+                  {...register("file")}
+                />
+              </div>
+              <div>
                 <label
                   htmlFor="notes"
                   className="form-control w-full max-w-4xl"
@@ -125,22 +160,19 @@ export default function Permission() {
                 <textarea
                   placeholder=""
                   className="textarea textarea-bordered textarea-lg w-full max-w-4xl text-sm"
-                  {...register("notes")}
+                  {...register("notes", { required: true })}
                 ></textarea>
               </div>
-              <div className="flex justify-end">
-                <button
-                  className="btn bg-black text-white my-3"
-                  type="submit"
-                >
+              <div className="flex justify-end m-5">
+                <Button color="primary" type="submit">
                   Submit
-                </button>
+                </Button>
               </div>
             </form>
           </div>
         </div>
       </dialog>
-      <DetailPemission/>
+      <DetailPemission />
     </div>
   );
 }
