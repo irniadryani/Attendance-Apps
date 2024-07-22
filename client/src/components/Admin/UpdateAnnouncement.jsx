@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import { updateAnnouncementFn } from "../../api/announcement/announcement";
+import { Button } from "@nextui-org/react";
 
 export default function UpdateAnnouncement({ announcement, refetch }) {
   const {
@@ -71,12 +72,9 @@ export default function UpdateAnnouncement({ announcement, refetch }) {
             </label>
           </div>
           <div className="flex justify-end">
-            <button
-              type="submit"
-              className="btn bg-black text-white text-xs text-center rounded-lg font-semibold p-2"
-            >
+            <Button color="primary" type="submit">
               Update
-            </button>
+            </Button>
           </div>
         </form>
       </div>

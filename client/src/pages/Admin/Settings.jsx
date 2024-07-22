@@ -8,7 +8,7 @@ import {
   updateLatitudeFn,
   updateLeavesLimitFn,
   updateLongitudeFn,
-  getUserContentFn, 
+  getUserContentFn,
 } from "../../api/setting/setting";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -110,11 +110,20 @@ export default function Settings() {
     },
   });
 
-  const onSubmit = (data) => {
-    if (data.default_password) updatePasswordMutation.mutateAsync({ default_password: data.default_password });
-    if (data.latitude) updateLatitudeMutation.mutateAsync({ latitude: data.latitude });
-    if (data.longitude) updateLongitudeMutation.mutateAsync({ longitude: data.longitude });
-    if (data.limit_leaves) updateLeavesLimitMutation.mutateAsync({ limit_leaves: data.limit_leaves });
+  const onSubmitPassword = (data) => {
+    updatePasswordMutation.mutateAsync({ default_password: data.default_password });
+  };
+
+  const onSubmitLatitude = (data) => {
+    updateLatitudeMutation.mutateAsync({ latitude: data.latitude });
+  };
+
+  const onSubmitLongitude = (data) => {
+    updateLongitudeMutation.mutateAsync({ longitude: data.longitude });
+  };
+
+  const onSubmitLeavesLimit = (data) => {
+    updateLeavesLimitMutation.mutateAsync({ limit_leaves: data.limit_leaves });
   };
 
   return (
@@ -124,7 +133,7 @@ export default function Settings() {
       </div>
       <div className="flex my-10 bg-gray-100 rounded-lg">
         <div className="p-5 w-full">
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmitPassword)}>
             <div>
               <p className="font-bold text-xl">Password</p>
               <div className="flex flex-row gap-5 w-full">
@@ -146,7 +155,9 @@ export default function Settings() {
                 </div>
               </div>
             </div>
+          </form>
 
+          <form onSubmit={handleSubmit(onSubmitLatitude)}>
             <div>
               <p className="font-bold text-xl mt-5">Check In Location</p>
               <div className="flex flex-row gap-5 w-full">
@@ -167,26 +178,31 @@ export default function Settings() {
                   <Button color="primary" type="submit">Edit</Button>
                 </div>
               </div>
-              <div className="flex flex-row gap-5 w-full">
-                <div className="w-full">
-                  <label className="form-control w-full">
-                    <div className="label">
-                      <span className="label-text">Longitude</span>
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Type here"
-                      className="input input-bordered w-full"
-                      {...register("longitude")}
-                    />
-                  </label>
-                </div>
-                <div className="items-center mt-10 justify-center">
-                  <Button color="primary" type="submit">Edit</Button>
-                </div>
+            </div>
+          </form>
+
+          <form onSubmit={handleSubmit(onSubmitLongitude)}>
+            <div className="flex flex-row gap-5 w-full">
+              <div className="w-full">
+                <label className="form-control w-full">
+                  <div className="label">
+                    <span className="label-text">Longitude</span>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Type here"
+                    className="input input-bordered w-full"
+                    {...register("longitude")}
+                  />
+                </label>
+              </div>
+              <div className="items-center mt-10 justify-center">
+                <Button color="primary" type="submit">Edit</Button>
               </div>
             </div>
+          </form>
 
+          <form onSubmit={handleSubmit(onSubmitLeavesLimit)}>
             <div>
               <p className="font-bold text-xl mt-5">Limit</p>
               <div className="flex flex-row gap-5 w-full">

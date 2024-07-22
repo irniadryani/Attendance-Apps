@@ -13,6 +13,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { createDailyReportFn } from "../../api/dailyReport/dailyReport";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
+import { Button } from "@nextui-org/react";
 
 export default function Attendance() {
   const [clock, setClock] = useState(new Date());
@@ -148,7 +149,9 @@ export default function Attendance() {
           <form method="dialog">
             <button
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-              onClick={() => document.getElementById("attendance_modal").close()}
+              onClick={() =>
+                document.getElementById("attendance_modal").close()
+              }
             >
               ✕
             </button>
@@ -162,11 +165,11 @@ export default function Attendance() {
             </div>
           )}
           <div className="flex flex-col gap-5 w-full my-5">
-          {attendance?.check_in && !attendance?.check_out && (
-            <p className="flex justify-center items-center text-center font-medium text-base">
-              Please Fill The Daily Report First Before Checkout
-            </p>
-          )}
+            {attendance?.check_in && !attendance?.check_out && (
+              <p className="flex justify-center items-center text-center font-medium text-base">
+                Please Fill The Daily Report First Before Checkout
+              </p>
+            )}
             {attendance?.check_in && !attendance?.check_out && (
               <div className="w-full">
                 <div className="card bg-base-100 w-full shadow-2xl mr-10">
@@ -209,13 +212,10 @@ export default function Attendance() {
                         {...register("report_message", { required: true })}
                       ></textarea>
                     </div>
-                    <div className="flex justify-end">
-                      <button
-                        className="btn bg-black text-white my-3"
-                        type="submit"
-                      >
-                        Submit
-                      </button>
+                    <div className="flex justify-end m-5">
+                      <Button color="primary" type="submit">
+                        Send
+                      </Button>
                     </div>
                   </form>
                 </div>

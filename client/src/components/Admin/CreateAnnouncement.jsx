@@ -1,10 +1,14 @@
 import React from "react";
-import { createAnnouncementFn, deleteAnnouncementFn } from "../../api/announcement/announcement";
+import {
+  createAnnouncementFn,
+  deleteAnnouncementFn,
+} from "../../api/announcement/announcement";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import Swal from "sweetalert2";
+import { Button } from "@nextui-org/react";
 
-export default function CreateAnnouncement({refetch}) {
+export default function CreateAnnouncement({ refetch }) {
   const {
     register,
     handleSubmit,
@@ -39,7 +43,6 @@ export default function CreateAnnouncement({refetch}) {
     handleCreateAnnouncement.mutateAsync(data);
   };
 
-
   return (
     <dialog id="create_announcement_modal" className="modal">
       <div className="modal-box">
@@ -60,14 +63,14 @@ export default function CreateAnnouncement({refetch}) {
           </div>
 
           <div className="flex justify-end">
-            <button
-              className="bg-black text-white text-xs text-center rounded-lg font-semibold p-2"
+            <Button
+              color="primary"
               onClick={() =>
                 document.getElementById("create_announcement_modal").close()
               }
             >
               Create
-            </button>
+            </Button>
           </div>
         </form>
       </div>

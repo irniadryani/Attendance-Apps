@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Layout from "../Layout";
 import { getAllAttendanceFn } from "../../api/attendance/attendance";
 import { getAllPermissionFn } from "../../api/permission/permission";
@@ -6,42 +6,36 @@ import { getAllLeavesFn } from "../../api/leaves/leaves";
 import { useQuery } from "@tanstack/react-query";
 import TodayAttendanceTable from "../../components/Admin/TodayAttendanceTable";
 import Admin from "../../assets/admin.png";
+import { IoMdSearch } from "react-icons/io";
 
 export default function Dashboard() {
-  const {
-    data: dataAttendance,
-    isLoading: loadingAttendance,
-  } = useQuery({
+  const [search, setSearch] = useState("");
+
+  const { data: dataAttendance, isLoading: loadingAttendance } = useQuery({
     queryKey: ["attendance"],
     queryFn: getAllAttendanceFn,
   });
 
-  const {
-    data: dataPermission,
-    isLoading: loadingPermission,
-  } = useQuery({
+  const { data: dataPermission, isLoading: loadingPermission } = useQuery({
     queryKey: ["permission"],
     queryFn: getAllPermissionFn,
   });
 
-  const {
-    data: dataLeaves,
-    isLoading: loadingLeaves,
-  } = useQuery({
+  const { data: dataLeaves, isLoading: loadingLeaves } = useQuery({
     queryKey: ["leaves"],
     queryFn: getAllLeavesFn,
   });
 
   const formatDate = (date) => {
     const d = new Date(date);
-    let month = '' + (d.getMonth() + 1);
-    let day = '' + d.getDate();
+    let month = "" + (d.getMonth() + 1);
+    let day = "" + d.getDate();
     const year = d.getFullYear();
 
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
 
-    return [year, month, day].join('-');
+    return [year, month, day].join("-");
   };
 
   const today = formatDate(new Date());
@@ -65,7 +59,7 @@ export default function Dashboard() {
     if (!loadingPermission && dataPermission) {
       // Calculate permission lengths for today
       todayPermission = dataPermission.filter(
-        (entry) => formatDate(entry.start_date) === today 
+        (entry) => formatDate(entry.start_date) === today
       ).length;
     }
 
@@ -88,6 +82,16 @@ export default function Dashboard() {
   const todayAbsences = calculateTodayAbsences();
   const todayPermission = calculateTodayPermission();
   const todayLeaves = calculateTodayLeaves();
+
+  const filteredAttendances = dataAttendance?.attendances.filter(
+    (attendance) => {
+      const matchingName =
+        search === "" ||
+        attendance?.full_name?.toLowerCase().includes(search.toLowerCase());
+
+      return matchingName;
+    }
+  );
 
   return (
     <Layout>
@@ -132,8 +136,23 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      <div className="flex justify-end">
+        <div className="flex items-center gap-2 pl-4 max-w-[200px] my-10 mx-10 rounded-lg bg-white border border-black hover:border-black focus:border-black  border-solid border-2 shadow-xl">
+          <IoMdSearch fontSize="1.125rem" color="#000000" />
+          <input
+            type="text"
+            className="flex h-10 pe-4 pb-1 w-full rounded-lg outline-none text-sm"
+            placeholder="Search Employee"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+      </div>
       <div className="my-10">
-        <TodayAttendanceTable />
+        <TodayAttendanceTable
+          dataAttendance={filteredAttendances}
+          loadingAttendance={loadingAttendance}
+        />
       </div>
     </Layout>
   );

@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 const sequelize = require("./config/connection.js");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 const cors = require("cors");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
@@ -20,12 +22,17 @@ dotenv.config();
 const port = process.env.APP_PORT;
 
 //Middleware
+app.use(express.json());
 app.use(
   cors({
     origin: (origin, callback) => {
       // Check if the origin is allowed
       const allowedOrigins = [
-        "http://10.10.101.199:3000",
+        `http://10.10.101.129:${port}`,
+        `http://192.168.231.91:${port}`,
+        `http://localhost:${port}`,
+        "http://10.10.101.129:3000",
+        "http://192.168.231.91:3000",
         "http://localhost:3000",
       ];
 
@@ -42,11 +49,11 @@ app.use(
   })
 );
 
-
 // Middleware for handling file uploads
 app.use(fileUpload());
 app.use(cookieParser());
 app.use(express.json()); //menerima data dalam bentuk json
+app.use("/images", express.static("public/images"));
 app.use(UserRoute);
 app.use(PermissionRoute);
 app.use(AuthRoute);
@@ -60,9 +67,6 @@ app.use(LimitRoute);
 app.post("/ping", (req, res) => {
   res.send("pong");
 });
-
-// // Start cron job
-// updateMissedCheckouts();
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

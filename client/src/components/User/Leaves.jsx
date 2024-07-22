@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import DetailLeaves from "./DetailLeaves";
 import { useSelector } from "react-redux";
+import { Button } from "@nextui-org/react";
 
 export default function Leaves() {
   const [startDate, setStartDate] = useState(new Date());
@@ -22,8 +23,6 @@ export default function Leaves() {
     queryKey: ["leaves", user?.id],
     queryFn: () => getLeavesByIdFn(user?.id),
   });
-
-  
 
   const {
     register,
@@ -80,17 +79,24 @@ export default function Leaves() {
               document.getElementById("detail_leaves_modal").showModal()
             }
           >
-            <p className="font-thin text-xs mb-1 text-start">*Tap to see detail</p>
+            <p className="font-thin text-xs mb-1 text-start">
+              *Tap to see detail
+            </p>
             <div className="card bg-neutral text-neutral-content w-56 h-24">
               <div className="flex flex-col items-center text-center justify-between">
-                <h2 className="font-bold text-6xl items-end">{dataSingleLeaves?.remainingLeaves || dataSingleLeaves?.maximumLeaves}</h2>
+                <h2 className="font-bold text-6xl items-end">
+                  {dataSingleLeaves?.remainingLeaves ||
+                    dataSingleLeaves?.maximumLeaves}
+                </h2>
                 <p className="font-bold text-lg items-end">Leaves Left</p>
               </div>
             </div>
           </button>
           <div className="card bg-base-100 w-full shadow-2xl my-5 mr-10">
             <form onSubmit={handleSubmit(addLeaves)} className="p-5">
-              <p className="font-bold text-lg my-5 text-center">Form Leave Request</p>
+              <p className="font-bold text-lg my-5 text-center">
+                Form Leave Request
+              </p>
               <div className="flex flex-row justify-between">
                 <label htmlFor="start_date" className="text-sm font-medium">
                   Start Date
@@ -144,10 +150,10 @@ export default function Leaves() {
                   {...register("notes")}
                 ></textarea>
               </div>
-              <div className="flex justify-end">
-                <button className="btn bg-black text-white my-3" type="submit">
+              <div className="flex justify-end m-5">
+                <Button color="primary" type="submit">
                   Submit
-                </button>
+                </Button>
               </div>
             </form>
           </div>

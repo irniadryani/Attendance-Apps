@@ -34,7 +34,6 @@ export default function DailyReport() {
               <AccordionItem
                 key={dailyReport.id}
                 aria-label={`Accordion ${dailyReport.id}`}
-                title="tes"
                 subtitle={dailyReport.report_date} 
               >
                 <div className="flex flex-col gap-1">

@@ -11,7 +11,7 @@ export const getAllUserFn = async () => {
 };
 
 export const getUserByIdFn = async (id) => {
-  const response = await Api.get(`/users/${id}`);
+  const response = await Api.get(`/user/${id}`);
   return response.data;
 };
 
@@ -21,11 +21,21 @@ export const createUserFn = async (data) => {
 };
 
 export const updateUserFn = async (id, data) => {
-  const response = await Api.put(`/users/${id}`, data, formDataconfig);
+  const response = await Api.put(`/user/${id}`, data, formDataconfig);
+  return response.data;
+};
+
+export const updateRoleUserFn = async (id, data) => {
+  const response = await Api.put(`/user/update-role/${id}`, data);
+  return response.data;
+};
+
+export const changePasswordUserFn = async (id, data) => {
+  const response = await Api.put(`/user/change-password/${id}`, data);
   return response.data;
 };
 
 export const deleteUserFn = async (id) => {
-  const response = await Api.delete(`users/${id}`);
+  const response = await Api.delete(`user/${id}`);
   return response.data;
 };

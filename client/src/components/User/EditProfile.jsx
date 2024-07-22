@@ -17,8 +17,6 @@ export default function EditProfile() {
     queryFn: () => getUserByIdFn(user?.id),
   });
 
-  console.log("data", dataSingleUser);
-
   const {
     register,
     handleSubmit: submitEditProfile,
@@ -38,13 +36,23 @@ export default function EditProfile() {
     }
   }, [user.id, refetchSingleUser]);
 
+  // useEffect(() => {
+  //   if (!loadingSingleUser && dataSingleUser) {
+  //     resetEditProfile({
+  //       full_name: dataSingleUser.full_name,
+  //     });
+  //   }
+  // }, [loadingSingleUser, dataSingleUser]);
+
   useEffect(() => {
     if (!loadingSingleUser && dataSingleUser) {
       resetEditProfile({
         full_name: dataSingleUser.full_name,
       });
+
+      setValue("photo_profil", dataSingleUser.url);
     }
-  }, [loadingSingleUser, dataSingleUser]);
+  }, [loadingSingleUser, dataSingleUser, resetEditProfile]);
 
   const handleUpdateProfile = useMutation({
     mutationFn: (data) => updateUserFn(user.id, data),
@@ -86,6 +94,7 @@ export default function EditProfile() {
 
     handleUpdateProfile.mutateAsync(pengajarData);
   };
+
 
   return (
     <div>

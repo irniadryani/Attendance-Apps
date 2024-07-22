@@ -152,6 +152,7 @@ export default function Announcement() {
             </div>
           ))}
         </div>
+       
       </div>
       <CreateAnnouncement refetch={refetchAnnouncement} />
 

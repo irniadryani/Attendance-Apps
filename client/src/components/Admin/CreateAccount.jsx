@@ -3,6 +3,7 @@ import { createUserFn } from "../../api/user/user";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
+import { Button } from "@nextui-org/react";
 
 export default function CreateAccount() {
   const {
@@ -112,7 +113,7 @@ export default function CreateAccount() {
                     <input
                       type="text"
                       className="grow w-full text-black"
-                      placeholder="Email"
+                      placeholder="name"
                       {...register("full_name", { required: true })}
                     />
                   </label>
@@ -151,17 +152,18 @@ export default function CreateAccount() {
                     />
                   </label>
                 </div>
-
+               
                 <div className="flex justify-end">
-                  <button
+                  <Button
+                    color="primary"
                     type="submit"
-                    className="btn bg-white text-black"
+                  
                     onClick={() => {
                       console.log("clicked");
                     }}
                   >
                     Create
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

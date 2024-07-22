@@ -48,7 +48,7 @@ export default function DailyReport() {
         {filteredEmployee.map((employee) => (
           <div
             key={employee.user_id}
-            className="card bg-neutral text-neutral-content w-full mb-3 h-lg"
+            className="card bg-black text-white w-full mb-3 h-lg"
           >
             <div className="card-body items-start text-start">
               <h2 className="card-title text-start">{employee.user_name}</h2>
@@ -61,7 +61,7 @@ export default function DailyReport() {
                 }}
               >
                 <div className="flex justify-end">
-                  <button className="btn btn-active bg-white text-black btn-4/12 justify-end">
+                  <button className="btn btn-active bg-white text-black btn-4/12 justify-end shadow-lg">
                     Detail
                   </button>
                 </div>

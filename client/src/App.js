@@ -13,6 +13,8 @@ import DailyReport from "./pages/Admin/DailyReport";
 import DetailDailyReport from "./pages/Admin/DetailDailyReport";
 import Settings from "./pages/Admin/Settings.jsx"
 import DashboardSuperAdmin from "./pages/Superadmin/Dashboard.jsx"
+import SelfAttendance from "./pages/Admin/SelfAttendance.jsx"
+import EmployeeRole from "./pages/Superadmin/Employee.jsx"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools/build/modern/production.js";
 import { ToastContainer } from "react-toastify";
@@ -45,6 +47,7 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<DashboardUser />} />
+
               {/* Route Admin */}
               <Route path="/dashboard-admin" element={<DashboardAdmin />} />
               <Route path="/employee-list" element={<EmployeeList />} />
@@ -62,9 +65,12 @@ function App() {
               <Route path="/daily-report" element={<DailyReport />} />
               <Route path={"/daily-report/:id"} element={<DetailDailyReport />} />
               <Route path={"/settings"} element={<Settings />} />
+              <Route path={"/self-attendance"} element={<SelfAttendance />} />
+
 
               {/* Route SuperAdmin */}
               <Route path="/dashboard-superadmin" element={<DashboardSuperAdmin />} />
+              <Route path="/employee-role" element={<EmployeeRole />} />
             </Routes>
           </BrowserRouter>
           <ToastContainer />

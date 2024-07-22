@@ -1,4 +1,4 @@
-import { Accordion, AccordionItem } from "@nextui-org/react";
+import { Accordion, AccordionItem, Button } from "@nextui-org/react";
 import React from "react";
 import { getPermissionByIdFn } from "../../api/permission/permission";
 import { getLeavesByIdFn } from "../../api/leaves/leaves";
@@ -31,7 +31,7 @@ export default function Approval() {
     <div>
       <dialog id="approval_modal" className="modal">
         <div className="modal-box w-11/12 max-w-5xl">
-          <h3 className="font-bold text-2xl text-center">Approval List</h3>
+          {/* <h3 className="font-bold text-2xl text-center">Approval List</h3>
           <div className="modal-action">
             <div className="card bg-base-100 w-full shadow-xl">
               <div className="card-body">
@@ -52,7 +52,7 @@ export default function Approval() {
                 </div>))}
               </div>
             </div>
-          </div>
+          </div> */}
           <div className="modal-action">
             <div className="card bg-base-100 w-full shadow-xl">
             <div className="card-body">
@@ -74,11 +74,9 @@ export default function Approval() {
               </div>
             </div>
           </div>
-          <div className="modal-action flex justify-end">
+          <div className="modal-action flex justify-end m-5">
             <form method="dialog">
-              <button className="btn bg-black text-white justify-end my-5">
-                Close
-              </button>
+            <Button color="primary" type="submit">Close</Button>
             </form>
           </div>
         </div>

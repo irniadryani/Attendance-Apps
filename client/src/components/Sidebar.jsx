@@ -51,6 +51,16 @@ export const Sidebar = () => {
             </NavLink>
           </li>
           <li>
+            <NavLink
+              to="/employee-role"
+              className="menu-item rounded-xl mb-2"
+              activeClassName="font-bold"
+            >
+              <AiOutlineUserAdd />
+              Employee
+            </NavLink>
+          </li>
+          <li>
             <button
               onClick={() => logoutFn()}
               className="menu-item"
@@ -85,6 +95,7 @@ export const Sidebar = () => {
               Employee List
             </NavLink>
           </li>
+         
           <li>
             <NavLink
               to="/attendance-history"
@@ -123,16 +134,6 @@ export const Sidebar = () => {
             >
               <TbReportAnalytics />
               Daily Report
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/"
-              className="menu-item rounded-xl mb-2"
-              activeClassName="font-bold"
-            >
-              <LuUserCheck2 />
-              Self Attendance
             </NavLink>
           </li>
           <li>

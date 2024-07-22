@@ -12,16 +12,15 @@ import Approval from "./Approval";
 
 export default function Menu() {
   return (
-    <div>
-      {" "}
-      <div className="flex flex-row items-center justify-center gap-7 my-5">
-        <btn
-          className="bg-black rounded-3xl w-36 h-36 flex flex-col justify-center items-center p-5"
+    <div className="container mx-auto p-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 my-5">
+        <button
+          className="bg-black rounded-3xl w-full md-h-18 lg-h-18 flex flex-col justify-center items-center p-5"
           onClick={() =>
             document.getElementById("attendance_modal").showModal()
           }
         >
-          <div className="w-24">
+          <div className="md-w-12 lg-w-12">
             <img
               src={Attendance}
               className="w-full items-center justify-center"
@@ -32,14 +31,14 @@ export default function Menu() {
           <p className="text-white font-semibold text-center justify-center text-sm mt-3">
             Attendance
           </p>
-        </btn>
-        <btn
-          className="bg-black rounded-3xl w-36 h-36 flex flex-col justify-center items-center p-5"
+        </button>
+        <button
+          className="bg-black rounded-3xl w-full md-h-18 lg-h-18 flex flex-col justify-center items-center p-5"
           onClick={() =>
             document.getElementById("permission_modal").showModal()
           }
         >
-          <div className="w-24">
+          <div className="md-w-12 lg-w-12">
             <img
               src={Permissionn}
               className="w-full items-center justify-center"
@@ -50,15 +49,15 @@ export default function Menu() {
           <p className="text-white font-semibold text-center justify-center text-sm mt-3">
             Permission
           </p>
-        </btn>
-        <btn
-          className="bg-black rounded-3xl w-36 h-36 flex flex-col justify-center items-center p-5"
+        </button>
+        <button
+          className="bg-black rounded-3xl w-full md-h-18 lg-h-18 flex flex-col justify-center items-center p-5"
           onClick={() => document.getElementById("leaves_modal").showModal()}
         >
-          <div className="w-24">
+          <div className="md-w-12 lg-w-12">
             <img
               src={Leavess}
-              className="w-fullitems-center justify-center"
+              className="w-full items-center justify-center"
               alt="Leaves"
             />
           </div>
@@ -66,14 +65,14 @@ export default function Menu() {
           <p className="text-white font-semibold text-center justify-center text-sm mt-3">
             Leaves
           </p>
-        </btn>
-        <btn
-          className="bg-black rounded-3xl w-36 h-36 flex flex-col justify-center items-center p-5"
+        </button>
+        <button
+          className="bg-black rounded-3xl w-full md-h-18 lg-h-18 flex flex-col justify-center items-center p-5"
           onClick={() =>
             document.getElementById("daily_report_modal").showModal()
           }
         >
-          <div className="w-24">
+          <div className="md-w-12 lg-w-12">
             <img
               src={Daily}
               className="w-full items-center justify-center"
@@ -84,12 +83,12 @@ export default function Menu() {
           <p className="text-white font-semibold text-center justify-center text-sm mt-3">
             Daily Report
           </p>
-        </btn>
+        </button>
         <button
-          className="bg-black rounded-3xl w-36 h-36 flex flex-col justify-center items-center p-5"
+          className="bg-black rounded-3xl w-full md-h-18 lg-h-18 flex flex-col justify-center items-center p-5"
           onClick={() => document.getElementById("approval_modal").showModal()}
         >
-          <div className="w-24">
+          <div className="md-w-12 lg-w-12">
             <img
               src={Approvall}
               className="w-full items-center justify-center"
@@ -110,5 +109,3 @@ export default function Menu() {
     </div>
   );
 }
-
-//
