@@ -19,7 +19,12 @@ export const updateLongitudeFn = async (data) => {
   return response.data;
 };
 
+// export const updateLeavesLimitFn = async (data) => {
+//   const response = await Api.post("/limit-leaves", data);
+//   return response.data;
+// };
+
 export const updateLeavesLimitFn = async (data) => {
-  const response = await Api.post("/limit-leaves", data);
+  const response = await Api.post("/update-limit-leaves", data);
   return response.data;
 };

@@ -7,7 +7,7 @@ router.get('/userContent', verifyToken, settingController.getUserContent);
 router.post('/default-password', verifyToken, settingController.defaultPassword);
 router.post('/limit-leaves', verifyToken, settingController.limitLeaves);
 router.post('/latitude', verifyToken, settingController.latitude);
-router.post('/longtitude', verifyToken, settingController.longitude);
+router.post('/longitude', verifyToken, settingController.longitude);
 
 
 module.exports = router;

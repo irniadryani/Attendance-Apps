@@ -3,6 +3,6 @@ const router = require("express").Router();
 const limitController = require('../controllers/LimitController');
 const { verifyToken } = require("../middleware/AuthUser");
 
-router.post('/update-limit-leaves', verifyToken, limitController.limitLeaves);
+router.post('/update-limit-leaves', verifyToken, limitController.updateLimitLeaves);
 
 module.exports = router;
