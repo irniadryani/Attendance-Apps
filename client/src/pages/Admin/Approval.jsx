@@ -81,8 +81,8 @@ export default function Approval() {
           </div>
         </div>
         <Link to="/history-approval">
-          <div className="flex justify-end my-5">
-            <button className="btn btn-active btn-neutral">History</button>
+          <div className="flex justify-end my-5 mx-12">
+            <button className="btn btn-active bg-black text-white">History</button>
           </div>
         </Link>
         <div>

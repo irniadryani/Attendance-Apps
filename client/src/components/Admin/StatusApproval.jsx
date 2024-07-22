@@ -4,24 +4,17 @@ import { updatePermissionFn } from "../../api/permission/permission";
 import Swal from "sweetalert2";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { useMutation } from "@tanstack/react-query";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 
 export default function StatusApproval({ type, status, id, refetch }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [key, setKey] = useState(0);
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-    setKey((prevKey) => prevKey + 1);
-  };
 
   const closeDropdown = () => {
     setIsOpen(false);
   };
 
-  const updateStatusFn = type === "leave" ? updateLeavesFn : updatePermissionFn;
-
   const handleStatusResponse = useMutation({
-    mutationFn: ({ id, status }) => updateStatusFn(id, status),
+    mutationFn: (data) => updateLeavesFn(id, data),
     onSuccess: (res) => {
       console.log(res);
       refetch();
@@ -42,9 +35,12 @@ export default function StatusApproval({ type, status, id, refetch }) {
         cancelButtonColor: "#d33",
         confirmButtonText: "Yes, update it!",
       });
-  
+
       if (result.isConfirmed) {
-        await handleStatusResponse.mutateAsync({ id, status: newStatus });
+        const data = {
+          status: newStatus,
+        };
+        await handleStatusResponse.mutateAsync(data);
         Swal.fire({
           title: "Status Updated!",
           text: "The status has been updated.",
@@ -60,33 +56,56 @@ export default function StatusApproval({ type, status, id, refetch }) {
       });
     }
   };
-  
 
   return (
-    <details
-      className="dropdown"
-      key={key}
-      open={isOpen}
-      onClick={toggleDropdown}
-    >
-      <summary className="m-1 btn">
+    <Menu>
+      <MenuButton className="m-1 flex flex-row gap-2 items-center bg-base-100 p-2 rounded-md">
         <div className="flex gap-2 items-center">
-          <div className="flex gap-2 items-center">
-            <div className="rounded-full w-2 h-2" style={{ backgroundColor: status === "Approved" ? 'green' : 'red' }}></div>
-            <p className={`font-semibold text-sm ${status === "Approved" ? 'text-green-600' : 'text-red-600'}`}>{status}</p>
-          </div>
-          <MdOutlineKeyboardArrowDown />
+          <div
+            className="rounded-full w-2 h-2"
+            style={{
+              backgroundColor: status === "Approved" ? "green" : "red",
+            }}
+          ></div>
+          <p
+            className={`font-semibold text-sm ${
+              status === "Approved" ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {status}
+          </p>
         </div>
-      </summary>
-      <ul className="p-2 shadow menu dropdown-content z-[1] bg-base-100 rounded-box w-52 mt-2">
-        {["Submitted", "Approved", "Rejected", "Canceled"].map((statusOption) => (
-          <li onClick={() => handleConfirmStatus(statusOption)} key={statusOption}>
-            <div className="flex gap-2 items-center">
-              <p className={`font-semibold text-sm ${statusOption === "Approved" ? 'text-green-600' : 'text-red-600'}`}>{statusOption}</p>
+        <MdOutlineKeyboardArrowDown />
+      </MenuButton>
+      <MenuItems
+        anchor="bottom"
+        as="div"
+        className="p-2 w-40 shadow bg-base-100 mt-2 rounded-md"
+      >
+        {[
+          { name: "Submitted", color: "yellow" },
+          { name: "Approved", color: "green" },
+          { name: "Rejected", color: "red" },
+          { name: "Canceled", color: "blue" },
+        ].map((statusOption) => (
+          <MenuItem
+            onClick={() => handleConfirmStatus(statusOption.name)}
+            key={statusOption}
+          >
+            <div className="p-2 flex gap-2 items-center">
+              <p
+                className={`font-semibold text-sm ${
+                  statusOption.color === "yellow" && "text-yellow-600"
+                } ${statusOption.color === "green" && "text-green-600"} ${
+                  statusOption.color === "red" && "text-red-600"
+                } ${statusOption.color === "blue" && "text-blue-600"}`}
+              >
+                {statusOption.name}
+              </p>
             </div>
-          </li>
+          </MenuItem>
         ))}
-      </ul>
-    </details>
+      </MenuItems>
+    </Menu>
   );
 }
