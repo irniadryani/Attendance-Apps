@@ -2,43 +2,48 @@ import React, { useState, useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import LoginBG2 from "../assets/login2.png";
 import { useDispatch, useSelector } from "react-redux";
-import { getMe, loginUser, reset } from "../features/authSlice"; //panggil action dari redux
+import { getMe, loginUser, reset } from "../features/authSlice";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const togglePassword = () => setShowPassword((prev) => !prev);
 
-  const {
-    register,
-    handleSubmit,
-    // formState: { errors },
-  } = useForm();
+  const methods = useForm();
+  const { register, handleSubmit } = methods;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isError, user } = useSelector((state) => state.auth);
+  const { isError, user, message } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(getMe());
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   if (user) {
-  //     navigate("/");
-  //   }
-  // }, [user]);
-
   useEffect(() => {
     if (user?.role === "User") {
+      toast.success("You successfully logged in")
       navigate("/");
-    }else if (user?.role === "Admin"){
-      navigate("/dashboard-admin")
-    }else if (user?.role === "Superadmin"){
-      navigate("/dashboard-superadmin")
+    } else if (user?.role === "Admin") {
+      toast.success("You successfully logged in")
+      navigate("/dashboard-admin");
+    } else if (user?.role === "Superadmin") {
+      toast.success("You successfully logged in")
+      navigate("/dashboard-superadmin");
     }
-  }, [user]);
+  }, [user, navigate]);
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message || "Login failed");
+    }
+    dispatch(reset());
+  }, [isError, message, dispatch]);
 
   const Auth = (data, e) => {
     e.preventDefault();
@@ -52,9 +57,9 @@ export default function Login() {
       <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <div className="">
-            <div className="flex items-center justify-center">
+            {/* <div className="flex items-center justify-center">
               <img className="h-24 w-40" alt="Logo WGS" />
-            </div>
+            </div> */}
             <h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">
               Sign In
             </h2>
@@ -62,9 +67,8 @@ export default function Login() {
 
           <div className="mt-8">
             <div className="mt-6">
-              <FormProvider {...useForm}>
+              <FormProvider {...methods}>
                 <form className="space-y-6" onSubmit={handleSubmit(Auth)}>
-                  {/* {isError && <p className="text-center">{message}</p>} */}
                   <div className="flex flex-col">
                     <label className="mb-2" htmlFor="">
                       Email

@@ -15,7 +15,7 @@ export default function Announcement() {
   return (
     <div>
       <div>
-        <div className="card bg-base-100 w-full h-full shadow-2xl my-10">
+        <div className="card bg-base-100 w-full h-full shadow-2xl ">
           <div className="card-body">
             <h2 className="card-title text-center font-bold">Announcement!</h2>
             {dataAnnouncement?.map((announcement) => (

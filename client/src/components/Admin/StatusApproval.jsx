@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { updateLeavesFn } from "../../api/leaves/leaves";
-import { updatePermissionFn } from "../../api/permission/permission";
 import Swal from "sweetalert2";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { useMutation } from "@tanstack/react-query";

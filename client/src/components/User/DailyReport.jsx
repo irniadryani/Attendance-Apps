@@ -12,7 +12,7 @@ export default function DailyReport() {
     refetch: refetchDailyReport,
     isLoading: loadingDailyReport,
   } = useQuery({
-    queryKey: ["permission", user?.id],
+    queryKey: ["dailyReport", user?.id],
     queryFn: () => getDailyReportByIdFn(user?.id),
   });
 

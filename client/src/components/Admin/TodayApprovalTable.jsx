@@ -50,9 +50,7 @@ export default function TodayApprovalTable() {
 
   const calculateTodayLeaves = () => {
     if (!loadingLeaves && dataLeaves) {
-      return dataLeaves.filter(
-        (entry) => formatDate(entry.start_date) === today
-      );
+      return dataLeaves.filter((entry) => entry.status === "Submitted");
     }
     return [];
   };
@@ -66,9 +64,10 @@ export default function TodayApprovalTable() {
       [id]: !prevExpandedRows[id],
     }));
   };
+
   return (
     <div>
-      <p className="font-bold text-lg mx-12 my-5">Today Leaves Approval</p>
+      <p className="font-bold text-lg mx-12 my-5">Leaves Approval</p>
       <div className="overflow-x-auto flex justify-center">
         <table className="table table-zebra w-full max-w-4xl">
           <thead>
@@ -97,7 +96,9 @@ export default function TodayApprovalTable() {
                 <td>{leave.start_date}</td>
                 <td>{leave.end_date}</td>
                 <td>
-                {expandedRows[leave.id] ? leave.notes : `${leave.notes.substring(0, 20)}`}
+                  {expandedRows[leave.id]
+                    ? leave.notes
+                    : `${leave.notes.substring(0, 20)}`}
                   {leave.notes.length > 20 && (
                     <button
                       className="btn btn-xs bg-black text-white ml-3"
@@ -138,23 +139,40 @@ export default function TodayApprovalTable() {
                   <td>{permission.start_date}</td>
                   <td>{permission.end_date}</td>
                   <td>
-                    <img
-                      src={`${process.env.REACT_APP_BACKEND_HOST?.replace(
-                        /\/$/,
-                        ""
-                      )}${permission?.url}`}
-                      alt="proof"
-                      className="h-auto w-60 object-cover object-center"
-                    />
+                    {permission?.file?.endsWith(".pdf") ? (
+                      <iframe
+                        src={`${process.env.REACT_APP_BACKEND_HOST?.replace(
+                          /\/$/,
+                          ""
+                        )}${permission?.url}`}
+                        title="PDF Viewer"
+                        width="100%"
+                        height="200px"
+                      />
+                    ) : (
+                      <img
+                        src={`${process.env.REACT_APP_BACKEND_HOST?.replace(
+                          /\/$/,
+                          ""
+                        )}${permission?.url}`}
+                        alt="proof"
+                        className="h-auto w-60 object-cover object-center"
+                      />
+                    )}
                   </td>
+
                   <td>
-                  {expandedRows[permission.id] ? permission.notes : `${permission.notes.substring(0, 20)}`}
+                    {expandedRows[permission.id]
+                      ? permission.notes
+                      : `${permission.notes.substring(0, 20)}`}
                     {permission.notes.length > 20 && (
                       <button
                         className="btn btn-xs bg-black text-white ml-3"
                         onClick={() => toggleRowExpansion(permission.id)}
                       >
-                        {expandedRows[permission.id] ? "Show less" : "Show more"}
+                        {expandedRows[permission.id]
+                          ? "Show less"
+                          : "Show more"}
                       </button>
                     )}
                   </td>

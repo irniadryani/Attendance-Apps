@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { getAllAttendanceFn } from "../../api/attendance/attendance";
 import { useQuery } from "@tanstack/react-query";
+import { hourglass } from "ldrs";
+
 
 export default function TodayAttendanceTable({
   dataAttendance,
@@ -8,6 +10,8 @@ export default function TodayAttendanceTable({
   currentPaginationTable,
 }) {
   const [currentPage, setCurrentPage] = useState(currentPaginationTable || 1);
+
+  hourglass.register();
 
   const calculateTodayAttendance = () => {
     if (!loadingAttendance && dataAttendance) {
@@ -63,7 +67,16 @@ export default function TodayAttendanceTable({
 
   // Show loading or empty state when todayAttendance is undefined or null
   if (!todayAttendance) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex justify-center items-center h-full">
+        <l-hourglass
+          size="40"
+          bg-opacity="0.1"
+          speed="1.75"
+          color="black"
+        ></l-hourglass>
+      </div>
+    );
   }
 
   return (

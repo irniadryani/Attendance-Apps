@@ -60,16 +60,6 @@ export const Sidebar = () => {
               Employee
             </NavLink>
           </li>
-          <li>
-            <button
-              onClick={() => logoutFn()}
-              className="menu-item"
-              activeClassName="font-bold"
-            >
-              <TbLogout />
-              Log out
-            </button>
-          </li>
         </>
       );
     } else if (user && user.role === "Admin") {
@@ -156,16 +146,6 @@ export const Sidebar = () => {
               Settings
             </NavLink>
           </li>
-          <li>
-            <button
-              onClick={() => logoutFn()}
-              className="menu-item"
-              activeClassName="font-bold"
-            >
-              <TbLogout />
-              Log out
-            </button>
-          </li>
         </>
       );
     }
@@ -173,7 +153,7 @@ export const Sidebar = () => {
 
   return (
     <div>
-      <div className="drawer lg:drawer-open">
+      <div className="drawer !h-dvh lg:drawer-open">
         <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
 
         <div className="drawer-side">
@@ -182,7 +162,7 @@ export const Sidebar = () => {
             aria-label="close sidebar"
             className="drawer-overlay"
           ></label>
-          <ul className="menu bg-black text-white font-semibold min-h-full w-80 p-4">
+          <ul className="menu bg-black text-white font-semibold !h-dvh w-80 p-4 overflow-y-auto">
             {getMenuItems()}
           </ul>
         </div>

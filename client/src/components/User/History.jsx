@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Accordion, AccordionItem } from "@nextui-org/react";
 import { useParams } from "react-router-dom";
 import { getAttendanceByIdFn } from "../../api/attendance/attendance";
@@ -15,8 +15,11 @@ export default function History() {
     queryFn: () => getAttendanceByIdFn(id),
   });
 
-  console.log("attendance", dataSingleAttendance)
-  
+  // useEffect(() => {
+  //   dataSingleAttendance();
+  //   }
+  // ,[]);
+
   const getTitle = (attendance) => {
     const today = new Date();
     const attendanceDate = new Date(attendance.date);
@@ -41,7 +44,7 @@ export default function History() {
       <div>
         <p className="font-bold text-2xl mx-10 mt-10">History</p>
 
-        <div className="flex justify-end mx-10">
+        {/* <div className="flex justify-end mx-10">
           <div className="dropdown dropdown-hover mt-5">
             <div
               tabIndex={0}
@@ -62,7 +65,7 @@ export default function History() {
               </li>
             </ul>
           </div>
-        </div>
+        </div> */}
 
         <div className="my-5">
           <Accordion variant="splitted" className="dark:bg-gray-800 text-black">

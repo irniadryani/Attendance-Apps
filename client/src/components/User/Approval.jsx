@@ -9,15 +9,6 @@ export default function Approval() {
   const { user } = useSelector((state) => state.auth);
 
   const {
-    data: dataSinglePermission,
-    refetch: refetchSinglePermission,
-    isLoading: loadingSinglePermission,
-  } = useQuery({
-    queryKey: ["permission", user?.id],
-    queryFn: () => getPermissionByIdFn(user?.id),
-  });
-
-  const {
     data: dataSingleLeaves,
     refetch: refetchSingleLeaves,
     isLoading: loadingSingleLeaves,
@@ -26,57 +17,39 @@ export default function Approval() {
     queryFn: () => getLeavesByIdFn(user?.id),
   });
 
- 
   return (
     <div>
       <dialog id="approval_modal" className="modal">
         <div className="modal-box w-11/12 max-w-5xl">
-          {/* <h3 className="font-bold text-2xl text-center">Approval List</h3>
           <div className="modal-action">
             <div className="card bg-base-100 w-full shadow-xl">
               <div className="card-body">
-                <h2 className="card-title mb-5">Permission Approval</h2>
-                {dataSinglePermission?.map((permission) => (
-                <div className="card bg-black w-full shadow-xl flex flex-row justify-between">
-                  <div className="p-2 mx-2">
-                    <p className="text-white font-semibold text-lg">{permission.notes}</p>
-                    <p className="text-white font-semibold text-sm">
-                    {`${permission.start_date} - ${permission.end_date}`}
-                    </p>
-                  </div>
-                  <div className="rounded-2xl bg-white text-black w-24 h-10 text-center m-3 items-center">
-                    <p className="flex text-center justify-center items-center mt-2 font-medium">
-                     {permission.status}
-                    </p>
-                  </div>
-                </div>))}
-              </div>
-            </div>
-          </div> */}
-          <div className="modal-action">
-            <div className="card bg-base-100 w-full shadow-xl">
-            <div className="card-body">
                 <h2 className="card-title mb-5">Leaves Approval</h2>
                 {dataSingleLeaves?.leaves.map((leaves) => (
-                <div className="card bg-black w-full shadow-xl flex flex-row justify-between">
-                  <div className="p-2 mx-2">
-                    <p className="text-white font-semibold text-lg">{leaves.notes}</p>
-                    <p className="text-white font-semibold text-sm">
-                    {`${leaves.start_date} - ${leaves.end_date}`}
-                    </p>
+                  <div className="card bg-black w-full shadow-xl flex flex-row justify-between">
+                    <div className="p-2 mx-2">
+                      <p className="text-white font-semibold text-lg">
+                        {leaves.notes}
+                      </p>
+                      <p className="text-white font-semibold text-sm">
+                        {`${leaves.start_date} - ${leaves.end_date}`}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-white text-black w-24 h-10 text-center m-3 items-center">
+                      <p className="flex text-center justify-center items-center mt-2 font-medium">
+                        {leaves.status}
+                      </p>
+                    </div>
                   </div>
-                  <div className="rounded-2xl bg-white text-black w-24 h-10 text-center m-3 items-center">
-                    <p className="flex text-center justify-center items-center mt-2 font-medium">
-                     {leaves.status}
-                    </p>
-                  </div>
-                </div>))}
+                ))}
               </div>
             </div>
           </div>
           <div className="modal-action flex justify-end m-5">
             <form method="dialog">
-            <Button color="primary" type="submit">Close</Button>
+              <Button color="primary" type="submit">
+                Close
+              </Button>
             </form>
           </div>
         </div>

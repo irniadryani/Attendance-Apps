@@ -36,24 +36,25 @@ export default function DetailDailyReport() {
 
   return (
     <Layout>
-      <div className="flex flex-col">
+      <div className="flex flex-col mx-5">
         <p className="mt-10 font-bold text-4xl text-black">{employeeName}</p>
         <p className="font-medium text-xl text-black">{employeePosition}</p>
       </div>
-      <div>
-        <div className="flex flex-row p-3">
+      <div className="mt-10">
+        <div className="flex flex-row p-3 bg-black text-white w-72 rounded-xl mx-3">
           <div>
-            <p className="font-semibold text-sm items-center mr-2">
+            <p className="font-semibold text-sm items-center ">
               Sort By Date:
             </p>
           </div>
 
-          <div className="w-36">
+          <div className="ml-1 w-36 rounded-lg">
             <DatePicker
+            className="rounded-lg text-black"
               selected={date}
               onChange={(date) => setDate(date)}
               isClearable
-              placeholderText="Select a date"
+              placeholderText=" Select a date"
             />
           </div>
         </div>

@@ -40,12 +40,14 @@ const Attendance = () => {
     const matchingName =
       search === "" ||
       employee?.full_name?.toLowerCase().includes(search.toLowerCase());
-    
+
     const matchingDate =
       !date || new Date(employee?.date).toDateString() === date.toDateString();
 
     return matchingName && matchingDate;
   });
+
+  console.log("filtered employee", filteredEmployee)
 
   return (
     <Layout>
@@ -91,20 +93,21 @@ const Attendance = () => {
       <div className="flex flex-row mt-10">
         <div className="w-2/3">
           <div className="flex flex-row justify-between">
-            <div className="card bg-base-100 w-72 shadow-xl my-5">
-              <div className="flex flex-row p-3">
+            <div className="mt-10">
+              <div className="flex flex-row p-3 bg-black text-white w-72 rounded-xl mx-3">
                 <div>
-                  <p className="font-semibold text-sm items-center mr-2">
+                  <p className="font-semibold text-sm items-center ">
                     Sort By Date:
                   </p>
                 </div>
 
-                <div className="w-36">
+                <div className="ml-1 w-36 rounded-lg">
                   <DatePicker
+                    className="rounded-lg text-black"
                     selected={date}
                     onChange={(date) => setDate(date)}
                     isClearable
-                    placeholderText="Select a date"
+                    placeholderText=" Select a date"
                   />
                 </div>
               </div>
@@ -136,6 +139,7 @@ const Attendance = () => {
         <div className="flex card bg-base-100 w-1/3 mx-5 h-full shadow-xl">
           <div className="flex items-center justify-center p-3">
             <div className="w-64 justify-center">
+              <p className="font-semibold text-lg text-center my-2">Chart Yearly</p>
               <Chart />
             </div>
           </div>

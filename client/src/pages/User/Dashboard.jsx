@@ -62,7 +62,7 @@ export default function Dashboard() {
           </div>
 
           <div className="w-1/3 m-5">
-            <Calendarr />
+            {/* <Calendarr /> */}
             <Announcement />
           </div>
         </div>

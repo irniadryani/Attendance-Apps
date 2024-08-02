@@ -17,9 +17,9 @@ export default function Layout({ children }) {
     return (
       <React.Fragment>
         <Navbar />
-        <div className="flex">
+        <div className="flex h-screen overflow-hidden">
           {user.role !== "User" && <Sidebar />}
-          <div className="flex-grow p-4">
+          <div className="flex-grow overflow-auto p-4">
             <main>{children}</main>
           </div>
         </div>

@@ -64,6 +64,7 @@ export default function CreateAnnouncement({ refetch }) {
 
           <div className="flex justify-end">
             <Button
+            type="submit"
               color="primary"
               onClick={() =>
                 document.getElementById("create_announcement_modal").close()

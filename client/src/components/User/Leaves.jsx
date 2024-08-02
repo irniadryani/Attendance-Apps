@@ -55,13 +55,34 @@ export default function Leaves() {
     },
   });
 
+  const formatNotes = (notes) => {
+    const maxLength = 50;
+    const regex = new RegExp(`.{1,${maxLength}}`, "g");
+    return notes.match(regex).join("\n");
+  };
+
   const addLeaves = (data) => {
+    const formattedNotes = formatNotes(data.notes);
     const leavesData = {
       ...data,
+      start_date: startDate.toISOString().split('T')[0], // Format date as YYYY-MM-DD
+      end_date: endDate.toISOString().split('T')[0], // Format date as YYYY-MM-DD
+      notes: formattedNotes,
     };
     console.log("leaves data", leavesData); // Log to check the values
     handleLeavesResponse.mutateAsync(leavesData);
   };
+  
+
+  // const addLeaves = (data) => {
+  //   const formattedNotes = formatNotes(data.notes);
+  //   const leavesData = {
+  //     ...data,
+  //     notes : formattedNotes
+  //   };
+  //   console.log("leaves data", leavesData); // Log to check the values
+  //   handleLeavesResponse.mutateAsync(leavesData);
+  // };
 
   return (
     <div>
