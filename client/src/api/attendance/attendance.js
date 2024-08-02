@@ -11,9 +11,15 @@ export const checkoutFn = async (data) => {
 };
 
 export const getAllAttendanceFn = async () => {
+  const response = await Api.get("/attendances-monthly");
+  return response.data;
+};
+
+export const getAllAttendanceDataFn = async () => {
   const response = await Api.get("/attendances");
   return response.data;
 };
+
 
 export const getAttendanceByIdFn = async (id) => {
   const response = await Api.get(`attendances/${id}`);

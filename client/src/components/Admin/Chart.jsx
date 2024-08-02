@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart, ArcElement, Tooltip } from 'chart.js';
 import { useQuery } from '@tanstack/react-query';
-import { getAllAttendanceFn } from '../../api/attendance/attendance';
+import { getAllAttendanceDataFn } from '../../api/attendance/attendance';
 import { getAllPermissionFn } from '../../api/permission/permission';
 import { getAllLeavesFn } from '../../api/leaves/leaves';
 
-// Import Chart.js tooltip plugin
 Chart.register(Tooltip);
 Chart.register(ArcElement);
 
@@ -20,8 +19,8 @@ const ChartComponent = () => {
     refetch: refetchAttendance,
     isLoading: loadingAttendance,
   } = useQuery({
-    queryKey: ['attendance'],
-    queryFn: getAllAttendanceFn,
+    queryKey: ['fullAttendance'],
+    queryFn: getAllAttendanceDataFn,
   });
 
   const {
@@ -43,19 +42,22 @@ const ChartComponent = () => {
   });
 
   useEffect(() => {
-    if (dataAttendance?.attendances) {
-      setAttendanceCount(dataAttendance?.attendances?.length);
+    if (dataAttendance) {
+      console.log('Attendance Data:', dataAttendance);
+      setAttendanceCount(dataAttendance.length);
     }
-  }, [dataAttendance?.attendances]);
+  }, [dataAttendance]);
 
   useEffect(() => {
     if (dataPermission) {
+      console.log('Permission Data:', dataPermission);
       setPermissionCount(dataPermission.length);
     }
   }, [dataPermission]);
 
   useEffect(() => {
     if (dataLeaves) {
+      console.log('Leaves Data:', dataLeaves);
       setLeavesCount(dataLeaves.length);
     }
   }, [dataLeaves]);
