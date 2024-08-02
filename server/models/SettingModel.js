@@ -26,6 +26,10 @@ const Setting = sequelize.define('settings', {
         type: DataTypes.DECIMAL(10, 7),
         allowNull: true,
     },
+    maximum_distance: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+    },
     limit_leaves: {
         type: DataTypes.INTEGER,
         allowNull: true,

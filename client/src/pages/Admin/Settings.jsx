@@ -8,6 +8,7 @@ import {
   updateLatitudeFn,
   updateLeavesLimitFn,
   updateLongitudeFn,
+  updateMaximumDistanceFn,
   getUserContentFn,
 } from "../../api/setting/setting";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -27,6 +28,7 @@ export default function Settings() {
       setValue("latitude", setting.latitude);
       setValue("longitude", setting.longitude);
       setValue("limit_leaves", setting.limit_leaves);
+      setValue("maximum_distance", setting.maximum_distance);
     }
   }, [settings, setValue]);
 
@@ -46,6 +48,26 @@ export default function Settings() {
         icon: "error",
         title: "Error updating Default Password!",
         text: "An error occurred while updating the default password.",
+      });
+    },
+  });
+
+  const updateMaximumDistanceMutation = useMutation({
+    mutationFn: updateMaximumDistanceFn,
+    onSuccess: () => {
+      Swal.fire({
+        icon: "success",
+        title: "Maximum Distance updated!",
+        text: "The Maximum Distance has been successfully updated.",
+      });
+      refetch();
+    },
+    onError: (error) => {
+      console.error(error);
+      Swal.fire({
+        icon: "error",
+        title: "Error updating Maximum Distance!",
+        text: "An error occurred while updating the Maximum Distance.",
       });
     },
   });
@@ -126,6 +148,10 @@ export default function Settings() {
     updateLeavesLimitMutation.mutateAsync({ limit_leaves: data.limit_leaves });
   };
 
+  const onSubmitMaximumDistance = (data) => {
+    updateMaximumDistanceMutation.mutateAsync({ maximum_distance: data.maximum_distance });
+  };
+
   return (
     <Layout>
       <div>
@@ -193,6 +219,27 @@ export default function Settings() {
                     placeholder="Type here"
                     className="input input-bordered w-full"
                     {...register("longitude")}
+                  />
+                </label>
+              </div>
+              <div className="items-center mt-10 justify-center">
+                <Button color="primary" type="submit">Edit</Button>
+              </div>
+            </div>
+          </form>
+
+          <form onSubmit={handleSubmit(onSubmitMaximumDistance)}>
+            <div className="flex flex-row gap-5 w-full">
+              <div className="w-full">
+                <label className="form-control w-full">
+                  <div className="label">
+                    <span className="label-text">Maximum Distance (meters)</span>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Type here"
+                    className="input input-bordered w-full"
+                    {...register("maximum_distance")}
                   />
                 </label>
               </div>
