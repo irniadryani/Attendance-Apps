@@ -5,18 +5,18 @@ const Limit = require("../models/LimitModel");
 const Setting = require("../models/SettingModel");
 const User = require("../models/UserModel");
 const { Op } = require("sequelize");
-const { logMessage } = require('../utils/logger');
+const { logMessage } = require("../utils/logger");
 
 const formatDate = (date) => {
   const d = new Date(date);
-  let month = '' + (d.getMonth() + 1);
-  let day = '' + d.getDate();
+  let month = "" + (d.getMonth() + 1);
+  let day = "" + d.getDate();
   const year = d.getFullYear();
 
-  if (month.length < 2) month = '0' + month;
-  if (day.length < 2) day = '0' + day;
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
 
-  return [year, month, day].join('-');
+  return [year, month, day].join("-");
 };
 
 const createLeaves = async (req, res) => {
@@ -24,20 +24,18 @@ const createLeaves = async (req, res) => {
   const { id: user_id } = req.user;
 
   try {
-    logMessage('info', 'Creating leave request', { user_id, start_date, end_date, status, notes });
-
     const user = await User.findOne({
       where: { id: user_id },
       include: [{ model: Limit }],
     });
 
     if (!user) {
-      logMessage('warning', 'User not found', { user_id });
+      logMessage("warning", "User not found", { user_id });
       return res.status(404).json({ msg: "User not found" });
     }
 
     if (!user.limit) {
-      logMessage('warning', 'Leave limit not defined for user', { user_id });
+      logMessage("warning", "Leave limit not defined for user", { user_id });
       return res.status(400).json({ msg: "Leave limit not defined for user" });
     }
 
@@ -49,15 +47,18 @@ const createLeaves = async (req, res) => {
     });
 
     if (userLeavesCount >= user.limit.maximum) {
-      logMessage('warning', 'Leave limit reached', { user_id, limit_id: user.limit.id });
+      logMessage("warning", "Leave limit reached", {
+        user_id,
+        limit_id: user.limit.id,
+      });
       return res.status(400).json({ msg: "Leave limit reached" });
     }
 
     const newLeaves = await Leaves.create({
       user_id: user_id,
       limit_id: user.limit.id,
-      start_date: start_date,
-      end_date: end_date,
+      start_date: new Date(start_date), // Ensure start_date is a Date object
+      end_date: new Date(end_date), // Ensure end_date is a Date object
       notes: notes,
       status: status || "Submitted",
     });
@@ -68,34 +69,36 @@ const createLeaves = async (req, res) => {
       end_date: newLeaves.end_date.toISOString().split("T")[0],
     };
 
-    logMessage('info', 'Leave created successfully', { leave: formattedLeaves });
     res.status(201).json({
       msg: "Leave successfully created",
       leaves: formattedLeaves,
     });
   } catch (error) {
-    logMessage('error', 'Error creating leave', { error: error.message });
-    res.status(400).json({ msg: "Failed to create leave", error: error.message });
+    logMessage("error", "Error creating leave", { error: error.message });
+    res
+      .status(400)
+      .json({ msg: "Failed to create leave", error: error.message });
   }
 };
 
+
 const getAllLeaves = async (req, res) => {
   try {
-    logMessage('info', 'Fetching all leaves');
-
     const response = await Leaves.findAll({
       attributes: [
-        'id',
-        'user_id',
-        'start_date',
-        'end_date',
-        'status',
-        'notes',
+        "id",
+        "user_id",
+        "start_date",
+        "end_date",
+        "status",
+        "notes",
       ],
-      include: [{
-        model: User,
-        attributes: ['full_name', 'position'], // Include user attributes
-      }],
+      include: [
+        {
+          model: User,
+          attributes: ["full_name", "position"], // Include user attributes
+        },
+      ],
     });
 
     const formattedResponse = response.map((leaves) => ({
@@ -108,36 +111,35 @@ const getAllLeaves = async (req, res) => {
       status: leaves.status,
     }));
 
-    logMessage('info', 'Fetched all leaves successfully', { leaves: formattedResponse });
     res.status(200).json(formattedResponse);
   } catch (error) {
-    logMessage('error', 'Error fetching leaves', { error: error.message });
+    logMessage("error", "Error fetching leaves", { error: error.message });
     res.status(500).json({ msg: error.message });
   }
 };
 
 const getLeavesById = async (req, res) => {
   try {
-    logMessage('info', 'Fetching leaves by user ID', { user_id: req.params.id });
-
     const user = await User.findOne({
       where: { id: req.params.id },
       include: [{ model: Limit }],
     });
 
     if (!user) {
-      logMessage('warning', 'User not found', { user_id: req.params.id });
+      logMessage("warning", "User not found", { user_id: req.params.id });
       return res.status(404).json({ msg: "User not found" });
     }
 
     const leaves = await Leaves.findAll({
-      attributes: ['id', 'start_date', 'end_date', 'status', 'notes'],
+      attributes: ["id", "start_date", "end_date", "status", "notes"],
       where: {
         user_id: req.params.id,
       },
     });
 
-    const approvedLeaves = leaves.filter(leave => leave.status === "Approved");
+    const approvedLeaves = leaves.filter(
+      (leave) => leave.status === "Approved"
+    );
     const totalLeavesTaken = approvedLeaves.length;
     const remainingLeaves = user.limit.maximum - totalLeavesTaken;
     const maximumLeaves = user.limit.maximum;
@@ -148,8 +150,6 @@ const getLeavesById = async (req, res) => {
       end_date: formatDate(leave.end_date),
     }));
 
-    logMessage('info', 'Fetched leaves by user ID successfully', { leaves: formattedResponse });
-
     res.status(200).json({
       leaves: formattedResponse,
       totalLeavesTaken,
@@ -157,9 +157,15 @@ const getLeavesById = async (req, res) => {
       maximumLeaves,
     });
   } catch (error) {
-    logMessage('error', 'Error fetching leaves by user ID', { user_id: req.params.id, error: error.message });
+    logMessage("error", "Error fetching leaves by user ID", {
+      user_id: req.params.id,
+      error: error.message,
+    });
 
-    if (error.message === `invalid input syntax for type uuid: \"${req.params.id}\"`) {
+    if (
+      error.message ===
+      `invalid input syntax for type uuid: \"${req.params.id}\"`
+    ) {
       res.status(404).json({ msg: "Leaves Not Found" });
     } else {
       res.status(500).json({ msg: error.message });
@@ -172,12 +178,10 @@ const updateLeaves = async (req, res) => {
   const { status } = req.body;
 
   try {
-    logMessage('info', 'Updating leave status', { leave_id: id, status });
-
     const leave = await Leaves.findByPk(id);
 
     if (!leave) {
-      logMessage('warning', 'Leave not found', { leave_id: id });
+      logMessage("warning", "Leave not found", { leave_id: id });
       return res.status(404).json({ msg: "Leave not found" });
     }
 
@@ -190,17 +194,24 @@ const updateLeaves = async (req, res) => {
       end_date: formatDate(leave.end_date),
     };
 
-    logMessage('info', 'Leave status updated successfully', { leave: formattedLeave });
     res.status(200).json({
       msg: "Leave status updated successfully",
       leave: formattedLeave,
     });
   } catch (error) {
-    logMessage('error', 'Error updating leave status', { leave_id: id, error: error.message });
-    res.status(400).json({ msg: "Failed to update leave status", error: error.message });
+    logMessage("error", "Error updating leave status", {
+      leave_id: id,
+      error: error.message,
+    });
+    res
+      .status(400)
+      .json({ msg: "Failed to update leave status", error: error.message });
   }
 };
 
 module.exports = {
-  createLeaves, getAllLeaves, getLeavesById, updateLeaves
+  createLeaves,
+  getAllLeaves,
+  getLeavesById,
+  updateLeaves,
 };
