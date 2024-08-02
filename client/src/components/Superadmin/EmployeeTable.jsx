@@ -89,7 +89,7 @@ export default function EmployeeTable({
                   <StatusEmployee
                     userId={employee.id}
                     currentStatus={
-                      employee.deletedAt !== null ? "Inactive" : "Active"
+                     employee.status === false ? 'Inactive' : 'Active'
                     }
                     refetch={refetch}
                   />

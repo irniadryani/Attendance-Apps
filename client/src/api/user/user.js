@@ -35,6 +35,12 @@ export const changePasswordUserFn = async (id, data) => {
   return response.data;
 };
 
+export const changeStatusUserFn = async (id, data) => {
+  const response = await Api.patch(`/user/change-status/${id}`, data);
+  return response.data;
+};
+
+
 export const deleteUserFn = async (id) => {
   const response = await Api.delete(`user/${id}`);
   return response.data;

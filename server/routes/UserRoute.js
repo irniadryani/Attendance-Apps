@@ -18,8 +18,8 @@ router.get("/users/filter", verifyToken, userController.filterUsers);
 
 router.put("/user/update-role/:id",verifyToken, userController.roleUser);
 
-router.put("/user/update-status/:id",verifyToken, userController.updateUserStatus);
-
 router.put("/user/change-password/:id",verifyToken, userController.changePassword);
+
+router.patch("/user/change-status/:id", verifyToken, userController.changeStatus);
 
 module.exports = router;

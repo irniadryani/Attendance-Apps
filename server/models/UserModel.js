@@ -69,6 +69,10 @@ const Users = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
+    status: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { RiInformation2Fill } from "react-icons/ri";
 import DetailEmployee from "./DetailEmployee";
 import StatusEmployee from "./StatusEmployee";
-import { deleteUserFn } from "../../api/user/user"
+import { deleteUserFn } from "../../api/user/user";
+import { hourglass } from "ldrs";
 
 export default function EmployeeTable({
   dataUser,
@@ -11,6 +12,8 @@ export default function EmployeeTable({
 }) {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [currentPage, setCurrentPage] = useState(currentPaginationTable || 1);
+
+  hourglass.register();
 
   // Update currentPage when currentPaginationTable changes
   useEffect(() => {
@@ -54,7 +57,16 @@ export default function EmployeeTable({
 
   // Show loading or empty state when dataUser is undefined or null
   if (!dataUser) {
-    return <p>Loading...</p>;
+    return (
+      <div className="flex justify-center items-center h-full">
+        <l-hourglass
+          size="40"
+          bg-opacity="0.1"
+          speed="1.75"
+          color="black"
+        ></l-hourglass>
+      </div>
+    );
   }
 
   return (
@@ -82,7 +94,9 @@ export default function EmployeeTable({
                 <td>
                   <StatusEmployee
                     userId={employee.id}
-                    currentStatus={employee.deletedAt !== null ? 'Inactive' : 'Active'}
+                    currentStatus={
+                      employee.status === false ? "Inactive" : "Active"
+                    }
                     refetch={refetch}
                   />
                 </td>
