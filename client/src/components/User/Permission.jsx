@@ -21,7 +21,6 @@ export default function Permission() {
 
   const handlePermissionResponse = useMutation({
     mutationFn: (data) => createPermissionFn(data),
-
     onMutate() {},
     onSuccess: (res) => {
       console.log(res);
@@ -38,12 +37,19 @@ export default function Permission() {
     },
   });
 
+  const formatNotes = (notes) => {
+    const maxLength = 50;
+    const regex = new RegExp(`.{1,${maxLength}}`, "g");
+    return notes.match(regex).join("\n");
+  };
+
   const addPermission = (data) => {
+    const formattedNotes = formatNotes(data.notes);
     const permissionData = new FormData();
 
-    permissionData.append("start_date", data.start_date);
-    permissionData.append("end_date", data.end_date);
-    permissionData.append("notes", data.notes);
+    permissionData.append("start_date", new Date(startDate).toISOString());
+    permissionData.append("end_date", new Date(endDate).toISOString());
+    permissionData.append("notes", formattedNotes);
     if (data.file) {
       permissionData.append("file", data.file[0]);
     }
@@ -72,16 +78,6 @@ export default function Permission() {
                 History Permission
               </button>
             </div>
-            <div>
-              <button
-                className="btn my-5 bg-yellow-400 text-white rounded-lg"
-                onClick={() =>
-                  document.getElementById("detail_permission_modal").showModal()
-                }
-              >
-                Update Permission
-              </button>
-            </div>
           </div>
 
           <div className="card bg-base-100 w-full shadow-2xl my-5 mr-10">
@@ -95,12 +91,9 @@ export default function Permission() {
                 </label>
                 <div>
                   <DatePicker
-                    showTimeSelect
-                    minTime={new Date(0, 0, 0, 12, 30)}
-                    maxTime={new Date(0, 0, 0, 19, 0)}
                     selected={startDate}
                     onChange={(date) => setStartDate(date)}
-                    dateFormat="MMMM d, yyyy h:mmaa"
+                    dateFormat="MMMM d, yyyy"
                     className="flex justify-center mr-24"
                   />
                   <input
@@ -116,12 +109,9 @@ export default function Permission() {
                 </label>
                 <div>
                   <DatePicker
-                    showTimeSelect
-                    minTime={new Date(0, 0, 0, 12, 30)}
-                    maxTime={new Date(0, 0, 0, 19, 0)}
                     selected={endDate}
                     onChange={(date) => setEndDate(date)}
-                    dateFormat="MMMM d, yyyy h:mmaa"
+                    dateFormat="MMMM d, yyyy"
                     className="flex justify-center ml-10 mr-24"
                   />
                   <input
@@ -172,6 +162,7 @@ export default function Permission() {
           </div>
         </div>
       </dialog>
+
       <DetailPemission />
     </div>
   );

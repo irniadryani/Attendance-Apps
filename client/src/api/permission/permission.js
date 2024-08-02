@@ -22,6 +22,6 @@ export const createPermissionFn = async (data) => {
 };
 
 export const updatePermissionFn = async (id, data) => {
-  const response = await Api.put(`/permission/${id}`, data);
+  const response = await Api.put(`/permission/${id}`, data, formDataconfig);
   return response.data;
 };
