@@ -27,6 +27,7 @@ export default function EditProfile() {
     defaultValues: {
       full_name: "",
       photo_profil: "",
+      phone_number: "",
     },
   });
 
@@ -48,6 +49,7 @@ export default function EditProfile() {
     if (!loadingSingleUser && dataSingleUser) {
       resetEditProfile({
         full_name: dataSingleUser.full_name,
+        phone_number: dataSingleUser.phone_number,
       });
 
       setValue("photo_profil", dataSingleUser.url);
@@ -87,6 +89,7 @@ export default function EditProfile() {
     console.log("data update", data);
 
     pengajarData.append("full_name", data.full_name);
+    pengajarData.append("phone_number", data.phone_number);
 
     if (data.photo_profil[0]) {
       pengajarData.append("photo_profil", data.photo_profil[0]);
@@ -94,7 +97,6 @@ export default function EditProfile() {
 
     handleUpdateProfile.mutateAsync(pengajarData);
   };
-
 
   return (
     <div>
@@ -125,6 +127,22 @@ export default function EditProfile() {
                 placeholder="Type here"
                 className="input input-bordered w-full max-w-xs rounded-lg"
                 {...register("full_name")}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="phone_number"
+                className="form-control w-full max-w-xs"
+              >
+                <div className="label mt-3 justify-start">
+                  <span className="label-text">Change Phone Number</span>
+                </div>
+              </label>
+              <input
+                type="text"
+                placeholder="Type here"
+                className="input input-bordered w-full max-w-xs rounded-lg"
+                {...register("phone_number")}
               />
             </div>
             <div>

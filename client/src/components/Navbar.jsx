@@ -38,8 +38,9 @@ export const Navbar = () => {
         <div className="flex-1">
           <a className="btn btn-ghost text-xl">DailyCheck</a>
         </div>
-        <div>
-          <p className="font-semibold mr-2">{dataSingleUser?.full_name}</p>
+        <div className="flex flex-col">
+          <p className="font-semibold mr-2  text-start">{dataSingleUser?.full_name}</p>
+          <p className="font-semibold mr-2 text-xs text-start">{dataSingleUser?.position}</p>
         </div>
         <div className="flex-none gap-2">
           <div className="dropdown dropdown-end">
