@@ -3,6 +3,7 @@ const router = express.Router();
 const { check } = require("express-validator");
 const { Op } = require("sequelize");
 const Setting = require("../models/SettingModel");
+const Limit = require("../models/LimitModel");
 const { logMessage } = require("../utils/logger");
 
 const getUserContent = async (req, res) => {
@@ -58,25 +59,56 @@ const defaultPassword = async (req, res) => {
 
 const limitLeaves = async (req, res) => {
   try {
-    const { limit_leaves } = req.body;
+    // Log the request body for debugging
+    console.log("Request Body:", req.body);
 
-    let currentSetting = await Setting.findOne({ where: { id: 1 } });
+    const { maximum } = req.body;
+
+    // Check if maximum is provided
+    if (maximum === undefined || maximum === null) {
+      return res.status(400).json({ error: "Maximum limit is required" });
+    }
+
+    const limitId = "81eb0cd9-74ec-4b55-bf70-414b2fa591dd";
+    let currentSetting = await Limit.findOne({ where: { id: limitId } });
 
     if (currentSetting) {
-      await currentSetting.update({ limit_leaves });
+      await currentSetting.update({ maximum });
     } else {
-      currentSetting = await Setting.create({ limit_leaves });
+      currentSetting = await Limit.create({ id: limitId, maximum });
     }
 
     return res.status(201).json({
       msg: "Default Limit Leaves Set Successfully",
-      data: { limit_leaves },
+      data: { maximum: currentSetting.maximum },
     });
   } catch (error) {
     logMessage("error", "Error setting limit leaves", { error });
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+// const limitLeavess = async (req, res) => {
+//   try {
+//     const { limit_leaves } = req.body;
+
+//     let currentSetting = await Setting.findOne({ where: { id: 1 } });
+
+//     if (currentSetting) {
+//       await currentSetting.update({ limit_leaves });
+//     } else {
+//       currentSetting = await Setting.create({ limit_leaves });
+//     }
+
+//     return res.status(201).json({
+//       msg: "Default Limit Leaves Set Successfully",
+//       data: { limit_leaves },
+//     });
+//   } catch (error) {
+//     logMessage("error", "Error setting limit leaves", { error });
+//     return res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
 
 const latitude = async (req, res) => {
   try {
