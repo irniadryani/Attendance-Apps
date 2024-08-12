@@ -728,384 +728,6 @@ const getAllAttendancesMonthly = async (req, res) => {
   }
 };
 
-// const getAllAttendances = async (req, res) => {
-//   try {
-//     const { full_name, startDate, endDate } = req.query;
-
-//     // Convert startDate and endDate to Date objects
-//     let start = startDate ? new Date(startDate) : new Date(0); // Default to epoch start
-//     let end = endDate ? new Date(endDate) : new Date(); // Default to current date
-//     end.setHours(23, 59, 59, 999); // Set endDate to the end of the day
-
-//     // Fetch all employees
-//     const employees = await User.findAll({
-//       where: full_name ? { full_name } : undefined, // Filter by full_name if provided
-//     });
-
-//     if (!employees.length) {
-//       return res.status(404).json({ error: "No employees found" });
-//     }
-
-//     // Calculate data for each employee
-//     const results = await Promise.all(employees.map(async (user) => {
-//       // Fetch attendance records for each user within date range
-//       const attendances = await Attendances.findAll({
-//         where: {
-//           user_id: user.id,
-//           [Op.and]: [
-//             { check_in: { [Op.not]: null } },
-//             { created_at: { [Op.between]: [start, end] } } // Filter by date range
-//           ]
-//         }
-//       });
-
-//       // Fetch permissions within date range
-//       const permissions = await Permissions.findAll({
-//         where: {
-//           user_id: user.id,
-//           created_at: { [Op.between]: [start, end] } // Filter by date range
-//         }
-//       });
-
-//       // Fetch leaves within date range
-//       const leaves = await Leaves.findAll({
-//         where: {
-//           user_id: user.id,
-//           created_at: { [Op.between]: [start, end] } // Filter by date range
-//         }
-//       });
-
-//       // Calculate totals
-//       const totalAttendance = attendances.length;
-//       const totalPermissions = permissions.length;
-//       const totalLeaves = leaves.length;
-
-//       // Calculate total work from home and other metrics
-//       const totalWorkFromOffice = attendances.filter(att => att.location_lat).length;
-//       const totalWorkFromHome = attendances.filter(att => att.checkin_image).length;
-
-//       // Determine absences
-//       const totalDaysInRange = countWeekdays(start, end); // Implement this function if needed
-//       const totalAbsences = totalDaysInRange - totalAttendance;
-
-//       return {
-//         full_name: user.full_name,
-//         total_attendance: totalAttendance,
-//         total_absences: 0,
-//         total_work_from_home: totalWorkFromHome,
-//         total_work_from_office: totalWorkFromOffice,
-//         total_permissions: totalPermissions,
-//         total_leaves: totalLeaves
-//       };
-//     }));
-
-//     // Filter out any null results (in case some employees were not found)
-//     const filteredResults = results.filter(result => result !== null);
-
-//     res.status(200).json(filteredResults);
-
-//   } catch (error) {
-//     console.error("Error fetching data:", error);
-//     res.status(500).json({ error: "Failed to fetch data" });
-//   }
-// };
-
-const getAllAttendancess = async (req, res) => {
-  //getall map
-  try {
-    // Fetch all employees
-    const employees = await User.findAll();
-
-    if (!employees.length) {
-      return res.status(404).json({ error: "No employees found" });
-    }
-
-    // Calculate data for each employee
-    const results = await Promise.all(
-      employees.map(async (user) => {
-        // Fetch attendance records for each user
-        const attendances = await Attendances.findAll({
-          where: {
-            [Op.and]: [{ user_id: user.id }, { check_in: { [Op.not]: null } }],
-          },
-        });
-
-        // Fetch permissions for each user
-        const permissions = await Permissions.findAll({
-          where: {
-            user_id: user.id,
-          },
-        });
-
-        // Fetch leaves for each user
-        const leaves = await Leaves.findAll({
-          where: {
-            user_id: user.id,
-          },
-        });
-
-        // Calculate totals
-        const totalAttendance = attendances.length;
-        const totalPermissions = permissions.length;
-        const totalLeaves = leaves.length;
-
-        // Calculate total work from home and other metrics
-        const totalWorkFromOffice = attendances.filter(
-          (att) => att.location_lat
-        ).length;
-        const totalWorkFromHome = attendances.filter(
-          (att) => att.checkin_image
-        ).length;
-
-        // Determine absences
-        // Assuming absence calculation is not needed as there is no date range
-
-        return {
-          full_name: user.full_name,
-          total_attendance: totalAttendance,
-          total_absences: 0, // Set to 0 or adjust as needed
-          total_work_from_home: totalWorkFromHome,
-          total_work_from_office: totalWorkFromOffice,
-          total_permissions: totalPermissions,
-          total_leaves: totalLeaves,
-        };
-      })
-    );
-
-    // Filter out any null results (in case some employees were not found)
-    const filteredResults = results.filter((result) => result !== null);
-
-    res.status(200).json(filteredResults);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    res.status(500).json({ error: "Failed to fetch data" });
-  }
-};
-
-//   const { full_name, startDate, endDate } = req.query;
-
-//   // Validate query parameters
-//   if (!startDate || !endDate) {
-//     return res.status(400).json({ error: "Missing required query parameters" });
-//   }
-
-//   // Convert startDate and endDate to Date objects
-//   const start = new Date(startDate);
-//   const end = new Date(endDate);
-//   end.setHours(23, 59, 59, 999); // Set endDate to the end of the day
-
-//   try {
-//     // Fetch all employees if no full_name is provided
-//     const employees = full_name
-//       ? [await User.findOne({ where: { full_name } })]
-//       : await User.findAll();
-
-//     if (!employees.length) {
-//       return res.status(404).json({ error: "No employees found" });
-//     }
-
-//     // Calculate data for each employee
-//     const results = await Promise.all(employees.map(async (user) => {
-//       if (!user) return null;
-
-//       // Fetch attendance records based on user ID and date range
-//       const attendances = await Attendances.findAll({
-//         where: {
-//           [Op.and]: [
-//             { user_id: user.id },
-//             { check_in: { [Op.not]: null } },
-//             { created_at: { [Op.between]: [start, end] } }
-//           ]
-//         }
-//       });
-
-//       // Fetch permissions and leaves within the date range
-//       const permissions = await Permissions.findAll({
-//         where: {
-//           [Op.and]: [
-//             { user_id: user.id },
-//             { created_at: { [Op.between]: [start, end] } }
-//           ]
-//         }
-//       });
-
-//       const leaves = await Leaves.findAll({
-//         where: {
-//           [Op.and]: [
-//             { user_id: user.id },
-//             { created_at: { [Op.between]: [start, end] } }
-//           ]
-//         }
-//       });
-
-//       // Calculate totals
-//       const totalAttendance = attendances.length;
-//       const totalPermissions = permissions.length;
-//       const totalLeaves = leaves.length;
-
-//       // Calculate total work from home and other metrics
-//       const totalWorkFromOffice = attendances.filter(att => att.location_lat).length;
-//       const totalWorkFromHome = attendances.filter(att => att.checkin_image).length;
-
-//       // Determine absences
-//       const totalDaysInRange = countWeekdays(start, end);
-//       const totalAbsences = totalDaysInRange - totalAttendance;
-
-//       return {
-//         full_name: user.full_name,
-//         total_attendance: totalAttendance,
-//         total_absences: totalAbsences,
-//         total_work_from_home: totalWorkFromHome,
-//         total_work_from_office: totalWorkFromOffice,
-//         total_permissions: totalPermissions,
-//         total_leaves: totalLeaves
-//       };
-//     }));
-
-//     // Filter out any null results (in case some employees were not found)
-//     const filteredResults = results.filter(result => result !== null);
-
-//     res.status(200).json(filteredResults);
-
-//   } catch (error) {
-//     console.error("Error fetching data:", error);
-//     res.status(500).json({ error: "Failed to fetch data" });
-//   }
-// };
-const getAllAttendancesss = async (req, res) => {
-  //first function
-  const { full_name, startDate, endDate } = req.query;
-
-  // Validate query parameters
-  if (!full_name || !startDate || !endDate) {
-    return res.status(400).json({ error: "Missing required query parameters" });
-  }
-
-  if (full_name === null) {
-  }
-
-  try {
-    const user = await User.findOne({
-      where: {
-        full_name: full_name,
-      },
-    });
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    // Convert startDate and endDate to Date objects
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    end.setHours(23, 59, 59, 999); // Set endDate to the end of the day
-
-    // Fetch attendance records based on full_name and date range
-    const attendances = await Attendances.findAll({
-      where: {
-        [Op.and]: [
-          {
-            check_in: {
-              [Op.not]: null,
-            },
-          },
-          {
-            created_at: {
-              [Op.between]: [start, end],
-            },
-          },
-        ],
-      },
-      include: [
-        {
-          model: User,
-          attributes: ["full_name"],
-          where: {
-            full_name: full_name,
-          },
-        },
-      ],
-    });
-
-    // Fetch permissions within the date range
-    const permissions = await Permissions.findAll({
-      where: {
-        [Op.and]: [
-          {
-            created_at: {
-              [Op.between]: [start, end],
-            },
-          },
-        ],
-      },
-      include: [
-        {
-          model: User,
-          attributes: ["full_name"],
-          where: {
-            full_name: full_name,
-          },
-        },
-      ],
-    });
-
-    // Fetch leaves within the date range
-    const leaves = await Leaves.findAll({
-      where: {
-        [Op.and]: [
-          {
-            created_at: {
-              [Op.between]: [start, end],
-            },
-          },
-        ],
-      },
-      include: [
-        {
-          model: User,
-          attributes: ["full_name"],
-          where: {
-            full_name: full_name,
-          },
-        },
-      ],
-    });
-
-    // Calculate totals
-    const totalAttendance = attendances.length;
-    const totalPermissions = permissions.length;
-    const totalLeaves = leaves.length;
-
-    // Calculate total work from home and other metrics
-    const totalWorkFromOffice = attendances.filter(
-      (att) => att.location_lat
-    ).length;
-    const totalWorkFromHome = attendances.filter(
-      (att) => att.checkin_image
-    ).length;
-
-    // Determine absences
-    const totalDaysInRange = countWeekdays(start, end);
-    const totalAbsences = totalDaysInRange - totalAttendance;
-
-    // Format results
-    const result = {
-      full_name,
-      total_attendance: totalAttendance,
-      total_absences: totalAbsences,
-      total_work_from_home: totalWorkFromHome,
-      total_work_from_office: totalWorkFromOffice,
-      total_permissions: totalPermissions,
-      total_leaves: totalLeaves,
-    };
-
-    res.status(200).json(result);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    res.status(500).json({ error: "Failed to fetch data" });
-  }
-};
-
 const getAllAttendances = async (req, res) => {
   const { full_name, startDate, endDate } = req.query;
 
@@ -1122,7 +744,13 @@ const getAllAttendances = async (req, res) => {
   try {
     if (full_name) {
       // Fetch specific user data
-      const user = await User.findOne({ where: { full_name: full_name } });
+      const user = await User.findOne({
+        where: {
+          full_name: {
+            [Op.iLike]: `%${full_name}%`, // Case-insensitive partial matching
+          },
+        },
+      });
       if (!user) {
         return res.status(404).json({ error: "User not found" });
       }
@@ -1139,7 +767,7 @@ const getAllAttendances = async (req, res) => {
           {
             model: User,
             attributes: ["full_name"],
-            where: { full_name: full_name },
+            where: { id: user.id },
           },
         ],
       });
@@ -1161,7 +789,7 @@ const getAllAttendances = async (req, res) => {
 
       // Format results
       const result = {
-        full_name,
+        full_name: user.full_name,
         total_attendance: attendances.length,
         total_absences: countWeekdays(start, end) - attendances.length,
         total_work_from_home: attendances.filter((att) => att.checkin_image)
@@ -1178,7 +806,7 @@ const getAllAttendances = async (req, res) => {
         average_work_hours: secondsToFormattedTime(averageSeconds),
       };
 
-      res.status(200).json(result);
+      return res.status(200).json(result);
     } else {
       // Fetch all users' data
       const users = await User.findAll();
@@ -1238,14 +866,13 @@ const getAllAttendances = async (req, res) => {
         })
       );
 
-      res.status(200).json(results);
+      return res.status(200).json(results);
     }
   } catch (error) {
     console.error("Error fetching data:", error);
-    res.status(500).json({ error: "Failed to fetch data" });
+    return res.status(500).json({ error: "Failed to fetch data" });
   }
 };
-
 const checkinWfh = async (req, res) => {
   const { id: user_id } = req.user;
   try {
