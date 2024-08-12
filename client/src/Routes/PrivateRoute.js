@@ -17,18 +17,28 @@ const PrivateRoute = ({ allowedRoles }) => {
 
   useEffect(() => {
     const accessToken = Cookies.get("accessToken");
-    if (accessToken && !user && isLoadingUser) {
-      dispatch(getMe());
-    }
-  }, [user, isLoadingUser, isUserError]);
-
-  useEffect(() => {
     const refreshToken = Cookies.get("refreshToken");
-    const accessToken = Cookies.get("accessToken");
-    if (refreshToken && !user && isLoadingUser&& !accessToken ) {
+    
+    if ((!accessToken && refreshToken && !user && isLoadingUser) || (accessToken && !user && isLoadingUser)) {
       dispatch(getMe());
     }
   }, [user, isLoadingUser, isUserError]);
+  
+
+  // useEffect(() => {
+  //   const accessToken = Cookies.get("accessToken");
+  //   if (accessToken && !user && isLoadingUser) {
+  //     dispatch(getMe());
+  //   }
+  // }, [user, isLoadingUser, isUserError]);
+
+  // useEffect(() => {
+  //   const refreshToken = Cookies.get("refreshToken");
+  //   const accessToken = Cookies.get("accessToken");
+  //   if (refreshToken && !user && isLoadingUser&& !accessToken ) {
+  //     dispatch(getMe());
+  //   }
+  // }, [user, isLoadingUser, isUserError]);
 
   if (!Cookies.get("accessToken") && !Cookies.get("refreshToken")) {
     return <Navigate to="/login" />;
