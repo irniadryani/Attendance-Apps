@@ -12,6 +12,7 @@ import { MdApproval } from "react-icons/md";
 import { TfiAnnouncement } from "react-icons/tfi";
 import { TbReportAnalytics } from "react-icons/tb";
 import { LuSettings } from "react-icons/lu";
+import { BsClipboardData } from "react-icons/bs";
 
 export const Sidebar = () => {
   const dispatch = useDispatch();
@@ -29,11 +30,11 @@ export const Sidebar = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    if (!user && isError) {
-      navigate("/login");
-    }
-  }, [user, isError]);
+  // useEffect(() => {
+  //   if (!user && isError) {
+  //     navigate("/login");
+  //   }
+  // }, [user, isError]);
 
   // Define menu items based on user role
   const getMenuItems = () => {
@@ -43,7 +44,7 @@ export const Sidebar = () => {
           <li>
             <NavLink
               to="/create-account-employee"
-              className="menu-item rounded-xl mb-2"
+              className="menu-item rounded-xl mb-2 hover:bg-white hover:text-black"
               activeClassName="font-bold"
             >
               <AiOutlineUserAdd />
@@ -53,7 +54,7 @@ export const Sidebar = () => {
           <li>
             <NavLink
               to="/employee-role"
-              className="menu-item rounded-xl mb-2"
+              className="menu-item rounded-xl mb-2 hover:bg-white hover:text-black"
               activeClassName="font-bold"
             >
               <AiOutlineUserAdd />
@@ -68,7 +69,7 @@ export const Sidebar = () => {
           <li>
             <NavLink
               to="/dashboard-admin"
-              className="menu-item rounded-xl mb-2"
+              className="menu-item rounded-xl mb-2 hover:bg-white hover:text-black"
               activeClassName="font-bold"
             >
               <HiOutlineHome />
@@ -78,18 +79,18 @@ export const Sidebar = () => {
           <li>
             <NavLink
               to="/employee-list"
-              className="menu-item rounded-xl mb-2"
+              className="menu-item rounded-xl mb-2 hover:bg-white hover:text-black"
               activeClassName="font-bold"
             >
               <GrGroup />
               Employee List
             </NavLink>
           </li>
-         
+
           <li>
             <NavLink
               to="/attendance-history"
-              className="menu-item rounded-xl mb-2"
+              className="menu-item rounded-xl mb-2 hover:bg-white hover:text-black"
               activeClassName="font-bold"
             >
               <RiHistoryFill />
@@ -98,8 +99,18 @@ export const Sidebar = () => {
           </li>
           <li>
             <NavLink
+              to="/recap-employee"
+              className="menu-item rounded-xl mb-2 hover:bg-white hover:text-black"
+              activeClassName="font-bold"
+            >
+              <BsClipboardData />
+              Recap Employee
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
               to="/approval"
-              className="menu-item rounded-xl mb-2"
+              className="menu-item rounded-xl mb-2 hover:bg-white hover:text-black"
               activeClassName="font-bold"
             >
               <MdApproval />
@@ -109,7 +120,7 @@ export const Sidebar = () => {
           <li>
             <NavLink
               to="/announcement"
-              className="menu-item rounded-xl mb-2"
+              className="menu-item rounded-xl mb-2 hover:bg-white hover:text-black"
               activeClassName="font-bold"
             >
               <TfiAnnouncement />
@@ -119,7 +130,7 @@ export const Sidebar = () => {
           <li>
             <NavLink
               to="/daily-report"
-              className="menu-item rounded-xl mb-2"
+              className="menu-item rounded-xl mb-2 hover:bg-white hover:text-black"
               activeClassName="font-bold"
             >
               <TbReportAnalytics />
@@ -129,7 +140,7 @@ export const Sidebar = () => {
           <li>
             <NavLink
               to="/create-account-employee"
-              className="menu-item rounded-xl mb-2"
+              className="menu-item rounded-xl mb-2 hover:bg-white hover:text-black"
               activeClassName="font-bold"
             >
               <AiOutlineUserAdd />
@@ -139,7 +150,7 @@ export const Sidebar = () => {
           <li>
             <NavLink
               to="/settings"
-              className="menu-item rounded-xl mb-2"
+              className="menu-item rounded-xl mb-2 hover:bg-white hover:text-black"
               activeClassName="font-bold"
             >
               <LuSettings />
@@ -162,7 +173,8 @@ export const Sidebar = () => {
             aria-label="close sidebar"
             className="drawer-overlay"
           ></label>
-          <ul className="menu bg-black text-white font-semibold !h-dvh w-80 p-4 overflow-y-auto">
+          <ul className="menu bg-black text-white font-semibold w-80 p-4 overflow-y-auto mx-5 rounded-xl shadow-xl ">
+            {/* !h-dvh  */}
             {getMenuItems()}
           </ul>
         </div>
