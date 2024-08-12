@@ -66,6 +66,18 @@ export default function AttendanceTable({
     );
   }
 
+  const getWorkLocation = (attendance) => {
+    if (attendance.checkin_image !== null && attendance.location_lat === null) {
+      return "Work From Home";
+    } else if (
+      attendance.checkin_image === null &&
+      attendance.location_lat !== null
+    ) {
+      return "Work From Office";
+    }
+    return "Unknown";
+  };
+
   return (
     <div>
       <div className="overflow-x-auto flex justify-center">
@@ -77,7 +89,7 @@ export default function AttendanceTable({
               <th>Checkin</th>
               <th>Checkout</th>
               <th>Work Hours</th>
-              <th>Date</th>
+              <th>Location</th>
             </tr>
           </thead>
           <tbody>
@@ -88,7 +100,7 @@ export default function AttendanceTable({
                 <td>{attendance.check_in}</td>
                 <td>{attendance.check_out}</td>
                 <td>{attendance.work_hours}</td>
-                <td>{attendance.date}</td>
+                <td>{getWorkLocation(attendance)}</td>
               </tr>
             ))}
           </tbody>

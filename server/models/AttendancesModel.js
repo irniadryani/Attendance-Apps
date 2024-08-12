@@ -53,6 +53,22 @@ const Attendances = sequelize.define(
       type: DataTypes.DECIMAL(10, 7),
       allowNull: true,
     },
+    checkin_image: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    checkin_url: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    checkout_image: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    checkout_url: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     created_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

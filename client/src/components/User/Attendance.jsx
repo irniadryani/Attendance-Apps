@@ -8,6 +8,7 @@ import { checkinFn, checkoutFn } from "../../api/attendance/attendance";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import DoneWorking from "../../assets/done-working.png";
+import WFH from "../../assets/cowfh.png";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { createDailyReportFn } from "../../api/dailyReport/dailyReport";
@@ -141,93 +142,111 @@ export default function Attendance() {
               ✕
             </button>
           </form>
-          <h3 className="font-bold text-lg">Attendance!</h3>
-          {!attendance?.check_in && !attendance?.check_out && (
-            <div className="flex justify-center">
-              <h2 className="text-xl font-bold my-5">
-                {clock.toLocaleTimeString()}
-              </h2>
-            </div>
-          )}
-          <div className="flex flex-col gap-5 w-full my-5">
-            {attendance?.check_in && !attendance?.check_out && (
-              <p className="flex justify-center items-center text-center font-medium text-base">
-                Please Fill The Daily Report First Before Checkout
-              </p>
-            )}
-            {attendance?.check_in && !attendance?.check_out && (
-              <div className="w-full">
-                <div className=" w-full  mr-10">
-                  <form onSubmit={handleSubmit(handleDailyReportAndCheckout)} className="p-5">
-                    <div className="flex flex-row justify-between">
-                      <label
-                        htmlFor="dateReport"
-                        className="text-sm font-medium"
-                      >
-                        Date
-                      </label>
-                      <div>
-                        <DatePicker
-                          selected={dateReport}
-                          dateFormat="MMMM d, yyyy h:mmaa"
-                          onChange={(date) => setDateReport(date)}
-                          className="flex justify-center"
-                          readOnly 
-                        />
-                        <input
-                          type="hidden"
-                          {...register("report_date", { required: true })}
-                          value={dateReport.toISOString()}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="report_message"
-                        className="form-control w-full max-w-4xl"
-                      >
-                        <div className="label mt-3 w-full justify-start">
-                          <span className="label-text text-sm font-medium">
-                            Notes
-                          </span>
-                        </div>
-                      </label>
-                      <textarea
-                        placeholder=""
-                        className="textarea textarea-bordered textarea-lg w-full max-w-4xl"
-                        {...register("report_message", { required: true })}
-                      ></textarea>
-                    </div>
-                    <div className="flex justify-end m-5">
-                      <button className="btn w-full btn-warning my-5" type="submit">
-                        Check Out
-                      </button>
-                    </div>
-                  </form>
-                </div>
+          <div>
+            <h3 className="font-bold text-lg">Attendance!</h3>
+            {!attendance?.check_in && !attendance?.check_out && (
+              <div className="flex justify-center">
+                <h2 className="text-xl font-bold my-5">
+                  {clock.toLocaleTimeString()}
+                </h2>
               </div>
             )}
-            {attendance?.check_in && attendance?.check_out && (
-              <div className="w-full text-center">
-                <p className="font-bold text-lg">
-                  You have been working today.
+            <div className="flex flex-col gap-5 w-full my-5">
+              {attendance?.check_in && !attendance?.check_out && attendance.checkin_image === null && (
+                <p className="flex justify-center items-center text-center font-medium text-base">
+                  Please Fill The Daily Report First Before Checkout
                 </p>
-                <div className="flex justify-center mt-3">
-                  <img src={DoneWorking} className="w-36" />
+              )}
+              {attendance?.check_in && !attendance?.check_out && attendance.checkin_image === null && (
+                <div className="w-full">
+                  <div className=" w-full  mr-10">
+                    <form
+                      onSubmit={handleSubmit(handleDailyReportAndCheckout)}
+                      className="p-5"
+                    >
+                      <div className="flex flex-row justify-between">
+                        <label
+                          htmlFor="dateReport"
+                          className="text-sm font-medium"
+                        >
+                          Date
+                        </label>
+                        <div>
+                          <DatePicker
+                            selected={dateReport}
+                            dateFormat="MMMM d, yyyy h:mmaa"
+                            onChange={(date) => setDateReport(date)}
+                            className="flex justify-center"
+                            readOnly
+                          />
+                          <input
+                            type="hidden"
+                            {...register("report_date", { required: true })}
+                            value={dateReport.toISOString()}
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="report_message"
+                          className="form-control w-full max-w-4xl"
+                        >
+                          <div className="label mt-3 w-full justify-start">
+                            <span className="label-text text-sm font-medium">
+                              Notes
+                            </span>
+                          </div>
+                        </label>
+                        <textarea
+                          placeholder=""
+                          className="textarea textarea-bordered textarea-lg w-full max-w-4xl"
+                          {...register("report_message", { required: true })}
+                        ></textarea>
+                      </div>
+                      <div className="flex justify-end m-5">
+                        <button
+                          className="btn w-full btn-warning my-5"
+                          type="submit"
+                        >
+                          Check Out
+                        </button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
-              </div>
-            )}
-            {!attendance?.check_in && (
-              <div className="w-full">
-                <button
-                  type="button"
-                  onClick={handleCheckIn}
-                  className="btn w-full btn-info"
-                >
-                  Check In
-                </button>
-              </div>
-            )}
+              )}
+              {attendance?.check_in && attendance?.check_out && (
+                <div className="w-full text-center">
+                  <p className="font-bold text-lg">
+                    You have been working today.
+                  </p>
+                  <div className="flex justify-center mt-3">
+                    <img src={DoneWorking} className="w-36" />
+                  </div>
+                </div>
+              )}
+              {attendance?.checkin_image !== null &&  attendance?.checkout_image === null &&(
+                <div className="w-full text-center">
+                  <p className="font-bold text-lg">
+                    You're working remote today.
+                  </p>
+                  <div className="flex justify-center mt-3">
+                    <img src={WFH} className="w-36" />
+                  </div>
+                </div>
+              )}
+              {!attendance?.check_in && (
+                <div className="w-full">
+                  <button
+                    type="button"
+                    onClick={handleCheckIn}
+                    className="btn w-full btn-info"
+                  >
+                    Check In
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </dialog>

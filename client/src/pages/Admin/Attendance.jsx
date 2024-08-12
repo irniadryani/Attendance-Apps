@@ -47,45 +47,49 @@ const Attendance = () => {
     return matchingName && matchingDate;
   });
 
-  console.log("filtered employee", filteredEmployee)
+  console.log("filtered employee", filteredEmployee);
 
   return (
     <Layout>
-      <div className="flex flex-row justify-between my-5">
-        <div className="card bg-black text-neutral-content w-56 h-24">
-          <div className="flex flex-col items-center text-center justify-between">
-            <h2 className="font-bold text-6xl items-end">
+      <div className="flex flex-row gap-5 my-5">
+        <div className="card bg-base shadow-xl text-gray-700 w-56 h-full">
+          <div className="flex flex-col items-start ml-5 justify-between">
+            <p className="font-bold text-sm items-end">Total Permissions</p>
+            <h2 className="font-bold text-6xl items-end text-black">
               {!loadingPermission && dataPermission?.length !== undefined
                 ? dataPermission?.length
                 : ""}
             </h2>
-            <p className="font-bold text-lg items-end">Total Permission</p>
+            <p className="font-medium text-xs py-2 items-end">Permission</p>
           </div>
         </div>
-        <div className="card bg-black text-neutral-content w-56 h-24">
-          <div className="flex flex-col items-center text-center justify-between">
-            <h2 className="font-bold text-6xl items-end">
+        <div className="card bg-base shadow-xl text-gray-700 w-56 h-full">
+          <div className="flex flex-col items-start ml-5 justify-between">
+            <p className="font-bold text-sm items-end">Total Leaves</p>
+            <h2 className="font-bold text-6xl items-end text-black">
               {!loadingLeaves && dataLeaves?.length !== undefined
                 ? dataLeaves?.length
                 : ""}
             </h2>
-            <p className="font-bold text-lg items-end">Total Leaves </p>
+            <p className="font-medium text-xs py-2 items-end">Leave</p>
           </div>
         </div>
-        <div className="card bg-black text-neutral-content w-56 h-24">
-          <div className="flex flex-col items-center text-center gap-2">
-            <h2 className="font-bold text-xl items-end mt-5">
+        <div className="card bg-base shadow-xl text-gray-700 w-56 h-30">
+          <div className="flex flex-col items-start ml-5 justify-between">
+            <p className="font-bold text-sm items-end">Total Working Hours</p>
+            <h2 className="font-bold text-xl items-end text-black mt-5">
               {dataAttendance?.totalWorkingHours}
             </h2>
-            <p className="font-bold text-lg items-end">Total Working Hours</p>
+            <p className="font-medium text-xs py-2 items-end">Hour</p>
           </div>
         </div>
-        <div className="card bg-black text-neutral-content w-56 h-24">
-          <div className="flex flex-col items-center text-center gap-2">
-            <h2 className="font-bold text-xl items-end mt-5">
+        <div className="card bg-base shadow-xl text-gray-700 w-56 h-30">
+          <div className="flex flex-col items-start ml-5 justify-between">
+            <p className="font-bold text-sm items-end">Average Working Hours</p>
+            <h2 className="font-bold text-xl items-end text-black mt-5">
               {dataAttendance?.averageWorkingHours}
             </h2>
-            <p className="font-bold text-lg items-end">Average Working Hours</p>
+            <p className="font-medium text-xs py-2 items-end">Hour</p>
           </div>
         </div>
       </div>
@@ -139,7 +143,9 @@ const Attendance = () => {
         <div className="flex card bg-base-100 w-1/3 mx-5 h-full shadow-xl">
           <div className="flex items-center justify-center p-3">
             <div className="w-64 justify-center">
-              <p className="font-semibold text-lg text-center my-2">Chart Yearly</p>
+              <p className="font-semibold text-lg text-center my-2">
+                Chart Yearly
+              </p>
               <Chart />
             </div>
           </div>
