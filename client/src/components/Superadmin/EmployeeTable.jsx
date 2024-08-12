@@ -2,16 +2,65 @@ import React, { useEffect, useState } from "react";
 import { RiInformation2Fill } from "react-icons/ri";
 import RoleUser from "./RoleUser";
 import StatusEmployee from "../Admin/StatusEmployee";
+import { MdDelete } from "react-icons/md";
+import { deleteUserFn } from "../../api/user/user";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import { useMutation } from "@tanstack/react-query";
 
 export default function EmployeeTable({
   dataUser,
   refetch,
   currentPaginationTable,
 }) {
+  const [userIdToDelete, setUserIdToDelete] = useState(null);
+
+  const handleDeleteUser = useMutation({
+    mutationFn: (id) => deleteUserFn(id),
+    onMutate() {},
+    onSuccess: (res) => {
+      console.log(res);
+      refetch();
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error("Failed to delete user", {
+        position: "top-right",
+      });
+    },
+  });
+
+  const handleConfirmDelete = async (id) => {
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
+
+      if (result.isConfirmed) {
+        await handleDeleteUser.mutateAsync(id);
+        Swal.fire({
+          title: "Deleted!",
+          text: "User has been deleted.",
+          icon: "success",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete user", {
+        position: "top-right",
+      });
+    }
+  };
+
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [currentPage, setCurrentPage] = useState(currentPaginationTable || 1);
 
-  // Update currentPage when currentPaginationTable changes
   useEffect(() => {
     if (
       currentPaginationTable === undefined ||
@@ -21,12 +70,10 @@ export default function EmployeeTable({
     }
   }, [currentPaginationTable]);
 
-  // Calculate employees to display based on currentPage and search
   const recordsPerPage = 10;
   const npage = Math.ceil((dataUser?.length || 0) / recordsPerPage);
   const numbers = Array.from({ length: npage }, (_, index) => index + 1);
 
-  // Pagination handlers
   const prePage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -43,7 +90,6 @@ export default function EmployeeTable({
     }
   };
 
-  // Filter employees based on search and pagination
   const filteredEmployees = dataUser
     ? dataUser.slice(
         (currentPage - 1) * recordsPerPage,
@@ -51,7 +97,6 @@ export default function EmployeeTable({
       )
     : [];
 
-  // Show loading or empty state when dataUser is undefined or null
   if (!dataUser) {
     return <p>Loading...</p>;
   }
@@ -67,6 +112,7 @@ export default function EmployeeTable({
               <th>Email</th>
               <th>Role</th>
               <th>Status</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -89,17 +135,27 @@ export default function EmployeeTable({
                   <StatusEmployee
                     userId={employee.id}
                     currentStatus={
-                     employee.status === false ? 'Inactive' : 'Active'
+                      employee.status === false ? "Inactive" : "Active"
                     }
                     refetch={refetch}
                   />
+                </td>
+                <td>
+                  <button
+                    className="flex my-5 mx-7 items-center justify-center"
+                    type="button"
+                    onClick={() => {
+                      handleConfirmDelete(employee.id);
+                    }}
+                  >
+                    <MdDelete size={20} />
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-
       <nav className="flex justify-center mt-5">
         <div className="flex items-center gap-4 mt-2 justify-center lg:justify-end">
           <button

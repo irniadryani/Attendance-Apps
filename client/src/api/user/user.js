@@ -40,8 +40,7 @@ export const changeStatusUserFn = async (id, data) => {
   return response.data;
 };
 
-
-export const deleteUserFn = async (id) => {
-  const response = await Api.delete(`user/${id}`);
+export const deleteUserFn = async (id, data) => {
+  const response = await Api.delete(`user/${id}`, data);
   return response.data;
 };
