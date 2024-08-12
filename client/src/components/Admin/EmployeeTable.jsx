@@ -55,6 +55,15 @@ export default function EmployeeTable({
       )
     : [];
 
+  const handleOpenModal = (employeeId) => {
+    setSelectedEmployeeId(employeeId);
+    const detailEmployeeModal = document.getElementById(
+      "detail_employee_modal"
+    );
+    if (detailEmployeeModal) {
+      detailEmployeeModal.showModal();
+    }
+  };
   // Show loading or empty state when dataUser is undefined or null
   if (!dataUser) {
     return (
@@ -102,12 +111,8 @@ export default function EmployeeTable({
                 </td>
                 <td>
                   <button
-                    onClick={() => {
-                      setSelectedEmployeeId(employee.id);
-                      document
-                        .getElementById("detail_employee_modal")
-                        ?.showModal();
-                    }}
+                    type="button"
+                    onClick={() => handleOpenModal(employee.id)}
                   >
                     <RiInformation2Fill fontSize="1.125rem" />
                   </button>
@@ -117,6 +122,8 @@ export default function EmployeeTable({
           </tbody>
         </table>
       </div>
+
+      <DetailEmployee employeeId={selectedEmployeeId} />
 
       <nav className="flex justify-center mt-5">
         <div className="flex items-center gap-4 mt-2 justify-center lg:justify-end">
@@ -149,7 +156,6 @@ export default function EmployeeTable({
           </button>
         </div>
       </nav>
-      <DetailEmployee employeeId={selectedEmployeeId} />
     </div>
   );
 }
