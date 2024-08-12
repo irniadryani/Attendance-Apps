@@ -8,8 +8,10 @@ const initialState = {
   isError: false,
   isSuccess: false,
   isLoading: false,
+  isLoadingUser: true,
   isRefreshing: false,
   isLoggingOut: false,
+  isUserError: false,
   message: "",
 };
 
@@ -28,7 +30,6 @@ export const loginUser = createAsyncThunk(
       Cookies.set("refreshToken", refreshToken, { expires: 7 });
 
       // Navigate to home page after successful login
-
       return user;
     } catch (error) {
       if (error.response) {
@@ -131,6 +132,7 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
+        state.isLoadingUser = false;
         state.user = action.payload;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -150,11 +152,14 @@ const authSlice = createSlice({
       .addCase(getMe.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
+        state.isLoadingUser = false;
         state.user = action.payload;
       })
       .addCase(getMe.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
+        state.isLoadingUser = false;
+        state.isUserError = true;
         state.message = action.payload;
       });
 
