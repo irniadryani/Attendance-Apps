@@ -165,7 +165,9 @@ export const Sidebar = () => {
   return (
     <div>
       <div className="drawer !h-dvh lg:drawer-open">
-        <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
+        <input id="my-drawer-2" type
+        
+        ="checkbox" className="drawer-toggle" />
 
         <div className="drawer-side">
           <label

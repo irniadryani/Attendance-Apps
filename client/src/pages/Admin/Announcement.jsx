@@ -111,7 +111,7 @@ export default function Announcement() {
           </button>
         </div>
 
-        <div className="my-5 grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="my-5 grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
           {dataAnnouncement?.map((announcement) => (
             <div className="card bg-black w-72 shadow-xl">
               <div className="flex flex-row gap-1 justify-between mx-3 mt-3">

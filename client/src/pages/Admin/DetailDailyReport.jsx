@@ -41,16 +41,16 @@ export default function DetailDailyReport() {
         <p className="font-medium text-xl text-black">{employeePosition}</p>
       </div>
       <div className="mt-10">
-        <div className="flex flex-row p-3 bg-black text-white w-72 rounded-xl mx-3">
+        <div className="flex flex-row p-3 bg-base shadow-lg text-black w-72 rounded-xl">
           <div>
-            <p className="font-semibold text-sm items-center ">
+            <p className="font-semibold text-sm items-center mt-1">
               Sort By Date:
             </p>
           </div>
 
           <div className="ml-1 w-36 rounded-lg">
             <DatePicker
-            className="rounded-lg text-black"
+            className="rounded-lg text-black text-xs"
               selected={date}
               onChange={(date) => setDate(date)}
               isClearable

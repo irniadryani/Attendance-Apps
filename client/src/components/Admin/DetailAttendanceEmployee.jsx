@@ -35,6 +35,8 @@ export default function DetailAttendanceEmployee({ employeeId }) {
     enabled: !!employeeId,
   });
 
+  console.log({attendanceDetail})
+
   hourglass.register();
 
   const toggleDateRangePicker = () => {
@@ -87,7 +89,7 @@ export default function DetailAttendanceEmployee({ employeeId }) {
         );
       }) || [];
 
-  const attendancePageCount = Math.ceil(filteredAttendanceDetail.length / recordsPerPage);
+  const attendancePageCount = Math.ceil(filteredAttendanceDetail?.length / recordsPerPage);
 
   const prePageAttendance = () => {
     if (currentPageAttendance > 1) {
@@ -106,7 +108,7 @@ export default function DetailAttendanceEmployee({ employeeId }) {
   };
 
   const currentAttendance =
-    filteredAttendanceDetail.slice(
+    filteredAttendanceDetail?.slice(
       (currentPageAttendance - 1) * recordsPerPage,
       currentPageAttendance * recordsPerPage
     );
@@ -124,7 +126,7 @@ export default function DetailAttendanceEmployee({ employeeId }) {
     return null;
   }
 
-  if (!filteredAttendanceDetail || filteredAttendanceDetail.length === 0) {
+  if (!filteredAttendanceDetail || filteredAttendanceDetail?.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center">
         <div>
