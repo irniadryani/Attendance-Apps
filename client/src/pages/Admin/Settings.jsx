@@ -11,6 +11,7 @@ import {
   updateMaximumDistanceFn,
   getUserContentFn,
 } from "../../api/setting/setting";
+import {getLimitLeavesFn} from "../../api/limit/limit"
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 export default function Settings() {
@@ -21,16 +22,29 @@ export default function Settings() {
     queryFn: getUserContentFn,
   });
 
+  const { data: limits, refetch: refetchLimit } = useQuery({
+    queryKey: ["limits"],
+    queryFn: getLimitLeavesFn,
+  });
+
+  console.log("limit", limits)
+
   useEffect(() => {
     if (settings && settings.length > 0) {
       const setting = settings[0];
       setValue("default_password", setting.default_password);
       setValue("latitude", setting.latitude);
       setValue("longitude", setting.longitude);
-      setValue("limit_leaves", setting.limit_leaves);
+      setValue("maximum", setting.maximum);
       setValue("maximum_distance", setting.maximum_distance);
     }
   }, [settings, setValue]);
+
+  useEffect(() => {
+    if (limits) {
+      setValue("maximum", limits.maximum);
+    }
+  }, [limits, setValue]);
 
   const updatePasswordMutation = useMutation({
     mutationFn: updateDefaultPasswordFn,
@@ -120,7 +134,7 @@ export default function Settings() {
         title: "Leaves Limit updated!",
         text: "The Leaves Limit has been successfully updated.",
       });
-      refetch();
+      refetchLimit();
     },
     onError: (error) => {
       console.error(error);
@@ -145,7 +159,7 @@ export default function Settings() {
   };
 
   const onSubmitLeavesLimit = (data) => {
-    updateLeavesLimitMutation.mutateAsync({ limit_leaves: data.limit_leaves });
+    updateLeavesLimitMutation.mutateAsync({ maximum: data.maximum });
   };
 
   const onSubmitMaximumDistance = (data) => {
@@ -262,7 +276,7 @@ export default function Settings() {
                       type="text"
                       placeholder="Type here"
                       className="input input-bordered w-full"
-                      {...register("limit_leaves")}
+                      {...register("maximum")}
                     />
                   </label>
                 </div>
