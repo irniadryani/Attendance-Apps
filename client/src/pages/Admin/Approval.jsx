@@ -27,14 +27,14 @@ export default function Approval() {
 
   const formatDate = (date) => {
     const d = new Date(date);
-    let month = '' + (d.getMonth() + 1);
-    let day = '' + d.getDate();
+    let month = "" + (d.getMonth() + 1);
+    let day = "" + d.getDate();
     const year = d.getFullYear();
 
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
 
-    return [year, month, day].join('-');
+    return [year, month, day].join("-");
   };
 
   const today = formatDate(new Date());
@@ -42,7 +42,8 @@ export default function Approval() {
   const calculateTodayPermission = () => {
     if (!loadingPermission && dataPermission) {
       return dataPermission.filter(
-        (entry) => formatDate(entry.start_date) === today && entry.status === "Submitted"
+        (entry) =>
+          formatDate(entry.start_date) === today && entry.status === "Submitted"
       );
     }
     return [];
@@ -51,7 +52,8 @@ export default function Approval() {
   const calculateTodayLeaves = () => {
     if (!loadingLeaves && dataLeaves) {
       return dataLeaves.filter(
-        (entry) => formatDate(entry.start_date) === today  && entry.status === "Submitted"
+        (entry) =>
+          formatDate(entry.start_date) === today && entry.status === "Submitted"
       );
     }
     return [];
@@ -60,29 +62,36 @@ export default function Approval() {
   const todayPermission = calculateTodayPermission();
   const todayLeaves = calculateTodayLeaves();
 
-
   return (
     <Layout>
       <div>
         <div>
           <div className="flex flex-row gap-10 my-5">
-            <div className="card bg-black text-neutral-content w-56 h-24">
-              <div className="flex flex-col items-center text-center justify-between">
-                <h2 className="font-bold text-6xl">{todayPermission.length}</h2>
+            <div className="card bg-base shadow-xl text-gray-700 w-56 h-ful">
+              <div className="flex flex-col items-start text-start ml-5 justify-between">
                 <p className="font-bold text-lg">Permission Queue</p>
+                <h2 className="font-bold text-black text-6xl">
+                  {todayPermission.length}
+                </h2>
+                <p className="font-medium text-xs py-2 items-end">Permission</p>
               </div>
             </div>
-            <div className="card bg-black text-neutral-content w-56 h-24">
-              <div className="flex flex-col items-center text-center justify-between">
-                <h2 className="font-bold text-6xl">{todayLeaves.length}</h2>
+            <div className="card bg-base shadow-xl text-gray-700 w-56 h-ful">
+              <div className="flex flex-col items-start text-start ml-5 justify-between">
                 <p className="font-bold text-lg">Leaves Queue</p>
+                <h2 className="font-bold text-black text-6xl">
+                  {todayLeaves.length}
+                </h2>
+                <p className="font-medium text-xs py-2 items-end">Leave</p>
               </div>
             </div>
           </div>
         </div>
         <Link to="/history-approval">
           <div className="flex justify-end my-5 mx-12">
-            <button className="btn btn-active bg-black text-white">History</button>
+            <button className="btn btn-active bg-black text-white">
+              History
+            </button>
           </div>
         </Link>
         <div>

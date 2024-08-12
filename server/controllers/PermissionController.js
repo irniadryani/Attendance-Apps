@@ -40,6 +40,7 @@ const getPermission = async (req, res) => {
           attributes: ["full_name"], // Include user attributes
         },
       ],
+      order: [["created_at", "DESC"]],
     });
 
       const formattedResponse = response.map((permission) => ({

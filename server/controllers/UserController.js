@@ -106,6 +106,7 @@ const getUserById = async (req, res) => {
       where: {
         id: req.params.id,
       },
+      order: [["created_at", "DESC"]],
     });
 
     if (!user) {

@@ -131,13 +131,13 @@ export default function HistoryApprovalTable() {
       currentPagePermission * recordsPerPage
     ) || [];
 
-    if (dataPermission?.file === null) {
-      return (
-        <div className="flex justify-center items-center h-full">
+  if (dataPermission?.file === null) {
+    return (
+      <div className="flex justify-center items-center h-full">
         <p>No proof</p>
-        </div>
-      );
-    }
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -172,7 +172,24 @@ export default function HistoryApprovalTable() {
               <tr className="hover font-base text-sm text-black" key={leave.id}>
                 <td>{(currentPageLeaves - 1) * recordsPerPage + index + 1}</td>
                 <td>{leave.user_name}</td>
-                <td>{leave.status}</td>
+                <td>
+                  <p
+                    className={`font-semibold text-sm ${
+                      leave.status === "Approved"
+                        ? "text-green-600"
+                        : leave.status === "Rejected"
+                        ? "text-red-600"
+                        : leave.status === "Submitted"
+                        ? "text-yellow-600"
+                        : leave.status === "Canceled"
+                        ? "text-blue-600"
+                        : ""
+                    }`}
+                  >
+                    {leave.status}
+                  </p>
+                </td>
+
                 <td>{leave.start_date}</td>
                 <td>{leave.end_date}</td>
                 <td>
@@ -236,7 +253,6 @@ export default function HistoryApprovalTable() {
               <tr className="text-sm text-white bg-black">
                 <th>No</th>
                 <th>Name</th>
-                <th>Status</th>
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Proof</th>
@@ -253,7 +269,6 @@ export default function HistoryApprovalTable() {
                     {(currentPagePermission - 1) * recordsPerPage + index + 1}
                   </td>
                   <td>{permission.user_name}</td>
-                  <td>{permission.status}</td>
                   <td>{permission.start_date}</td>
                   <td>{permission.end_date}</td>
                   <td>

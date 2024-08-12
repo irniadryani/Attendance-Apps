@@ -15,6 +15,7 @@ export default function EditProfile() {
   } = useQuery({
     queryKey: ["user", user?.id],
     queryFn: () => getUserByIdFn(user?.id),
+    enabled: user !== null
   });
 
   const {

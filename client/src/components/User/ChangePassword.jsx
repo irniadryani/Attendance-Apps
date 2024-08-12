@@ -16,6 +16,8 @@ export default function ChangePassword() {
   } = useQuery({
     queryKey: ["user", user?.id],
     queryFn: () => getUserByIdFn(user?.id),
+    enabled: user !== null
+
   });
 
   const [showCurPassword, setShowCurPassword] = useState();

@@ -23,7 +23,7 @@ export default function Login() {
 
   useEffect(() => {
     dispatch(getMe());
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     if (user?.role === "User") {
@@ -36,14 +36,14 @@ export default function Login() {
       toast.success("You successfully logged in")
       navigate("/dashboard-superadmin");
     }
-  }, [user, navigate]);
-
+  }, [user]);
+  
   useEffect(() => {
     if (isError) {
       toast.error(message || "Login failed");
     }
     dispatch(reset());
-  }, [isError, message, dispatch]);
+  }, [isError, message]);
 
   const Auth = (data, e) => {
     e.preventDefault();

@@ -3,17 +3,19 @@ import Attendance from "../../assets/clock.png";
 import Daily from "../../assets/daily.png";
 import Approvall from "../../assets/approval.png";
 import Permissionn from "../../assets/permission.png";
+import WFH from "../../assets/wfh.png";
 import Leavess from "../../assets/vacation.png";
 import Attendances from "./Attendance";
 import Permission from "./Permission";
 import Leaves from "./Leaves";
 import DailyReport from "./DailyReport";
 import Approval from "./Approval";
+import WorkFromHome from "./WorkFromHome";
 
 export default function Menu() {
   return (
     <div className="container mx-auto p-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 my-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 my-5">
         <button
           className="bg-black rounded-3xl w-full md-h-18 lg-h-18 flex flex-col justify-center items-center p-5"
           onClick={() =>
@@ -30,6 +32,21 @@ export default function Menu() {
 
           <p className="text-white font-semibold text-center justify-center text-sm mt-3">
             Attendance
+          </p>
+        </button>
+        <button
+          className="bg-black rounded-3xl w-full md-h-18 lg-h-18 flex flex-col justify-center items-center p-5"
+          onClick={() => document.getElementById("wfh_modal").showModal()}
+        >
+          <div className="md-w-12 lg-w-12">
+            <img
+              src={WFH}
+              className="w-full items-center justify-center"
+              alt="Attendance"
+            />
+          </div>
+          <p className="text-white font-semibold text-center justify-center text-sm mt-3">
+            Work From Home
           </p>
         </button>
         <button
@@ -102,6 +119,7 @@ export default function Menu() {
         </button>
       </div>
       <Attendances />
+      <WorkFromHome />
       <Permission />
       <Leaves />
       <DailyReport />

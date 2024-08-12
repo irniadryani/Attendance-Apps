@@ -32,14 +32,15 @@ export default function Employee() {
   return (
     <Layout>
       <div>
-        <div className="card bg-black text-neutral-content w-56 h-24 mb-10">
-          <div className="flex flex-col items-center text-center justify-between">
+        <div className="card bg-base shadow-xl text-gray-700 w-56 h-full mb-10">
+          <div className="flex flex-col items-start ml-5 justify-between">
+            <p className="font-bold text-lg items-end">Total Employee</p>
             {!loadingUser && dataUser?.length !== undefined && (
-              <h2 className="font-bold text-6xl items-end">
+              <h2 className="font-bold text-black text-6xl items-end">
                 {dataUser.length}
               </h2>
             )}
-            <p className="font-bold text-lg items-end">Total Employee</p>
+            <p className="font-medium text-xs py-2 items-end">Employee</p>
           </div>
         </div>
       </div>

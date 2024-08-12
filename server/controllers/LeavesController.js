@@ -99,6 +99,7 @@ const getAllLeaves = async (req, res) => {
           attributes: ["full_name", "position"], // Include user attributes
         },
       ],
+      order: [["created_at", "DESC"]],
     });
 
     const formattedResponse = response.map((leaves) => ({
@@ -118,11 +119,14 @@ const getAllLeaves = async (req, res) => {
   }
 };
 
+
+
 const getLeavesById = async (req, res) => {
   try {
     const user = await User.findOne({
       where: { id: req.params.id },
       include: [{ model: Limit }],
+      order: [["created_at", "DESC"]],
     });
 
     if (!user) {

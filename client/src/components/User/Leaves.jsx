@@ -74,16 +74,6 @@ export default function Leaves() {
   };
   
 
-  // const addLeaves = (data) => {
-  //   const formattedNotes = formatNotes(data.notes);
-  //   const leavesData = {
-  //     ...data,
-  //     notes : formattedNotes
-  //   };
-  //   console.log("leaves data", leavesData); // Log to check the values
-  //   handleLeavesResponse.mutateAsync(leavesData);
-  // };
-
   return (
     <div>
       <dialog id="leaves_modal" className="modal">

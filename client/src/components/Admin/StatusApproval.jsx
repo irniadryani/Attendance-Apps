@@ -63,12 +63,30 @@ export default function StatusApproval({ type, status, id, refetch }) {
           <div
             className="rounded-full w-2 h-2"
             style={{
-              backgroundColor: status === "Approved" ? "green" : "red",
+              backgroundColor:
+                status === "Approved"
+                  ? "green"
+                  : status === "Rejected"
+                  ? "red"
+                  : status === "Submitted"
+                  ? "yellow"
+                  : status === "Canceled"
+                  ? "blue"
+                  : "transparent",
             }}
           ></div>
+
           <p
             className={`font-semibold text-sm ${
-              status === "Approved" ? "text-green-600" : "text-red-600"
+              status === "Approved"
+                ? "text-green-600"
+                : status === "Rejected"
+                ? "text-red-600"
+                : status === "Submitted"
+                ? "text-yellow-600"
+                : status === "Canceled"
+                ? "text-blue-600"
+                : ""
             }`}
           >
             {status}

@@ -4,7 +4,7 @@ import { logout, reset } from "../features/authSlice";
 import { useEffect } from "react";
 import EditProfile from "./User/EditProfile";
 import { getUserByIdFn } from "../api/user/user";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ChangePassword from "./User/ChangePassword";
 
 export const Navbar = () => {
@@ -12,16 +12,19 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const { user, isError } = useSelector((state) => state.auth);
 
+  const queryClient = useQueryClient();
+
   const logoutFn = () => {
+    queryClient.invalidateQueries();
     dispatch(logout());
     dispatch(reset());
   };
 
-  useEffect(() => {
-    if (!user && isError) {
-      navigate("/login");
-    }
-  }, [user, isError]);
+  // useEffect(() => {
+  //   if (!user && isError) {
+  //     navigate("/login");
+  //   }
+  // }, [user, isError]);
 
   const {
     data: dataSingleUser,
@@ -30,17 +33,22 @@ export const Navbar = () => {
   } = useQuery({
     queryKey: ["user", user?.id],
     queryFn: () => getUserByIdFn(user?.id),
+    enabled: user !== null
   });
 
   return (
     <div>
-      <div className="navbar bg-base-100">
+      <div className="navbar z-40 sticky top-0  backdrop-blur-xl bg-base-100">
         <div className="flex-1">
           <a className="btn btn-ghost text-xl">DailyCheck</a>
         </div>
         <div className="flex flex-col">
-          <p className="font-semibold mr-2  text-start">{dataSingleUser?.full_name}</p>
-          <p className="font-semibold mr-2 text-xs text-start">{dataSingleUser?.position}</p>
+          <p className="font-semibold mr-2  text-start">
+            {dataSingleUser?.full_name}
+          </p>
+          <p className="font-semibold mr-2 text-xs text-start">
+            {dataSingleUser?.position}
+          </p>
         </div>
         <div className="flex-none gap-2">
           <div className="dropdown dropdown-end">
@@ -71,7 +79,6 @@ export const Navbar = () => {
                   }
                 >
                   Profile
-                  <span className="badge">New</span>
                 </button>
               </li>
               <li>
@@ -85,7 +92,7 @@ export const Navbar = () => {
               </li>
               {user.role !== "User" && (
                 <li>
-                  <Link to="/">
+                  <Link to="/self-attendance">
                     <button>
                       <a>Self Attendance</a>
                     </button>

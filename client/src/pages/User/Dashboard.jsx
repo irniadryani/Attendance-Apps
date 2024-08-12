@@ -50,7 +50,7 @@ export default function Dashboard() {
                 <div className="flex justify-right">
                   <img
                     src={Employee}
-                    className="justify-end w-48"
+                    className="justify-end w-48 " //sm:max-w-sm md:max-w-md lg:max-w-lg h-auto
                     alt="Employee"
                   />
                 </div>
@@ -62,7 +62,6 @@ export default function Dashboard() {
           </div>
 
           <div className="w-1/3 m-5">
-            {/* <Calendarr /> */}
             <Announcement />
           </div>
         </div>

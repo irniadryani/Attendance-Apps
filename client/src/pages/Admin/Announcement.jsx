@@ -29,7 +29,6 @@ export default function Announcement() {
 
   const handleDeleteAnnouncement = useMutation({
     mutationFn: (data) => deleteAnnouncementFn(data),
-
     onMutate() {},
     onSuccess: (res) => {
       console.log(res);

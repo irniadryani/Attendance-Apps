@@ -15,6 +15,8 @@ export default function History() {
     queryFn: () => getAttendanceByIdFn(id),
   });
 
+  console.log("att", dataSingleAttendance)
+
   // useEffect(() => {
   //   dataSingleAttendance();
   //   }

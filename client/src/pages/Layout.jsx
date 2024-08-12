@@ -5,17 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { getMe } from "../features/authSlice";
 
 export default function Layout({ children }) {
-  const dispatch = useDispatch();
-
-  const { user } = useSelector((state) => state.auth);
-
-  useEffect(() => {
-    dispatch(getMe());
-  }, [dispatch]);
+  const { user, isLoadingUser } = useSelector((state) => state.auth);
 
   if (user) {
     return (
-      <React.Fragment>
+      <div className="overflow-hidden">
         <Navbar />
         <div className="flex h-screen overflow-hidden">
           {user.role !== "User" && <Sidebar />}
@@ -23,7 +17,7 @@ export default function Layout({ children }) {
             <main>{children}</main>
           </div>
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }

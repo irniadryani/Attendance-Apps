@@ -40,24 +40,52 @@ export default function Dashboard() {
 
   const today = formatDate(new Date());
 
-  const calculateTodayAbsences = () => {
-    let todayAbsences = 0;
+  const calculateTodayAttendances = () => {
+    let totalTodayAttendances = 0;
 
     if (!loadingAttendance && dataAttendance) {
-      // Calculate attendance lengths for today
-      todayAbsences = dataAttendance?.attendances.filter(
+      totalTodayAttendances = dataAttendance?.attendances.filter(
         (entry) => formatDate(entry.date) === today
       ).length;
     }
 
-    return todayAbsences;
+    return totalTodayAttendances;
   };
+
+  const calculateTodayWorkFromOffice = () => {
+    let todayWorkFromOffice = 0;
+  
+    if (!loadingAttendance && dataAttendance) {
+      todayWorkFromOffice = dataAttendance?.attendances.filter(
+        (entry) =>
+          formatDate(entry.date) === today && entry.location_lat !== null && entry.checkin_image === null
+      ).length;
+    }
+  
+    return todayWorkFromOffice;
+  };
+
+
+
+
+  const calculateTodayWorkFromHome = () => {
+    let todayWFH = 0;
+
+    if (!loadingAttendance && dataAttendance) {
+      todayWFH = dataAttendance?.attendances.filter(
+        (entry) =>
+          formatDate(entry.date) === today && entry.checkin_image !== null && entry.location_lat === null
+      ).length;
+    }
+
+    return todayWFH;
+  };
+
 
   const calculateTodayPermission = () => {
     let todayPermission = 0;
 
     if (!loadingPermission && dataPermission) {
-      // Calculate permission lengths for today
       todayPermission = dataPermission.filter(
         (entry) => formatDate(entry.start_date) === today
       ).length;
@@ -70,7 +98,6 @@ export default function Dashboard() {
     let todayLeaves = 0;
 
     if (!loadingLeaves && dataLeaves) {
-      // Calculate leaves lengths for today
       todayLeaves = dataLeaves.filter(
         (entry) => formatDate(entry.start_date) === today
       ).length;
@@ -79,7 +106,9 @@ export default function Dashboard() {
     return todayLeaves;
   };
 
-  const todayAbsences = calculateTodayAbsences();
+  const totalTodayAttendances = calculateTodayAttendances();
+  const todayWorkFromOffice = calculateTodayWorkFromOffice();
+  const todayWFH = calculateTodayWorkFromHome();
   const todayPermission = calculateTodayPermission();
   const todayLeaves = calculateTodayLeaves();
 
@@ -109,32 +138,69 @@ export default function Dashboard() {
         </div>
       </div>
       <div>
-        <div className="flex flex-row gap-20 justify-center">
-          <div className="card bg-black text-neutral-content w-56 h-24">
-            <div className="flex flex-col items-center text-center justify-between">
-              {!loadingAttendance && (
-                <h2 className="font-bold text-6xl items-end">
-                  {todayAbsences}
-                </h2>
-              )}
-              <p className="font-bold text-lg items-end">Today Absences</p>
-            </div>
-          </div>
-          <div className="card bg-black text-neutral-content w-56 h-24">
-            <div className="flex flex-col items-center text-center justify-between">
-              <h2 className="font-bold text-6xl items-end">
-                {todayPermission}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 justify-center">
+        <div className="card bg-base shadow-xl text-gray-700 w-56 h-full">
+          <div className="flex flex-col items-start ml-5 justify-between">
+            <p className="font-bold text-sm text-start py-2 items-end">
+              Total Today Attendances
+            </p>
+            {!loadingAttendance && (
+              <h2 className="font-bold text-6xl items-end text-black">
+                {totalTodayAttendances}
               </h2>
-              <p className="font-bold text-lg items-end">Today's Permission</p>
-            </div>
-          </div>
-          <div className="card bg-black text-neutral-content w-56 h-24">
-            <div className="flex flex-col items-center text-center justify-between">
-              <h2 className="font-bold text-6xl items-end">{todayLeaves}</h2>{" "}
-              <p className="font-bold text-lg items-end">Today Leaves</p>
-            </div>
+            )}
+            <p className="font-medium text-xs py-2 items-end">Attendances</p>
           </div>
         </div>
+        <div className="card bg-base shadow-xl text-gray-700 w-56 h-full">
+          <div className="flex flex-col items-start ml-5 justify-between">
+            <p className="font-bold text-sm text-start py-2 items-end">
+              Work From Office
+            </p>
+            {!loadingAttendance && (
+              <h2 className="font-bold text-6xl items-end text-black">
+                {todayWorkFromOffice}
+              </h2>
+            )}
+            <p className="font-medium text-xs py-2 items-end">Attendances</p>
+          </div>
+        </div>
+        <div className="card bg-base shadow-xl text-gray-700 w-56 h-full">
+          <div className="flex flex-col items-start ml-5 justify-between">
+            <p className="font-bold text-sm text-start py-2 items-end">
+              Work From Home
+            </p>
+            {!loadingAttendance && (
+              <h2 className="font-bold text-6xl items-end text-black">
+                {todayWFH}
+              </h2>
+            )}
+            <p className="font-medium text-xs py-2 items-end">Attendances</p>
+          </div>
+        </div>
+        <div className="card bg-base shadow-xl text-gray-700 w-56 h-full">
+          <div className="flex flex-col items-start ml-5 justify-between">
+            <p className="font-bold text-sm text-start py-2 items-end">
+              Today Permission
+            </p>
+            <h2 className="font-bold text-6xl items-end text-black">
+              {todayPermission}
+            </h2>
+            <p className="font-medium text-xs py-2 items-end">Permissions</p>
+          </div>
+        </div>
+        <div className="card bg-base shadow-xl text-gray-700 w-56 h-full">
+          <div className="flex flex-col items-start ml-5 justify-between">
+            <p className="font-bold text-sm text-start py-2 items-end">
+              Today Leaves
+            </p>
+            <h2 className="font-bold text-6xl items-end text-black">
+              {todayLeaves}
+            </h2>
+            <p className="font-medium text-xs py-2 items-end">Leaves</p>
+          </div>
+        </div>
+      </div>
       </div>
       <div className="flex justify-end">
         <div className="flex items-center gap-2 pl-4 max-w-[200px] my-10 mx-10 rounded-lg bg-white border border-black hover:border-black focus:border-black  border-solid border-2 shadow-xl">
@@ -148,7 +214,7 @@ export default function Dashboard() {
           />
         </div>
       </div>
-      <div className="my-10">
+      <div>
         <TodayAttendanceTable
           dataAttendance={filteredAttendances}
           loadingAttendance={loadingAttendance}
