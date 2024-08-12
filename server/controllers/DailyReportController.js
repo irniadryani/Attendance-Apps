@@ -60,7 +60,9 @@ const createDailyReport = async (req, res) => {
     });
 
     if (existingReport) {
-      return res.status(400).json({ msg: "Daily report for today already exists" });
+      return res
+        .status(400)
+        .json({ msg: "Daily report for today already exists" });
     }
 
     // Create new daily report
@@ -83,10 +85,11 @@ const createDailyReport = async (req, res) => {
     logMessage("error", "Error creating daily report", {
       error: error.message,
     });
-    res.status(400).json({ msg: "Failed to create daily report", error: error.message });
+    res
+      .status(400)
+      .json({ msg: "Failed to create daily report", error: error.message });
   }
 };
-
 
 // const createDailyReport = async (req, res) => {
 //   const { report_date, report_message } = req.body;
@@ -120,10 +123,27 @@ const createDailyReport = async (req, res) => {
 
 const getDailyReportById = async (req, res) => {
   try {
+    const currentDate = new Date();
+
+    // Get the first and last date of the current month
+    const startOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      1
+    );
+    const endOfMonth = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + 1,
+      0
+    );
+
     const response = await DailyReport.findAll({
       attributes: ["id", "report_date", "report_message"],
       where: {
         user_id: req.params.id,
+        created_at: {
+          [Op.between]: [startOfMonth, endOfMonth],
+        },
       },
     });
 
