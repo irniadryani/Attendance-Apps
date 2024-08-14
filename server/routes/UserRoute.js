@@ -22,4 +22,6 @@ router.put("/user/change-password/:id",verifyToken, userController.changePasswor
 
 router.patch("/user/change-status/:id", verifyToken, userController.changeStatus);
 
+router.put("/user/reset-password/:id",verifyToken, userController.resetPassword);
+
 module.exports = router;

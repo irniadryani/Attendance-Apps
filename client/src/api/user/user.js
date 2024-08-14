@@ -44,3 +44,9 @@ export const deleteUserFn = async (id, data) => {
   const response = await Api.delete(`user/${id}`, data);
   return response.data;
 };
+
+export const resetPasswordFn = async (id, data) => {
+  const response = await Api.put(`/user/reset-password/${id}`, data);
+  return response.data;
+};
+

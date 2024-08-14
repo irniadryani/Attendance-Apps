@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { getUserByIdFn } from "../../api/user/user";
+import React, { useState } from "react";
+import { getUserByIdFn, resetPasswordFn } from "../../api/user/user";
 import { Link } from "react-router-dom";
 import { Button } from "@nextui-org/react";
-import { toast } from "react-toastify";
 import DetailAttendanceEmployee from "./DetailAttendanceEmployee";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import Swal from "sweetalert2";
 
 export default function DetailEmployee({ employeeId }) {
   const [employeeDetail, setEmployeeDetail] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
 
+  // Fetch user details
   const {
     data: dataSingleUser,
     refetch: refetchSingleUser,
@@ -22,6 +23,49 @@ export default function DetailEmployee({ employeeId }) {
       return data;
     },
     enabled: employeeId !== null,
+  });
+
+  // Handle password reset
+  const handleResetPasswordFn = useMutation({
+    mutationFn: () => resetPasswordFn(employeeId),
+    onMutate: async () => {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, reset it!",
+      });
+
+      if (!result.isConfirmed) {
+        throw new Error("Reset password action cancelled");
+      }
+    },
+    onSuccess: () => {
+      Swal.fire({
+        icon: "success",
+        title: "Password Reset!",
+        text: "The password has been reset to default.",
+      });
+      refetchSingleUser();
+    },
+    onError: (error) => {
+      let errorMessage;
+
+      if (error.response && error.response.data.msg) {
+        errorMessage = error.response.data.msg;
+      } else {
+        errorMessage = error.message || "An unexpected error occurred";
+      }
+
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: errorMessage,
+      });
+    },
   });
 
   if (!employeeDetail) {
@@ -108,6 +152,14 @@ export default function DetailEmployee({ employeeId }) {
                         <p className="w-36 font-medium text-start">
                           {employeeDetail.position}
                         </p>
+                      </div>
+                      <div>
+                        <button
+                          className="btn bg-black text-white hover:bg-white hover:text-black my-5"
+                          onClick={() => handleResetPasswordFn.mutate()}
+                        >
+                          Reset Password
+                        </button>
                       </div>
                     </div>
                   </div>
