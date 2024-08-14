@@ -5,8 +5,6 @@ import { tailspin } from "ldrs";
 export default function RecapEmployeeTable({ data, loading }) {
   tailspin.register();
 
-  console.log({ data });
-
   if (loading) {
     return (
       <div className="flex items-center justify-center">

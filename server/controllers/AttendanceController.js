@@ -47,6 +47,21 @@ function secondsToFormattedTime(seconds) {
   return formattedTime.trim();
 }
 
+const countWeekdaysBetweenDates = (startDate, endDate) => {
+  let count = 0;
+  let currentDate = new Date(startDate);
+
+  while (currentDate <= endDate) {
+    const dayOfWeek = currentDate.getDay();
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      count++;
+    }
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return count;
+};
+
 // Function to calculate distance using Haversine formula
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371e3; // Radius of the Earth in meters
@@ -873,6 +888,7 @@ const getAllAttendances = async (req, res) => {
     return res.status(500).json({ error: "Failed to fetch data" });
   }
 };
+
 const checkinWfh = async (req, res) => {
   const { id: user_id } = req.user;
   try {
@@ -1034,6 +1050,253 @@ const checkoutWfh = async (req, res) => {
   }
 };
 
+const recapAttendances = async (req, res) => {
+  const { full_name, startDate, endDate } = req.query;
+
+  if (!startDate || !endDate) {
+    return res.status(400).json({ error: "Missing required query parameters" });
+  }
+
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  end.setHours(23, 59, 59, 999);
+
+  try {
+    if (full_name) {
+      const user = await User.findOne({
+        where: {
+          full_name: {
+            [Op.iLike]: `%${full_name}%`,
+          },
+        },
+      });
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const attendances = await Attendances.findAll({
+        where: {
+          [Op.and]: [
+            { check_in: { [Op.not]: null } },
+            { created_at: { [Op.between]: [start, end] } },
+          ],
+        },
+        include: [
+          {
+            model: User,
+            attributes: ["full_name"],
+            where: { id: user.id },
+          },
+        ],
+      });
+
+      let totalSeconds = 0;
+      let totalAttendances = 0;
+
+      attendances.forEach((att) => {
+        if (att.work_hours) {
+          const workSeconds = timeToSeconds(att.work_hours);
+          totalSeconds += workSeconds;
+          totalAttendances++;
+        }
+      });
+
+      const averageSeconds =
+        totalAttendances > 0 ? totalSeconds / totalAttendances : 0;
+
+      const totalWorkDays = countWeekdaysBetweenDates(start, end);
+
+      const leaves = await Leaves.findAll({
+        where: {
+          user_id: user.id,
+          start_date: {
+            [Op.between]: [start, end]
+          }
+        },
+        include: [
+          {
+            model: User,
+            attributes: ["full_name"],
+            where: { id: user.id },
+          },
+        ],
+      });
+      
+  
+      // Filter approved leaves
+      const approvedLeaves = leaves.filter(
+        (leave) => leave.status === "Approved"
+      );
+  
+      // Calculate total leaves taken
+      const totalLeaves = approvedLeaves.reduce((total, leave) => {
+        const weekdays = countWeekdaysBetweenDates(leave.start_date, leave.end_date);
+        return total + weekdays;
+      }, 0);
+
+      const permissions = await Permissions.findAll({
+        where: {
+          user_id: user.id,
+          start_date: {
+            [Op.between]: [start, end]
+          }
+        },
+        include: [
+          {
+            model: User,
+            attributes: ["full_name"],
+            where: { id: user.id },
+          },
+        ],
+      });
+      
+  
+      // Filter approved leaves
+      const approvedPermissions = permissions.filter(
+        (leave) => leave.status === "Submitted"
+      );
+  
+      // Calculate total leaves taken
+      const totalPermissions = approvedPermissions.reduce((total, permission) => {
+        const weekdays = countWeekdaysBetweenDates(permission.start_date, permission.end_date);
+        return total + weekdays;
+      }, 0);
+
+      const result = {
+        full_name: user.full_name,
+        total_attendance: attendances.length,
+        total_absences: totalWorkDays - attendances.length,
+        total_work_from_home: attendances.filter((att) => att.checkin_image)
+          .length,
+        total_work_from_office: attendances.filter((att) => att.location_lat)
+          .length,
+        total_permissions: totalPermissions,
+        total_leaves: totalLeaves,
+        total_work_hours: secondsToFormattedTime(totalSeconds),
+        average_work_hours: secondsToFormattedTime(averageSeconds),
+      };
+
+      return res.status(200).json(result);
+    } else {
+      const users = await User.findAll();
+
+      const results = await Promise.all(
+        users.map(async (user) => {
+          const attendances = await Attendances.findAll({
+            where: {
+              [Op.and]: [
+                { check_in: { [Op.not]: null } },
+                { created_at: { [Op.between]: [start, end] } },
+              ],
+            },
+            include: [
+              {
+                model: User,
+                attributes: ["full_name"],
+                where: { id: user.id },
+              },
+            ],
+          });
+
+          let totalSeconds = 0;
+          let totalAttendances = 0;
+
+          attendances.forEach((att) => {
+            if (att.work_hours) {
+              const workSeconds = timeToSeconds(att.work_hours);
+              totalSeconds += workSeconds;
+              totalAttendances++;
+            }
+          });
+
+          const averageSeconds =
+            totalAttendances > 0 ? totalSeconds / totalAttendances : 0;
+
+          const totalWorkDays = countWeekdaysBetweenDates(start, end);
+
+          const leaves = await Leaves.findAll({
+            where: {
+              user_id: user.id,
+              start_date: {
+                [Op.between]: [start, end]
+              }
+            },
+            include: [
+              {
+                model: User,
+                attributes: ["full_name"],
+                where: { id: user.id },
+              },
+            ],
+          });
+          
+      
+          // Filter approved leaves
+          const approvedLeaves = leaves.filter(
+            (leave) => leave.status === "Approved"
+          );
+      
+          // Calculate total leaves taken
+          const totalLeaves = approvedLeaves.reduce((total, leave) => {
+            const weekdays = countWeekdaysBetweenDates(leave.start_date, leave.end_date);
+            return total + weekdays;
+          }, 0);
+
+          const permissions = await Permissions.findAll({
+            where: {
+              user_id: user.id,
+              start_date: {
+                [Op.between]: [start, end]
+              }
+            },
+            include: [
+              {
+                model: User,
+                attributes: ["full_name"],
+                where: { id: user.id },
+              },
+            ],
+          });
+          
+      
+          // Filter approved leaves
+          const approvedPermissions = permissions.filter(
+            (leave) => leave.status === "Submitted"
+          );
+      
+          // Calculate total leaves taken
+          const totalPermissions = approvedPermissions.reduce((total, permission) => {
+            const weekdays = countWeekdaysBetweenDates(permission.start_date, permission.end_date);
+            return total + weekdays;
+          }, 0);
+         
+
+          return {
+            full_name: user.full_name,
+            total_attendance: attendances.length,
+            total_absences: totalWorkDays - attendances.length,
+            total_work_from_home: attendances.filter((att) => att.checkin_image)
+              .length,
+            total_work_from_office: attendances.filter(
+              (att) => att.location_lat
+            ).length,
+            total_permissions: totalPermissions,
+            total_leaves: totalLeaves,
+            total_work_hours: secondsToFormattedTime(totalSeconds),
+            average_work_hours: secondsToFormattedTime(averageSeconds),
+          };
+        })
+      );
+
+      return res.status(200).json(results);
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return res.status(500).json({ error: "Failed to fetch data" });
+  }
+};
+
+
 module.exports = {
   checkin,
   checkTodayAttendance,
@@ -1045,4 +1308,5 @@ module.exports = {
   getAllAttendances,
   checkinWfh,
   checkoutWfh,
+  recapAttendances
 };
