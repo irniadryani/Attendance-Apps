@@ -13,7 +13,7 @@ export default function Layout({ children }) {
         <Navbar />
         <div className="flex h-screen overflow-hidden">
           {user.role !== "User" && <Sidebar />}
-          <div className="flex-grow overflow-auto p-4">
+          <div className="flex-grow overflow-auto">
             <main>{children}</main>
           </div>
         </div>

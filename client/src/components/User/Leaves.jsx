@@ -116,7 +116,7 @@ export default function Leaves() {
                   <DatePicker
                     selected={startDate}
                     onChange={(date) => setStartDate(date)}
-                    dateFormat="MMMM d, yyyy h:mmaa"
+                    dateFormat="MMMM d, yyyy"
                     className="flex justify-center mr-24"
                   />
                   <input
@@ -134,7 +134,7 @@ export default function Leaves() {
                   <DatePicker
                     selected={endDate}
                     onChange={(date) => setEndDate(date)}
-                    dateFormat="MMMM d, yyyy h:mmaa"
+                    dateFormat="MMMM d, yyyy"
                     className="flex justify-center ml-10 mr-24"
                   />
                   <input

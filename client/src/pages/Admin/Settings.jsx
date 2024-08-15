@@ -11,8 +11,9 @@ import {
   updateMaximumDistanceFn,
   getUserContentFn,
 } from "../../api/setting/setting";
-import {getLimitLeavesFn} from "../../api/limit/limit"
+import { getLimitLeavesFn } from "../../api/limit/limit";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { isAxiosError } from "axios";
 
 export default function Settings() {
   const { register, handleSubmit, setValue } = useForm();
@@ -27,7 +28,7 @@ export default function Settings() {
     queryFn: getLimitLeavesFn,
   });
 
-  console.log("limit", limits)
+  console.log({ settings });
 
   useEffect(() => {
     if (settings && settings.length > 0) {
@@ -57,12 +58,14 @@ export default function Settings() {
       refetch();
     },
     onError: (error) => {
-      console.error(error);
-      Swal.fire({
-        icon: "error",
-        title: "Error updating Default Password!",
-        text: "An error occurred while updating the default password.",
-      });
+      console.log({ error });
+      if (isAxiosError(error) && error.response.status === 400) {
+        Swal.fire({
+          icon: "error",
+          title: "Error updating Default Password!",
+          text: "An error occurred while updating the default password.",
+        });
+      }
     },
   });
 
@@ -147,7 +150,9 @@ export default function Settings() {
   });
 
   const onSubmitPassword = (data) => {
-    updatePasswordMutation.mutateAsync({ default_password: data.default_password });
+    updatePasswordMutation.mutate({
+      default_password: data.default_password,
+    });
   };
 
   const onSubmitLatitude = (data) => {
@@ -163,7 +168,9 @@ export default function Settings() {
   };
 
   const onSubmitMaximumDistance = (data) => {
-    updateMaximumDistanceMutation.mutateAsync({ maximum_distance: data.maximum_distance });
+    updateMaximumDistanceMutation.mutateAsync({
+      maximum_distance: data.maximum_distance,
+    });
   };
 
   return (
@@ -191,7 +198,9 @@ export default function Settings() {
                   </label>
                 </div>
                 <div className="items-center mt-10 justify-center">
-                  <Button color="primary" type="submit">Edit</Button>
+                  <Button color="primary" type="submit">
+                    Edit
+                  </Button>
                 </div>
               </div>
             </div>
@@ -215,7 +224,9 @@ export default function Settings() {
                   </label>
                 </div>
                 <div className="items-center mt-10 justify-center">
-                  <Button color="primary" type="submit">Edit</Button>
+                  <Button color="primary" type="submit">
+                    Edit
+                  </Button>
                 </div>
               </div>
             </div>
@@ -237,7 +248,9 @@ export default function Settings() {
                 </label>
               </div>
               <div className="items-center mt-10 justify-center">
-                <Button color="primary" type="submit">Edit</Button>
+                <Button color="primary" type="submit">
+                  Edit
+                </Button>
               </div>
             </div>
           </form>
@@ -247,7 +260,9 @@ export default function Settings() {
               <div className="w-full">
                 <label className="form-control w-full">
                   <div className="label">
-                    <span className="label-text">Maximum Distance (meters)</span>
+                    <span className="label-text">
+                      Maximum Distance (meters)
+                    </span>
                   </div>
                   <input
                     type="text"
@@ -258,7 +273,9 @@ export default function Settings() {
                 </label>
               </div>
               <div className="items-center mt-10 justify-center">
-                <Button color="primary" type="submit">Edit</Button>
+                <Button color="primary" type="submit">
+                  Edit
+                </Button>
               </div>
             </div>
           </form>
@@ -281,7 +298,9 @@ export default function Settings() {
                   </label>
                 </div>
                 <div className="items-center mt-10 justify-center">
-                  <Button color="primary" type="submit">Edit</Button>
+                  <Button color="primary" type="submit">
+                    Edit
+                  </Button>
                 </div>
               </div>
             </div>

@@ -34,7 +34,7 @@ const defaultPassword = async (req, res) => {
       logMessage("warn", "Password length validation failed", {
         default_password,
       });
-      return res.status(422).json({
+      return res.status(400).json({
         msg: "Password length must be between 8 and 16 characters",
       });
     }

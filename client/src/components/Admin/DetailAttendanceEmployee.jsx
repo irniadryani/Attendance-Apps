@@ -22,7 +22,7 @@ export default function DetailAttendanceEmployee({ employeeId }) {
   const [isDateRangeCleared, setIsDateRangeCleared] = useState(true);
   const [expandedRows, setExpandedRows] = useState({});
   const [currentPageAttendance, setCurrentPageAttendance] = useState(1);
-  const recordsPerPage = 5;
+  const recordsPerPage = 10;
 
   const {
     data: attendanceDetail,
@@ -34,8 +34,6 @@ export default function DetailAttendanceEmployee({ employeeId }) {
     queryFn: () => getAllAttendanceByIdFn(employeeId),
     enabled: !!employeeId,
   });
-
-  console.log({attendanceDetail})
 
   hourglass.register();
 
@@ -126,7 +124,7 @@ export default function DetailAttendanceEmployee({ employeeId }) {
     return null;
   }
 
-  if (!filteredAttendanceDetail || filteredAttendanceDetail?.length === 0) {
+  if (!filteredAttendanceDetail ) {
     return (
       <div className="flex flex-col items-center justify-center">
         <div>

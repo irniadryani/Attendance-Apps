@@ -46,7 +46,7 @@ const getPermission = async (req, res) => {
       const formattedResponse = response.map((permission) => ({
         id: permission.id,
         user_id: permission.user_id,
-        user_name: permission.user.full_name,
+        user_name: permission?.user?.full_name,
         start_date: formatDate(permission.start_date),
         end_date: formatDate(permission.end_date),
         notes: permission.notes,

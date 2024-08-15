@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
-const { verifyToken } = require("../middleware/AuthUser");
+const { verifyToken} = require("../middleware/AuthUser");
 const permissionController = require("../controllers/PermissionController");
 
 const router = express.Router();

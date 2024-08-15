@@ -108,7 +108,7 @@ export default function TodayAttendanceTable({
                 className="hover font-base text-sm text-black"
                 key={attendance.id}
               >
-                <td>{index + 1}</td>
+                <td>{(currentPage - 1) * recordsPerPage + index + 1}</td>
                 <td>{attendance.full_name}</td>
                 <td>{attendance.check_in}</td>
                 <td>{attendance.check_out}</td>

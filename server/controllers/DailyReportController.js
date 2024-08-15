@@ -30,8 +30,8 @@ const getDailyReport = async (req, res) => {
       user_id: report.user_id,
       report_date: formatDate(report.report_date),
       report_message: report.report_message,
-      user_name: report.user.full_name, // Access full_name from associated Users model
-      user_position: report.user.position, // Access position from associated Users model
+      user_name: report?.user?.full_name, // Access full_name from associated Users model
+      user_position: report?.user?.position, // Access position from associated Users model
     }));
 
     res.status(200).json(formattedResponse);
@@ -121,30 +121,70 @@ const createDailyReport = async (req, res) => {
 //   }
 // };
 
+// const getDailyReportById = async (req, res) => {
+//   try {
+//     const currentDate = new Date();
+
+//     // Get the first and last date of the current month
+//     const startOfMonth = new Date(
+//       currentDate.getFullYear(),
+//       currentDate.getMonth(),
+//       1
+//     );
+//     const endOfMonth = new Date(
+//       currentDate.getFullYear(),
+//       currentDate.getMonth() + 1,
+//       0
+//     );
+
+//     const response = await DailyReport.findAll({
+//       attributes: ["id", "report_date", "report_message"],
+//       where: {
+//         user_id: req.params.id,
+//         created_at: {
+//           [Op.between]: [startOfMonth, endOfMonth],
+//         },
+//       },
+//     });
+
+//     if (response.length === 0) {
+//       logMessage("warning", "Daily report not found", {
+//         user_id: req.params.id,
+//       });
+//       return res.status(404).json({ msg: "Daily Report Not Found" });
+//     }
+
+//     const formattedResponse = response.map((report) => ({
+//       ...report.toJSON(),
+//       report_date: formatDate(report.report_date),
+//     }));
+
+//     res.status(200).json(formattedResponse);
+//   } catch (error) {
+//     logMessage("error", "Error fetching daily report by user ID", {
+//       user_id: req.params.id,
+//       error: error.message,
+//     });
+
+//     if (
+//       error.message ===
+//       `invalid input syntax for type uuid: \"${req.params.id}\"`
+//     ) {
+//       res.status(404).json({ msg: "User Not Found" });
+//     } else {
+//       res.status(500).json({ msg: error.message });
+//     }
+//   }
+// };
+
 const getDailyReportById = async (req, res) => {
   try {
-    const currentDate = new Date();
-
-    // Get the first and last date of the current month
-    const startOfMonth = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      1
-    );
-    const endOfMonth = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() + 1,
-      0
-    );
-
     const response = await DailyReport.findAll({
       attributes: ["id", "report_date", "report_message"],
       where: {
         user_id: req.params.id,
-        created_at: {
-          [Op.between]: [startOfMonth, endOfMonth],
-        },
       },
+      order: [["created_at", "DESC"]]
     });
 
     if (response.length === 0) {
@@ -176,6 +216,7 @@ const getDailyReportById = async (req, res) => {
     }
   }
 };
+
 
 module.exports = {
   getDailyReport,

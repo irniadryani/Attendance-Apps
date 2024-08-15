@@ -13,9 +13,8 @@ export default function History() {
   } = useQuery({
     queryKey: ["attendance", id],
     queryFn: () => getAttendanceByIdFn(id),
+    refetchInterval: 1000,
   });
-
-  console.log("att", dataSingleAttendance)
 
   // useEffect(() => {
   //   dataSingleAttendance();
@@ -42,33 +41,9 @@ export default function History() {
   
 
   return (
-    <div className="dark:bg-gray-900 dark:text-white min-h-screen">
+    <div className="dark:bg-gray-900 dark:text-white mb-10">
       <div>
         <p className="font-bold text-2xl mx-10 mt-10">History</p>
-
-        {/* <div className="flex justify-end mx-10">
-          <div className="dropdown dropdown-hover mt-5">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn m-1 bg-black text-white text-center w-24"
-            >
-              Sort
-            </div>
-            <ul
-              tabIndex={0}
-              className="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-            >
-              <li>
-                <a>Item 1</a>
-              </li>
-              <li>
-                <a>Item 2</a>
-              </li>
-            </ul>
-          </div>
-        </div> */}
-
         <div className="my-5">
           <Accordion variant="splitted" className="dark:bg-gray-800 text-black">
             {dataSingleAttendance?.map((attendance) => (

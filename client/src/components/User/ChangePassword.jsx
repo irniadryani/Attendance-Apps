@@ -91,7 +91,7 @@ export default function ChangePassword() {
     userData.append("newPassword", data.newPassword);
     userData.append("confPassword", data.confPassword);
 
-    handleChangePassword.mutateAsync(userData);
+    handleChangePassword.mutate(userData);
   };
 
   return (

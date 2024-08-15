@@ -43,6 +43,14 @@ module.exports.adminOnly = (req, res, next) => {
   next();
 };
 
+module.exports.superadminOnly = (req, res, next) => {
+  if (req.user.role !== "Super Admin") {
+    // Mengakses role dari req.user
+    return res.status(403).json({ msg: "Access Forbidden" });
+  }
+  next();
+};
+
 // const jwt = require("jsonwebtoken");
 
 // module.exports.verifyToken = async (req, res, next) => {

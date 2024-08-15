@@ -23,7 +23,7 @@ export default function AttendanceTable({
   }, [currentPaginationTable]);
 
   // Calculate employees to display based on currentPage and search
-  const recordsPerPage = 10;
+  const recordsPerPage = 20;
   const npage = Math.ceil((dataAttendance?.length || 0) / recordsPerPage);
   const numbers = Array.from({ length: npage }, (_, index) => index + 1);
 
@@ -95,7 +95,7 @@ export default function AttendanceTable({
           <tbody>
             {filteredAttendances?.map((attendance, index) => (
               <tr className="hover font-base text-sm text-black " key={index}>
-                <th>{index + 1}</th>
+                <th>{(currentPage - 1) * recordsPerPage + index + 1}</th>
                 <td>{attendance.full_name}</td>
                 <td>{attendance.check_in}</td>
                 <td>{attendance.check_out}</td>

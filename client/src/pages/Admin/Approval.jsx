@@ -25,7 +25,7 @@ export default function Approval() {
     queryFn: getAllLeavesFn,
   });
 
-  const formatDate = (date) => {
+   const formatDate = (date) => {
     const d = new Date(date);
     let month = "" + (d.getMonth() + 1);
     let day = "" + d.getDate();
@@ -51,16 +51,16 @@ export default function Approval() {
 
   const calculateTodayLeaves = () => {
     if (!loadingLeaves && dataLeaves) {
-      return dataLeaves.filter(
-        (entry) =>
-          formatDate(entry.start_date) === today && entry.status === "Submitted"
-      );
+      return dataLeaves.filter((entry) => entry.status === "Submitted");
     }
     return [];
   };
 
+
   const todayPermission = calculateTodayPermission();
   const todayLeaves = calculateTodayLeaves();
+
+  console.log({todayPermission})
 
   return (
     <Layout>
@@ -69,7 +69,7 @@ export default function Approval() {
           <div className="flex flex-row gap-10 my-5">
             <div className="card bg-base shadow-xl text-gray-700 w-56 h-ful">
               <div className="flex flex-col items-start text-start ml-5 justify-between">
-                <p className="font-bold text-lg">Permission Queue</p>
+                <p className="font-bold text-lg">Today Permission</p>
                 <h2 className="font-bold text-black text-6xl">
                   {todayPermission.length}
                 </h2>

@@ -20,12 +20,6 @@ export const Navbar = () => {
     dispatch(reset());
   };
 
-  // useEffect(() => {
-  //   if (!user && isError) {
-  //     navigate("/login");
-  //   }
-  // }, [user, isError]);
-
   const {
     data: dataSingleUser,
     refetch: refetchSingleUser,

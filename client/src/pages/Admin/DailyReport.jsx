@@ -8,7 +8,8 @@ import { IoMdSearch } from "react-icons/io";
 export default function DailyReport() {
   const [search, setSearch] = useState("");
 
-  const { data: dataDailyReport, isLoading: loadingDailyReport } = useQuery({
+
+  const { data: dataDailyReport, isLoading: loadingDailyReport, refetch: refetchDailyReport } = useQuery({
     queryKey: ["dailyReport"],
     queryFn: getAllDailyReportFn,
   });
@@ -29,7 +30,7 @@ export default function DailyReport() {
     <Layout>
       <div>
         <div>
-          <p className="text-2xl font-bold mb-5">Employee's Daily Reports</p>
+          <p className="text-3xl font-bold my-5">Employee's <br/> Daily Reports</p>
         </div>
         <div>
           <div className="flex justify-end">
@@ -44,31 +45,33 @@ export default function DailyReport() {
               />
             </div>
           </div>
-        </div>
-        {filteredEmployee.map((employee) => (
-          <div
-            key={employee.user_id}
-            className="card bg-black text-white w-full mb-3 h-lg"
-          >
-            <div className="card-body items-start text-start">
-              <h2 className="card-title text-start">{employee.user_name}</h2>
-              <p className="font-semibold">{employee.user_position}</p>
-              <Link
-                to={`/daily-report/${btoa(employee.user_id)}`}
-                state={{
-                  employeeName: employee.user_name,
-                  employeePosition: employee.user_position,
-                }}
-              >
-                <div className="flex justify-end">
-                  <button className="btn btn-active bg-white text-black btn-4/12 justify-end shadow-lg">
-                    Detail
-                  </button>
-                </div>
-              </Link>
+        </div>{" "}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {filteredEmployee.map((employee) => (
+            <div
+              key={employee.user_id}
+              className="card bg-black text-white w-50 mb-3 h-lg"
+            >
+              <div className="card-body items-start text-start">
+                <h2 className="card-title text-start">{employee.user_name}</h2>
+                <p className="font-semibold">{employee.user_position}</p>
+                <Link
+                  to={`/daily-report/${btoa(employee.user_id)}`}
+                  state={{
+                    employeeName: employee.user_name,
+                    employeePosition: employee.user_position,
+                  }}
+                >
+                  <div className="flex justify-end">
+                    <button className="btn btn-active btn-md mt-2 bg-white text-black btn-4/12 justify-end shadow-lg">
+                      Detail
+                    </button>
+                  </div>
+                </Link>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </Layout>
   );
