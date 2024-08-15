@@ -5,10 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { getMe, loginUser, reset } from "../features/authSlice";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -19,27 +19,34 @@ export default function Login() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isError, user, message } = useSelector((state) => state.auth);
+  const { isError, user, message, isErrorLogin } = useSelector(
+    (state) => state.auth
+  );
+
+  const accessToken = Cookies.get("accessToken");
+  const refreshToken = Cookies.get("refreshToken");
 
   useEffect(() => {
-    dispatch(getMe());
-  }, []);
+    if (accessToken && refreshToken) {
+      dispatch(getMe());
+    }
+  }, [accessToken, refreshToken]);
 
   useEffect(() => {
-    if (user?.role === "User") {
-      toast.success("You successfully logged in")
+    if (accessToken && refreshToken && user?.role === "User") {
+      toast.success("You successfully logged in");
       navigate("/");
-    } else if (user?.role === "Admin") {
-      toast.success("You successfully logged in")
+    } else if (accessToken && refreshToken && user?.role === "Admin") {
+      toast.success("You successfully logged in");
       navigate("/dashboard-admin");
-    } else if (user?.role === "Superadmin") {
-      toast.success("You successfully logged in")
+    } else if (accessToken && refreshToken && user?.role === "Superadmin") {
+      toast.success("You successfully logged in");
       navigate("/dashboard-superadmin");
     }
-  }, [user]);
-  
+  }, [user, accessToken, refreshToken]);
+
   useEffect(() => {
-    if (isError) {
+    if (isErrorLogin) {
       toast.error(message || "Login failed");
     }
     dispatch(reset());

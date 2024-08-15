@@ -18,12 +18,14 @@ const PrivateRoute = ({ allowedRoles }) => {
   useEffect(() => {
     const accessToken = Cookies.get("accessToken");
     const refreshToken = Cookies.get("refreshToken");
-    
-    if ((!accessToken && refreshToken && !user && isLoadingUser) || (accessToken && !user && isLoadingUser)) {
+
+    if (
+      (!accessToken && refreshToken && !user && isLoadingUser) ||
+      (accessToken && !user && isLoadingUser)
+    ) {
       dispatch(getMe());
     }
   }, [user, isLoadingUser, isUserError]);
-  
 
   // useEffect(() => {
   //   const accessToken = Cookies.get("accessToken");
@@ -58,9 +60,9 @@ const PrivateRoute = ({ allowedRoles }) => {
     );
   }
 
-  if (!user && isError) {
-    return <Navigate to="/login" />;
-  }
+  // if (!user && isError) {
+  //   return <Navigate to="/login" />;
+  // }
 
   if (
     user &&
@@ -86,7 +88,6 @@ const PrivateRoute = ({ allowedRoles }) => {
 };
 
 export default PrivateRoute;
-
 
 // import React, { useEffect } from "react";
 // import { Navigate, Outlet, useLocation } from "react-router-dom";
