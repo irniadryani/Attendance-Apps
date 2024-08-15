@@ -452,7 +452,7 @@ const changePassword = async (req, res) => {
     const hashedNewPassword = await bcrypt.hash(newPassword, 10);
 
     // Update user password in the database
-    await User.update({ password: hashedNewPassword }, { where: { id } });
+    await User.update({ password: hashedNewPassword, default_password: false }, { where: { id } });
 
     return res.status(200).json({ msg: "Password changed successfully" });
   } catch (error) {
@@ -552,6 +552,40 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const resetPassword = async (req,res) => {
+  try {
+    const { id } = req.params;
+
+    // Dapatkan default password dari pengaturan
+    const setting = await Setting.findOne({ where: { id: 1 } });
+    const defaultPassword = setting ? setting.default_password : "defaultpassword";
+
+    if (!defaultPassword) {
+      return res.status(500).json({ error: "Default password not found" });
+    }
+
+    // Temukan peserta berdasarkan ID
+    const user = await User.findByPk(id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Hash default password
+    const hashedDefaultPassword = await bcrypt.hash(defaultPassword, 10);
+
+    // Ubah password_peserta peserta menjadi default_password
+    await User.update({
+      password: hashedDefaultPassword,
+      default_password: true, // Update kolom default_password menjadi true
+    }, {where: {id} });
+
+    return res.status(200).json({ msg: "Password reset successfully" });
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
 module.exports = {
   getUsers,
   getUserById,
@@ -562,4 +596,5 @@ module.exports = {
   roleUser,
   changePassword,
   changeStatus,
+  resetPassword
 };
