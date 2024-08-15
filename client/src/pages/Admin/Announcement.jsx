@@ -117,7 +117,7 @@ export default function Announcement() {
               <div className="flex flex-row gap-1 justify-between mx-3 mt-3">
                 <div className="flex justify-start">
                   <p className="text-xs text-start text-white font-semibold ml-5">
-                    2024-07-09
+                    {announcement?.date}
                   </p>
                 </div>
                 <div className="flex flex-row">
@@ -151,7 +151,6 @@ export default function Announcement() {
             </div>
           ))}
         </div>
-       
       </div>
       <CreateAnnouncement refetch={refetchAnnouncement} />
 

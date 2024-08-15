@@ -6,6 +6,7 @@ const Setting = require("../models/SettingModel");
 const User = require("../models/UserModel");
 const { Op } = require("sequelize");
 const { logMessage } = require("../utils/logger");
+const { format } = require("path");
 
 const formatDate = (date) => {
   const d = new Date(date);
@@ -17,6 +18,22 @@ const formatDate = (date) => {
   if (day.length < 2) day = "0" + day;
 
   return [year, month, day].join("-");
+};
+
+const getWeekdaysBetweenDates = (startDate, endDate) => {
+  let count = 0;
+  const currentDate = new Date(startDate);
+
+  while (currentDate <= new Date(endDate)) {
+    const dayOfWeek = currentDate.getDay();
+    // Count only weekdays (Monday = 1, Sunday = 0)
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      count++;
+    }
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return count;
 };
 
 const createLeaves = async (req, res) => {
@@ -81,7 +98,6 @@ const createLeaves = async (req, res) => {
   }
 };
 
-
 const getAllLeaves = async (req, res) => {
   try {
     const response = await Leaves.findAll({
@@ -105,7 +121,7 @@ const getAllLeaves = async (req, res) => {
     const formattedResponse = response.map((leaves) => ({
       id: leaves.id,
       user_id: leaves.user_id,
-      user_name: leaves.user.full_name,
+      user_name: leaves?.user?.full_name ,
       start_date: formatDate(leaves.start_date),
       end_date: formatDate(leaves.end_date),
       notes: leaves.notes,
@@ -118,8 +134,6 @@ const getAllLeaves = async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 };
-
-
 
 const getLeavesById = async (req, res) => {
   try {
@@ -141,13 +155,21 @@ const getLeavesById = async (req, res) => {
       },
     });
 
+    // Filter approved leaves
     const approvedLeaves = leaves.filter(
       (leave) => leave.status === "Approved"
     );
-    const totalLeavesTaken = approvedLeaves.length;
+
+    // Calculate total leaves taken
+    const totalLeavesTaken = approvedLeaves.reduce((total, leave) => {
+      const weekdays = getWeekdaysBetweenDates(leave.start_date, leave.end_date);
+      return total + weekdays;
+    }, 0);
+
     const remainingLeaves = user.limit.maximum - totalLeavesTaken;
     const maximumLeaves = user.limit.maximum;
 
+    // Format response
     const formattedResponse = leaves.map((leave) => ({
       ...leave.toJSON(),
       start_date: formatDate(leave.start_date),
@@ -176,6 +198,62 @@ const getLeavesById = async (req, res) => {
     }
   }
 };
+
+// const getLeavesById = async (req, res) => {
+//   try {
+//     const user = await User.findOne({
+//       where: { id: req.params.id },
+//       include: [{ model: Limit }],
+//       order: [["created_at", "DESC"]],
+//     });
+
+//     if (!user) {
+//       logMessage("warning", "User not found", { user_id: req.params.id });
+//       return res.status(404).json({ msg: "User not found" });
+//     }
+
+//     const leaves = await Leaves.findAll({
+//       attributes: ["id", "start_date", "end_date", "status", "notes"],
+//       where: {
+//         user_id: req.params.id,
+//       },
+//     });
+
+//     const approvedLeaves = leaves.filter(
+//       (leave) => leave.status === "Approved"
+//     );
+//     const totalLeavesTaken = approvedLeaves.length;
+//     const remainingLeaves = user.limit.maximum - totalLeavesTaken;
+//     const maximumLeaves = user.limit.maximum;
+
+//     const formattedResponse = leaves.map((leave) => ({
+//       ...leave.toJSON(),
+//       start_date: formatDate(leave.start_date),
+//       end_date: formatDate(leave.end_date),
+//     }));
+
+//     res.status(200).json({
+//       leaves: formattedResponse,
+//       totalLeavesTaken,
+//       remainingLeaves,
+//       maximumLeaves,
+//     });
+//   } catch (error) {
+//     logMessage("error", "Error fetching leaves by user ID", {
+//       user_id: req.params.id,
+//       error: error.message,
+//     });
+
+//     if (
+//       error.message ===
+//       `invalid input syntax for type uuid: \"${req.params.id}\"`
+//     ) {
+//       res.status(404).json({ msg: "Leaves Not Found" });
+//     } else {
+//       res.status(500).json({ msg: error.message });
+//     }
+//   }
+// };
 
 const updateLeaves = async (req, res) => {
   const { id } = req.params;

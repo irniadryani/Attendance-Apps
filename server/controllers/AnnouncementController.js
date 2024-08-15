@@ -6,6 +6,18 @@ const unirest = require("unirest");
 const { Op } = require("sequelize");
 const { logMessage } = require("../utils/logger");
 
+const formatDate = (date) => {
+  const d = new Date(date);
+  let month = "" + (d.getMonth() + 1);
+  let day = "" + d.getDate();
+  const year = d.getFullYear();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+
+  return [year, month, day].join("-");
+};
+
 const createAnnouncement = async (req, res) => {
   const { message } = req.body;
   const { id: admin_id } = req.user;
@@ -36,10 +48,19 @@ const createAnnouncement = async (req, res) => {
 const getAllAnnouncement = async (req, res) => {
   try {
     const response = await Announcement.findAll({
-      attributes: ["id", "admin_id", "message"],
+      attributes: ["id", "admin_id", "message", "created_at"],
+      order: [["created_at", "DESC"]],
     });
 
-    res.status(200).json(response);
+    const formattedResponse = response.map((announcement) => ({
+      id: announcement.id,
+      admin_id: announcement.admin_id,
+      user_name: announcement?.user?.full_name,
+      message: announcement?.message,
+      date: formatDate(announcement.created_at),
+    }));
+
+    res.status(200).json(formattedResponse);
   } catch (error) {
     // Log the error
     logMessage("error", "Failed to retrieve announcements", {
@@ -49,6 +70,7 @@ const getAllAnnouncement = async (req, res) => {
   }
 };
 
+
 const getAnnouncementById = async (req, res) => {
   try {
     const response = await Announcement.findAll({
@@ -56,6 +78,7 @@ const getAnnouncementById = async (req, res) => {
       where: {
         id: req.params.id,
       },
+      order: [["created_at", "DESC"]],
     });
 
     if (response.length === 0) {
